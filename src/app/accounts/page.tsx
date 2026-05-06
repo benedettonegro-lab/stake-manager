@@ -1,0 +1,905 @@
+"use client";
+
+import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/components/app";
+import type { GamingAccountStatus } from "@/components/gaming-account-card";
+import { AppShell } from "@/components/app-shell";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import Link from "next/link";
+import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
+import { paymentMethodTitle } from "@/lib/payment-methods";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type PlayerOption = { id: string; name: string };
+
+type BookmakerOption = { id: string; name: string };
+
+type AccountListRow = {
+  id: string;
+  player_id: string;
+  identity_id: string;
+  account_name: string;
+  bookmaker: string;
+  bookmaker_id: string | null;
+  bookmakers: { name: string } | { name: string }[] | null;
+  note: string | null;
+  initial_balance: string;
+  current_balance: string;
+  account_status: GamingAccountStatus | null;
+};
+
+type PaymentMethodRow = {
+  id: string;
+  label: string | null;
+  method_name: string;
+  balance: string;
+  player_id: string;
+  identity_id: string;
+  type: string;
+  note: string | null;
+};
+
+/** Conti gioco del player selezionato nel form (nessun join con payment_methods). */
+type GamingAccountBrief = {
+  id: string;
+  account_name: string;
+  bookmaker: string;
+  bookmaker_id: string | null;
+  bookmakers: { name: string } | { name: string }[] | null;
+};
+
+function formatMoney(value: string | number): string {
+  const n = typeof value === "string" ? Number.parseFloat(value) : value;
+  if (Number.isNaN(n)) return "—";
+  return new Intl.NumberFormat("it-IT", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+const ACCOUNT_STATUS_LABEL: Record<GamingAccountStatus, string> = {
+  active: "Attivo",
+  paused: "In pausa",
+  closed: "Chiuso",
+};
+
+/** Lista conti — glass compatto (allineato a identità) */
+const accListCardClass =
+  "w-full cursor-pointer rounded-xl border border-white/[0.06] bg-[#0f1624]/70 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_28px_rgba(52,211,153,0.14)] hover:scale-[1.02] active:scale-[0.99]";
+
+const accActionBtnClass =
+  "flex min-h-12 w-full items-center justify-center rounded-xl border text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
+
+function parseAmount(s: string): number {
+  return Number.parseFloat(s.replace(",", "."));
+}
+
+export default function AccountsListPage() {
+  const router = useRouter();
+  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+
+  const [ready, setReady] = useState(false);
+  const [accounts, setAccounts] = useState<AccountListRow[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
+  const [players, setPlayers] = useState<PlayerOption[]>([]);
+  const [bookmakers, setBookmakers] = useState<BookmakerOption[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [createPlayerId, setCreatePlayerId] = useState("");
+  const [createAccountName, setCreateAccountName] = useState("");
+  const [createBookmakerId, setCreateBookmakerId] = useState("");
+  const [createInitialStr, setCreateInitialStr] = useState("");
+  const [createNote, setCreateNote] = useState("");
+  const [createStatus, setCreateStatus] = useState<GamingAccountStatus>("active");
+  const [createSubmitting, setCreateSubmitting] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [methodsForSelectedPlayer, setMethodsForSelectedPlayer] = useState<
+    PaymentMethodRow[]
+  >([]);
+  const [accountsForCreatePlayer, setAccountsForCreatePlayer] = useState<
+    GamingAccountBrief[]
+  >([]);
+  const [methodsPlayerLoading, setMethodsPlayerLoading] = useState(false);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editing, setEditing] = useState<AccountListRow | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editBookmakerId, setEditBookmakerId] = useState("");
+  const [editBookmakerLegacy, setEditBookmakerLegacy] = useState("");
+  const [editNote, setEditNote] = useState("");
+  const [editStatus, setEditStatus] = useState<GamingAccountStatus>("active");
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<AccountListRow | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [createOpen, setCreateOpen] = useState(false);
+
+  /** Conto selezionato — azioni in bottom sheet */
+  const [detailAccount, setDetailAccount] = useState<AccountListRow | null>(null);
+
+  const loadData = useCallback(async () => {
+    setLoadError(null);
+    const [aRes, pmRes, pRes, bmRes] = await Promise.all([
+      supabase
+        .from("gaming_accounts")
+        .select(
+          `
+          id,
+          account_name,
+          bookmaker,
+          bookmaker_id,
+          current_balance,
+          initial_balance,
+          player_id,
+          identity_id,
+          account_status,
+          note,
+          bookmakers ( name )
+        `,
+        )
+        .order("account_name"),
+      supabase
+        .from("payment_methods")
+        .select(
+          `
+          id,
+          label,
+          method_name,
+          balance,
+          player_id,
+          identity_id,
+          note,
+          "type"
+        `,
+        )
+        .order("method_name"),
+      supabase.from("players").select("id, name").order("name"),
+      supabase.from("bookmakers").select("id, name").order("name"),
+    ]);
+
+    if (aRes.error || pmRes.error || pRes.error || bmRes.error) {
+      setLoadError(
+        aRes.error?.message ??
+          pmRes.error?.message ??
+          pRes.error?.message ??
+          bmRes.error?.message ??
+          "Errore caricamento",
+      );
+      setAccounts([]);
+      setPaymentMethods([]);
+      setPlayers([]);
+      setBookmakers([]);
+      return;
+    }
+    setAccounts((aRes.data as unknown as AccountListRow[]) ?? []);
+    setPaymentMethods((pmRes.data as unknown as PaymentMethodRow[]) ?? []);
+    setPlayers((pRes.data as PlayerOption[]) ?? []);
+    setBookmakers((bmRes.data as BookmakerOption[]) ?? []);
+  }, [supabase]);
+
+  const identityNameById = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const p of players) m.set(p.id, p.name);
+    return m;
+  }, [players]);
+
+  const filteredAccounts = useMemo(() => {
+    const raw = searchQuery.trim();
+    if (!raw) return accounts;
+    const q = raw.toLowerCase();
+    return accounts.filter((a) => {
+      const idn = (identityNameById.get(a.identity_id) ?? "").toLowerCase();
+      const name = a.account_name.toLowerCase();
+      const bm = gamingAccountBookmakerDisplay(a).toLowerCase();
+      return name.includes(q) || bm.includes(q) || idn.includes(q);
+    });
+  }, [accounts, identityNameById, searchQuery]);
+
+  const totalAccountsBalance = useMemo(
+    () =>
+      accounts.reduce(
+        (s, a) => s + (Number.parseFloat(a.current_balance) || 0),
+        0,
+      ),
+    [accounts],
+  );
+
+  const totalPaymentMethodsBalance = useMemo(
+    () =>
+      paymentMethods.reduce(
+        (s, p) => s + (Number.parseFloat(p.balance) || 0),
+        0,
+      ),
+    [paymentMethods],
+  );
+
+  const totalCassa = totalAccountsBalance + totalPaymentMethodsBalance;
+
+  useEffect(() => {
+    if (!createPlayerId) {
+      setMethodsForSelectedPlayer([]);
+      setAccountsForCreatePlayer([]);
+      return;
+    }
+    let cancelled = false;
+    setMethodsPlayerLoading(true);
+    void (async () => {
+      const [gaRes, pmRes] = await Promise.all([
+        supabase
+          .from("gaming_accounts")
+          .select(
+            `
+            id,
+            account_name,
+            bookmaker,
+            bookmaker_id,
+            bookmakers ( name )
+          `,
+          )
+          .eq("player_id", createPlayerId)
+          .order("account_name"),
+        supabase
+          .from("payment_methods")
+          .select(
+            `
+            id,
+            label,
+            method_name,
+            balance,
+            player_id,
+            identity_id,
+            note,
+            "type"
+          `,
+          )
+          .eq("player_id", createPlayerId)
+          .order("method_name"),
+      ]);
+      if (cancelled) return;
+      if (gaRes.error) {
+        setAccountsForCreatePlayer([]);
+      } else {
+        setAccountsForCreatePlayer((gaRes.data as GamingAccountBrief[]) ?? []);
+      }
+      if (pmRes.error) {
+        setMethodsForSelectedPlayer([]);
+      } else {
+        setMethodsForSelectedPlayer((pmRes.data as unknown as PaymentMethodRow[]) ?? []);
+      }
+      setMethodsPlayerLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [createPlayerId, supabase]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") router.replace("/login");
+    });
+
+    void (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
+      await loadData();
+      if (!cancelled) setReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+      authSub.subscription.unsubscribe();
+    };
+  }, [loadData, router, supabase]);
+
+  function openEdit(a: AccountListRow) {
+    setEditing(a);
+    setEditName(a.account_name);
+    setEditBookmakerId(a.bookmaker_id ?? "");
+    setEditBookmakerLegacy(
+      a.bookmaker_id ? "" : (a.bookmaker ?? "").trim(),
+    );
+    setEditNote(a.note ?? "");
+    setEditStatus(a.account_status ?? "active");
+    setEditError(null);
+    setEditOpen(true);
+  }
+
+  async function handleSaveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editing) return;
+    const name = editName.trim();
+    if (!name) {
+      setEditError("Il nome conto è obbligatorio.");
+      return;
+    }
+    setEditSaving(true);
+    setEditError(null);
+    const patch: Record<string, unknown> = {
+      account_name: name,
+      note: editNote.trim() ? editNote.trim() : null,
+      account_status: editStatus,
+    };
+    if (editBookmakerId) {
+      patch.bookmaker_id = editBookmakerId;
+    } else {
+      patch.bookmaker_id = null;
+      patch.bookmaker = editBookmakerLegacy.trim();
+    }
+    const { error } = await supabase.from("gaming_accounts").update(patch).eq("id", editing.id);
+    setEditSaving(false);
+    if (error) {
+      console.error("[conti] modifica conto", error);
+      setEditError(error.message);
+      return;
+    }
+    setEditOpen(false);
+    setEditing(null);
+    await loadData();
+  }
+
+  async function handleConfirmDelete() {
+    if (!deleteTarget) return;
+    setDeleteError(null);
+    setDeleteLoading(true);
+    const { error } = await supabase
+      .from("gaming_accounts")
+      .delete()
+      .eq("id", deleteTarget.id);
+    setDeleteLoading(false);
+    if (error) {
+      console.error("[conti] elimina conto", error);
+      setDeleteError(error.message);
+      return;
+    }
+    setDeleteTarget(null);
+    await loadData();
+  }
+
+  async function handleCreateAccount(e: React.FormEvent) {
+    e.preventDefault();
+    setCreateError(null);
+    if (!createPlayerId) {
+      setCreateError("Seleziona un'identità.");
+      return;
+    }
+    const name = createAccountName.trim();
+    if (!name) {
+      setCreateError("Il nome conto è obbligatorio.");
+      return;
+    }
+    const initial = parseAmount(createInitialStr);
+    if (Number.isNaN(initial) || initial < 0) {
+      setCreateError("Saldo iniziale non valido (numero ≥ 0).");
+      return;
+    }
+    if (!createBookmakerId) {
+      setCreateError("Seleziona un bookmaker.");
+      return;
+    }
+    setCreateSubmitting(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setCreateSubmitting(false);
+      router.replace("/login");
+      return;
+    }
+    const { error } = await supabase.from("gaming_accounts").insert({
+      user_id: user.id,
+      player_id: createPlayerId,
+      identity_id: createPlayerId,
+      account_name: name,
+      bookmaker_id: createBookmakerId,
+      bookmaker: "",
+      initial_balance: initial,
+      current_balance: initial,
+      note: createNote.trim() ? createNote.trim() : null,
+      account_status: createStatus,
+    });
+    setCreateSubmitting(false);
+    if (error) {
+      console.error("[conti] crea conto", error);
+      setCreateError(error.message);
+      return;
+    }
+    setCreateAccountName("");
+    setCreateBookmakerId("");
+    setCreateInitialStr("");
+    setCreateNote("");
+    setCreateStatus("active");
+    setCreateOpen(false);
+    await loadData();
+  }
+
+  if (!ready) {
+    return (
+      <AppShell title="Conti">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+          <div
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            aria-hidden
+          />
+          <p>Caricamento…</p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  return (
+    <AppShell title="Conti">
+      {loadError ? (
+        <p
+          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          role="alert"
+        >
+          {loadError}
+        </p>
+      ) : null}
+
+      <div className="sticky top-14 z-[25] -mx-3 mb-2 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2 backdrop-blur-md">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Cerca conto o bookmaker..."
+        />
+      </div>
+
+      <section className="mb-2 grid grid-cols-3 gap-1.5">
+        <StatPill
+          className="!px-2 !py-1.5"
+          label="Conti"
+          value={`${formatMoney(totalAccountsBalance)} €`}
+          tone={totalAccountsBalance >= 0 ? "default" : "negative"}
+        />
+        <StatPill
+          className="!px-2 !py-1.5"
+          label="Metodi"
+          value={`${formatMoney(totalPaymentMethodsBalance)} €`}
+          tone={totalPaymentMethodsBalance >= 0 ? "default" : "negative"}
+        />
+        <StatPill
+          className="!px-2 !py-1.5"
+          label="Cassa"
+          value={`${formatMoney(totalCassa)} €`}
+          tone={totalCassa >= 0 ? "accent" : "negative"}
+        />
+      </section>
+
+      <div className="mb-2 flex flex-wrap gap-2">
+        <QuickActionButton variant="primary" onClick={() => setCreateOpen(true)}>
+          + Conto
+        </QuickActionButton>
+        <QuickActionButton href="/transactions" variant="ghost">
+          Movimenti
+        </QuickActionButton>
+        <QuickActionButton href="/bookmakers" variant="ghost">
+          Bookmakers
+        </QuickActionButton>
+      </div>
+
+      <BottomSheet
+        open={createOpen}
+        title="Nuovo conto"
+        dismissDisabled={createSubmitting}
+        onClose={() => {
+          if (!createSubmitting) setCreateOpen(false);
+        }}
+      >
+        <form className="grid gap-3" onSubmit={(e) => void handleCreateAccount(e)}>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              Identità
+            </label>
+            <select
+              required
+              value={createPlayerId}
+              onChange={(e) => setCreatePlayerId(e.target.value)}
+              className="sm-input"
+            >
+              <option value="">—</option>
+              {players.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
+            {!createPlayerId ? (
+              <p className="text-xs text-[#94a3b8]">Seleziona identità.</p>
+            ) : methodsPlayerLoading ? (
+              <p className="text-xs text-[#94a3b8]">Caricamento…</p>
+            ) : (
+              <>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                  Conti
+                </p>
+                {accountsForCreatePlayer.length === 0 ? (
+                  <p className="mt-2 text-sm text-[#94a3b8]">Nessun conto ancora per questo player.</p>
+                ) : (
+                  <ul className="mt-2 space-y-1.5 text-xs text-[#cbd5e1]">
+                    {accountsForCreatePlayer.map((ga) => (
+                      <li key={ga.id} className="truncate">
+                        {ga.account_name}
+                        {gamingAccountBookmakerDisplay(ga)
+                          ? ` · ${gamingAccountBookmakerDisplay(ga)}`
+                          : ""}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                  <p className="mt-4 text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                  Metodi
+                </p>
+                {methodsForSelectedPlayer.length === 0 ? (
+                  <p className="mt-2 text-sm text-[#94a3b8]">Nessun metodo pagamento</p>
+                ) : (
+                  <ul className="mt-2 space-y-1.5 text-xs text-[#cbd5e1]">
+                    {methodsForSelectedPlayer.map((m) => (
+                      <li key={m.id} className="flex justify-between gap-2">
+                        <span className="truncate">{paymentMethodTitle(m)}</span>
+                        <span className="shrink-0 tabular-nums text-[#94a3b8]">
+                          {formatMoney(m.balance)} €
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Nome conto
+              </label>
+              <input
+                value={createAccountName}
+                onChange={(e) => setCreateAccountName(e.target.value)}
+                required
+                className="sm-input"
+                placeholder="Es. Conto principale"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Bookmaker
+              </label>
+              <select
+                required
+                value={createBookmakerId}
+                onChange={(e) => setCreateBookmakerId(e.target.value)}
+                className="sm-input"
+              >
+                <option value="">—</option>
+                {bookmakers.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              {bookmakers.length === 0 ? (
+                <p className="text-xs text-[#94a3b8]">
+                  <Link href="/bookmakers" className="text-[#a855f7] underline-offset-2 hover:underline">
+                    Aggiungi bookmakers
+                  </Link>
+                </p>
+              ) : null}
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Saldo iniziale
+              </label>
+              <input
+                value={createInitialStr}
+                onChange={(e) => setCreateInitialStr(e.target.value)}
+                required
+                inputMode="decimal"
+                className="sm-input"
+                placeholder="0,00"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Stato conto
+              </label>
+              <select
+                value={createStatus}
+                onChange={(e) =>
+                  setCreateStatus(e.target.value as GamingAccountStatus)
+                }
+                className="sm-input"
+              >
+                <option value="active">Attivo</option>
+                <option value="paused">In pausa</option>
+                <option value="closed">Chiuso</option>
+              </select>
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              Note
+            </label>
+            <textarea
+              rows={2}
+              value={createNote}
+              onChange={(e) => setCreateNote(e.target.value)}
+              className="sm-input"
+              placeholder="Opzionale"
+            />
+          </div>
+          {createError ? (
+            <p
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              role="alert"
+            >
+              {createError}
+            </p>
+          ) : null}
+          <button type="submit" disabled={createSubmitting} className="sm-btn-primary w-full rounded-full">
+            {createSubmitting ? "Creazione…" : "Crea conto"}
+          </button>
+        </form>
+      </BottomSheet>
+
+      <section className="min-w-0">
+        <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+          I tuoi conti
+        </h2>
+        {accounts.length === 0 && !loadError ? (
+          <p className="rounded-xl border border-dashed border-[#273449] bg-[#0c101c] px-3 py-10 text-center text-xs text-[#94a3b8]">
+            Nessun conto. Tocca + Conto per aggiungerne uno.
+          </p>
+        ) : filteredAccounts.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-[#273449] bg-[#0c101c] px-3 py-10 text-center text-xs text-[#64748b]">
+            Nessun risultato
+          </p>
+        ) : (
+          <ul className="flex list-none flex-col gap-2 p-0 pb-2">
+            {filteredAccounts.map((a) => {
+              const bm = gamingAccountBookmakerDisplay(a);
+              const idn = identityNameById.get(a.identity_id) ?? "—";
+              const bal = Number.parseFloat(a.current_balance) || 0;
+              const balCls =
+                bal > 0
+                  ? "text-emerald-400"
+                  : bal === 0
+                    ? "text-[#94a3b8]"
+                    : "text-[#fb7185]";
+              return (
+                <li key={a.id} className="min-w-0">
+                  <button type="button" onClick={() => setDetailAccount(a)} className={accListCardClass}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1 text-left">
+                        <p className="truncate text-[13px] font-semibold text-white">
+                          {a.account_name}
+                          {bm ? (
+                            <span className="font-medium text-[#94a3b8]">{` (${bm})`}</span>
+                          ) : null}
+                        </p>
+                        <p className="mt-1 truncate text-[11px] text-[#64748b]">{idn}</p>
+                      </div>
+                      <p
+                        className={`shrink-0 text-right text-lg font-bold tabular-nums leading-none tracking-tight sm:text-xl ${balCls}`}
+                      >
+                        {formatMoney(a.current_balance)} €
+                      </p>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <BottomSheet
+        open={detailAccount !== null}
+        title={detailAccount?.account_name.trim() || "Conto"}
+        stackClassName="z-[95]"
+        panelClassName="!max-w-[420px]"
+        onClose={() => setDetailAccount(null)}
+      >
+        {detailAccount ? (
+          <div className="mx-auto flex max-w-[360px] flex-col gap-3 pb-1">
+            {(() => {
+              const a = detailAccount;
+              const bm = gamingAccountBookmakerDisplay(a);
+              const idn = identityNameById.get(a.identity_id) ?? "—";
+              const bal = Number.parseFloat(a.current_balance) || 0;
+              const balCls =
+                bal > 0
+                  ? "text-emerald-400 drop-shadow-[0_0_18px_rgba(52,211,153,0.35)]"
+                  : bal === 0
+                    ? "text-[#94a3b8]"
+                    : "text-[#fb7185]";
+              const st = a.account_status ?? "active";
+              const accIdEnc = encodeURIComponent(a.id);
+              return (
+                <>
+                  <div className="rounded-xl border border-white/[0.06] bg-[#0f1624]/60 px-3 py-4 text-center backdrop-blur-sm">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                      Saldo
+                    </p>
+                    <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
+                      {formatMoney(a.current_balance)} €
+                    </p>
+                    <p className="mt-2 text-[11px] text-[#94a3b8]">
+                      {bm ? <span>{bm}</span> : null}
+                      {bm ? <span className="text-[#475569]"> · </span> : null}
+                      <span>{idn}</span>
+                    </p>
+                    <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-[#64748b]">
+                      {ACCOUNT_STATUS_LABEL[st]}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/transactions?account=${accIdEnc}&type=deposit`}
+                    className={`${accActionBtnClass} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_18px_rgba(16,185,129,0.22)]`}
+                    onClick={() => setDetailAccount(null)}
+                  >
+                    Deposita
+                  </Link>
+                  <Link
+                    href={`/transactions?account=${accIdEnc}&type=withdrawal`}
+                    className={`${accActionBtnClass} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_18px_rgba(251,191,36,0.18)]`}
+                    onClick={() => setDetailAccount(null)}
+                  >
+                    Preleva
+                  </Link>
+                  <Link
+                    href={`/transactions?account=${accIdEnc}`}
+                    className={`${accActionBtnClass} border-[#334155] bg-[#151c2a] text-[#e2e8f0] hover:border-[#475569]`}
+                    onClick={() => setDetailAccount(null)}
+                  >
+                    Movimenti
+                  </Link>
+                  <button
+                    type="button"
+                    className={`${accActionBtnClass} border-white/12 bg-transparent text-[#cbd5e1] hover:border-white/25 hover:bg-white/[0.04]`}
+                    onClick={() => {
+                      const row = a;
+                      setDetailAccount(null);
+                      openEdit(row);
+                    }}
+                  >
+                    Modifica
+                  </button>
+                  <button
+                    type="button"
+                    className={`${accActionBtnClass} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_14px_rgba(248,113,113,0.15)]`}
+                    onClick={() => {
+                      setDetailAccount(null);
+                      setDeleteTarget(a);
+                    }}
+                  >
+                    Elimina
+                  </button>
+                </>
+              );
+            })()}
+          </div>
+        ) : null}
+      </BottomSheet>
+
+      <BottomSheet
+        open={editOpen}
+        title="Modifica conto"
+        stackClassName="z-[100]"
+        onClose={() => !editSaving && setEditOpen(false)}
+        dismissDisabled={editSaving}
+      >
+        {editing ? (
+          <form className="space-y-4" onSubmit={(e) => void handleSaveEdit(e)}>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Nome conto
+              </label>
+              <input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                required
+                className="sm-input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Bookmaker
+              </label>
+              <select
+                value={editBookmakerId}
+                onChange={(e) => setEditBookmakerId(e.target.value)}
+                className="sm-input"
+              >
+                <option value="">Testo manuale (legacy)</option>
+                {bookmakers.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              {!editBookmakerId ? (
+                <input
+                  value={editBookmakerLegacy}
+                  onChange={(e) => setEditBookmakerLegacy(e.target.value)}
+                  className="sm-input mt-2"
+                  placeholder="Nome se non in elenco"
+                />
+              ) : null}
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Stato conto
+              </label>
+              <select
+                value={editStatus}
+                onChange={(e) =>
+                  setEditStatus(e.target.value as GamingAccountStatus)
+                }
+                className="sm-input"
+              >
+                <option value="active">Attivo</option>
+                <option value="paused">In pausa</option>
+                <option value="closed">Chiuso</option>
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+                Note
+              </label>
+              <textarea
+                rows={3}
+                value={editNote}
+                onChange={(e) => setEditNote(e.target.value)}
+                className="sm-input"
+              />
+            </div>
+            {editError ? (
+              <p className="text-sm text-[#fb7185]" role="alert">
+                {editError}
+              </p>
+            ) : null}
+            <button type="submit" disabled={editSaving} className="sm-btn-primary w-full rounded-full">
+              {editSaving ? "Salvataggio…" : "Salva modifiche"}
+            </button>
+          </form>
+        ) : null}
+      </BottomSheet>
+
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        title="Eliminare il conto?"
+        message={
+          deleteTarget
+            ? `Il conto «${deleteTarget.account_name}» verrà eliminato. I metodi collegati verranno rimossi (cascade). Se esistono transazioni collegate, l’operazione potrebbe fallire.`
+            : ""
+        }
+        confirmText="Elimina"
+        cancelText="Annulla"
+        variant="danger"
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          if (!deleteLoading) {
+            setDeleteTarget(null);
+            setDeleteError(null);
+          }
+        }}
+        onConfirm={() => void handleConfirmDelete()}
+      />
+    </AppShell>
+  );
+}
