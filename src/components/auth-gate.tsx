@@ -59,8 +59,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (!allowed) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-[#94a3b8]">
-        Accesso bloccato (DEBUG AUTH){blocked ? `: ${blocked}` : "…"}
+      <div className="flex min-h-screen items-center justify-center bg-[#050816] text-white">
+        <div className="rounded-2xl border border-[#273449] bg-[#111827] px-6 py-4 text-sm text-[#94a3b8]">
+          Caricamento…
+        </div>
       </div>
     );
   }
