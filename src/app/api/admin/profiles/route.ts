@@ -1,6 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { getSupabaseEnv } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase.server";
 
 type ProfileRole = "admin" | "user";
@@ -22,13 +20,12 @@ function isProfileRole(value: unknown): value is ProfileRole {
 
 export async function PATCH(request: Request) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const authSupabase = await createServerSupabaseClient();
 
-    // 1) Verify caller is authenticated via Supabase cookies
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await authSupabase.auth.getUser();
 
     if (userError || !user) {
       return Response.json(
@@ -37,7 +34,29 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // 3) Parse and validate body
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url) {
+      return Response.json(
+        { error: "NEXT_PUBLIC_SUPABASE_URL mancante" },
+        { status: 500 },
+      );
+    }
+
+    if (!serviceKey) {
+      return Response.json(
+        {
+          error:
+            "SUPABASE_SERVICE_ROLE_KEY mancante. Imposta la variabile d'ambiente per abilitare l'accesso admin a public.profiles.",
+        },
+        { status: 500 },
+      );
+    }
+
+    const supabaseAdmin = createClient(url, serviceKey);
+
+    // Parse and validate body
     const body = (await request.json()) as PatchBody;
     const id = typeof body.id === "string" ? body.id : null;
     const status = body.status;
@@ -79,30 +98,8 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // 4) Use service role for DB access (avoid RLS blocking).
-    const { url } = getSupabaseEnv();
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceKey) {
-      return Response.json(
-        { error: "SUPABASE_SERVICE_ROLE_KEY mancante" },
-        { status: 500 },
-      );
-    }
-
-    const cookieStore = await cookies();
-    const adminClient = createServerClient(url, serviceKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll() {
-          // Route handler: no need to set cookies for service role.
-        },
-      },
-    });
-
-    // 5) Fetch caller profile and enforce admin+approved (service role, no RLS issues)
-    const { data: callerProfile, error: callerProfileError } = await adminClient
+    // Fetch caller profile and enforce admin+approved (service role client)
+    const { data: callerProfile, error: callerProfileError } = await supabaseAdmin
       .from("profiles")
       .select("id, role, status")
       .eq("id", user.id)
@@ -115,18 +112,21 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if (
-      !callerProfile ||
-      callerProfile.role !== "admin" ||
-      callerProfile.status !== "approved"
-    ) {
+    if (!callerProfile) {
       return Response.json(
         { error: "Permessi insufficienti" },
         { status: 403 },
       );
     }
 
-    const { data: updated, error: updateError } = await adminClient
+    if (callerProfile.role !== "admin" || callerProfile.status !== "approved") {
+      return Response.json(
+        { error: "Permessi insufficienti" },
+        { status: 403 },
+      );
+    }
+
+    const { data: updated, error: updateError } = await supabaseAdmin
       .from("profiles")
       .update(update)
       .eq("id", id)
