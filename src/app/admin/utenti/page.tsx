@@ -138,13 +138,27 @@ export default function AdminUtentiPage() {
   async function patchProfile(id: string, patch: { status?: ProfileStatus; role?: ProfileRole }) {
     setActionError(null);
     setBusyId(id);
-    const { error } = await supabase.from("profiles").update(patch).eq("id", id);
-    setBusyId(null);
-    if (error) {
-      setActionError(error.message);
-      return;
+    try {
+      const res = await fetch("/api/admin/profiles", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id, ...patch }),
+      });
+
+      const json = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setActionError(json.error ?? `Errore HTTP ${res.status}`);
+        return;
+      }
+
+      await loadProfiles();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Errore sconosciuto");
+    } finally {
+      setBusyId(null);
     }
-    await loadProfiles();
   }
 
   if (!gateReady) {

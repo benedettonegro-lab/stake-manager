@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+type LoadingState = "signin" | "signup" | null;
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = useMemo(() => createBrowserSupabaseClient(), []);
@@ -13,21 +15,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [loading, setLoading] = useState<"signin" | "signup" | null>(null);
+  const [loading, setLoading] = useState<LoadingState>(null);
   const [reasonMessage, setReasonMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const reason = new URLSearchParams(window.location.search).get("reason");
 
-    setReasonMessage(
-      reason === "pending"
-        ? "Account in attesa di approvazione admin"
-        : reason === "blocked"
-          ? "Account bloccato"
-          : reason === "missing-profile"
-            ? "Profilo non trovato. Contatta admin."
-            : null,
-    );
+    if (reason === "pending") {
+      setReasonMessage("Account in attesa di approvazione admin");
+    } else if (reason === "blocked") {
+      setReasonMessage("Account bloccato");
+    } else if (reason === "missing-profile") {
+      setReasonMessage("Profilo non trovato. Contatta admin.");
+    } else {
+      setReasonMessage(null);
+    }
   }, []);
 
   const handleSignIn = async () => {
@@ -35,26 +37,40 @@ export default function LoginPage() {
     setError(null);
     setInfo(null);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error: signInError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error || !data.user) {
+    if (signInError || !data.user) {
       setError("Credenziali non valide");
       setLoading(null);
       return;
     }
 
+    console.log("[LOGIN] user id:", data.user?.id);
+    console.log("[LOGIN] user email:", data.user?.email);
+
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("status, role")
+      .select("id, email, role, status")
       .eq("id", data.user.id)
-      .single();
+      .maybeSingle();
 
-    if (profileError || !profile) {
+    console.log("[LOGIN] profile:", profile);
+    console.log("[LOGIN] profile error:", profileError);
+
+    if (profileError) {
       await supabase.auth.signOut();
-      setError("Profilo non trovato. Contatta admin.");
+      setError(`Errore profilo: ${profileError.message}`);
+      setLoading(null);
+      return;
+    }
+
+    if (!profile) {
+      await supabase.auth.signOut();
+      setError(`Profilo non trovato per user id: ${data.user.id}`);
       setLoading(null);
       return;
     }
@@ -74,13 +90,13 @@ export default function LoginPage() {
     setError(null);
     setInfo(null);
 
-    const { error } = await supabase.auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(null);
       return;
     }
@@ -118,8 +134,8 @@ export default function LoginPage() {
 
           <form
             className="space-y-5"
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(event) => {
+              event.preventDefault();
               void handleSignIn();
             }}
           >
@@ -137,7 +153,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 className="sm-input"
                 placeholder="nome@esempio.com"
               />
@@ -158,7 +174,7 @@ export default function LoginPage() {
                 required
                 minLength={6}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 className="sm-input"
                 placeholder="••••••••"
               />
