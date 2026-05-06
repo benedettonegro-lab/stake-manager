@@ -160,7 +160,7 @@ export function DashboardAnalytics() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((ev) => {
-      if (ev === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -169,7 +169,6 @@ export function DashboardAnalytics() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await load();

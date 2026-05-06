@@ -210,7 +210,7 @@ export default function AccountDetailPage() {
 
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -219,7 +219,6 @@ export default function AccountDetailPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadAll();
@@ -259,7 +258,6 @@ export default function AccountDetailPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
 
@@ -368,7 +366,6 @@ export default function AccountDetailPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setTxSubmitting(false);
-      router.replace("/login");
       return;
     }
     const note = txNotes.trim() ? txNotes.trim() : null;

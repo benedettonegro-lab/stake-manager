@@ -2,6 +2,7 @@
 
 import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/components/app";
 import type { GamingAccountStatus } from "@/components/gaming-account-card";
+import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import Link from "next/link";
@@ -281,7 +282,7 @@ export default function AccountsListPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -290,7 +291,6 @@ export default function AccountsListPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadData();
@@ -394,7 +394,6 @@ export default function AccountsListPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setCreateSubmitting(false);
-      router.replace("/login");
       return;
     }
     const { error } = await supabase.from("gaming_accounts").insert({
@@ -439,15 +438,16 @@ export default function AccountsListPage() {
   }
 
   return (
-    <AppShell title="Conti">
-      {loadError ? (
-        <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
-          role="alert"
-        >
-          {loadError}
-        </p>
-      ) : null}
+    <AuthGate>
+      <AppShell title="Conti">
+        {loadError ? (
+          <p
+            className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+            role="alert"
+          >
+            {loadError}
+          </p>
+        ) : null}
 
       <div className="sticky top-14 z-[25] -mx-3 mb-2 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2 backdrop-blur-md">
         <SearchInput
@@ -900,6 +900,7 @@ export default function AccountsListPage() {
         }}
         onConfirm={() => void handleConfirmDelete()}
       />
-    </AppShell>
+      </AppShell>
+    </AuthGate>
   );
 }

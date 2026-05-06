@@ -103,7 +103,7 @@ export default function NuovaScommessaPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((ev) => {
-      if (ev === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -112,7 +112,6 @@ export default function NuovaScommessaPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadData();
@@ -181,7 +180,6 @@ export default function NuovaScommessaPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { BottomSheet, FilterChips, SearchInput } from "@/components/app";
+import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { BET_TYPE_DEFAULT, BET_TYPE_OPTIONS } from "@/lib/bet-constants";
@@ -628,7 +629,7 @@ function BetsPageContent() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -637,7 +638,6 @@ function BetsPageContent() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadAll();
@@ -768,7 +768,6 @@ function BetsPageContent() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
 
@@ -1771,20 +1770,22 @@ function BetsPageContent() {
 
 export default function BetsPage() {
   return (
-    <Suspense
-      fallback={
-        <AppShell title="Giocate">
-          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
-            <div
-              className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
-              aria-hidden
-            />
-            <p>Caricamento…</p>
-          </div>
-        </AppShell>
-      }
-    >
-      <BetsPageContent />
-    </Suspense>
+    <AuthGate>
+      <Suspense
+        fallback={
+          <AppShell title="Giocate">
+            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+              <div
+                className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+                aria-hidden
+              />
+              <p>Caricamento…</p>
+            </div>
+          </AppShell>
+        }
+      >
+        <BetsPageContent />
+      </Suspense>
+    </AuthGate>
   );
 }

@@ -60,7 +60,7 @@ export default function BookmakersPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((ev) => {
-      if (ev === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
     void (async () => {
       const {
@@ -68,7 +68,6 @@ export default function BookmakersPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await load();
@@ -104,7 +103,6 @@ export default function BookmakersPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
     const { data: inserted, error } = await supabase

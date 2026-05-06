@@ -181,7 +181,7 @@ function TransactionsPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -190,7 +190,6 @@ function TransactionsPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadData();
@@ -303,7 +302,6 @@ function TransactionsPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
 

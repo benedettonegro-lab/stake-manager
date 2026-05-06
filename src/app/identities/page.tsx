@@ -1,6 +1,7 @@
 "use client";
 
 import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/components/app";
+import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
@@ -266,7 +267,7 @@ export default function IdentitiesPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -275,7 +276,6 @@ export default function IdentitiesPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadData();
@@ -302,7 +302,6 @@ export default function IdentitiesPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setNewIdSubmitting(false);
-      router.replace("/login");
       return;
     }
     const { error } = await supabase.from("players").insert({
@@ -375,7 +374,6 @@ export default function IdentitiesPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setAccSubmitting(false);
-      router.replace("/login");
       return;
     }
     const { error } = await supabase.from("gaming_accounts").insert({
@@ -532,7 +530,6 @@ export default function IdentitiesPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setTxSubmitting(false);
-      router.replace("/login");
       return;
     }
     const note = txNotes.trim() ? txNotes.trim() : null;
@@ -607,7 +604,6 @@ export default function IdentitiesPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setPmSubmitting(false);
-      router.replace("/login");
       return;
     }
 
@@ -740,136 +736,137 @@ export default function IdentitiesPage() {
     detailMethods.reduce((s, m) => s + (Number.parseFloat(String(m.balance)) || 0), 0);
 
   return (
-    <AppShell title="Identità">
-      {loadError ? (
-        <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]">
-          {loadError}
-        </p>
-      ) : null}
+    <AuthGate>
+      <AppShell title="Identità">
+        {loadError ? (
+          <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]">
+            {loadError}
+          </p>
+        ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Cerca identità..."
-        />
-      </div>
-
-      <div className="mb-3">
-        <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
-          + Identità
-        </QuickActionButton>
-      </div>
-
-      <BottomSheet
-        open={newIdentityOpen}
-        title="Nuova identità"
-        dismissDisabled={newIdSubmitting}
-        onClose={() => {
-          if (!newIdSubmitting) setNewIdentityOpen(false);
-        }}
-      >
-        <form onSubmit={(e) => void handleNewIdentity(e)} className="flex flex-col gap-3">
-          <input
-            value={newIdentityName}
-            onChange={(e) => setNewIdentityName(e.target.value)}
-            placeholder="Nome identità"
-            className="sm-input min-h-10 text-sm"
+        <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Cerca identità..."
           />
-          {newIdError ? <p className="text-xs text-[#fb7185]">{newIdError}</p> : null}
-          <button type="submit" disabled={newIdSubmitting} className="sm-btn-primary w-full rounded-full">
-            {newIdSubmitting ? "…" : "Crea"}
-          </button>
-        </form>
-      </BottomSheet>
+        </div>
 
-      {identities.length === 0 && !loadError ? (
-        <p className="rounded-xl border border-dashed border-[#273449] py-8 text-center text-xs text-[#94a3b8]">
-          Nessuna identità. Tocca + Identità.
-        </p>
-      ) : filteredIdentities.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-[#273449] py-10 text-center text-xs text-[#64748b]">
-          Nessun risultato
-        </p>
-      ) : (
-        <ul className="flex list-none flex-col gap-2 p-0">
-          {filteredIdentities.map((idn) => {
-            const accList = accountsByPlayer.get(idn.id) ?? [];
-            const methods = paymentMethodsForIdentity(idn.id, paymentMethods);
-            const sumAcc = accList.reduce(
-              (s, a) => s + (Number.parseFloat(String(a.current_balance)) || 0),
-              0,
-            );
-            const sumMeth = methods.reduce(
-              (s, m) => s + (Number.parseFloat(String(m.balance)) || 0),
-              0,
-            );
-            const cassa = sumAcc + sumMeth;
-            return (
-              <li key={idn.id}>
-                <button
-                  type="button"
-                  onClick={() => openDetailSheet(idn.id)}
-                  className="w-full rounded-2xl border border-[#1e293b] bg-[#0c101c] p-3 text-left shadow-sm transition hover:border-[#334155] active:scale-[0.99]"
-                >
-                  <p className="truncate text-sm font-semibold text-white">{idn.name}</p>
-                  <div className="mt-2 grid grid-cols-3 gap-1.5">
-                    <StatPill label="Conti" value={String(accList.length)} />
-                    <StatPill label="Metodi" value={String(methods.length)} />
-                    <StatPill
-                      label="Cassa"
-                      value={`${formatMoney(cassa)} €`}
-                      tone={cassa > 0 ? "positive" : cassa < 0 ? "negative" : "default"}
-                    />
-                  </div>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+        <div className="mb-3">
+          <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
+            + Identità
+          </QuickActionButton>
+        </div>
 
-      <BottomSheet
-        open={detailSheetId !== null && detailIdn !== null}
-        title={detailIdn?.name ?? "Identità"}
-        dismissDisabled={accSubmitting || pmSubmitting}
-        panelClassName="!max-w-[420px]"
-        headerExtra={
-          <div className="space-y-0.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748b]">
-              Cassa totale
-            </p>
-            <p
-              className={`text-[1.65rem] font-bold leading-tight tracking-tight tabular-nums sm:text-[1.85rem] ${
-                detailCassa > 0
-                  ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
-                  : detailCassa < 0
-                    ? "text-[#fb7185]"
-                    : "text-[#94a3b8]"
-              }`}
-            >
-              {formatMoney(detailCassa)} €
-            </p>
-            <p className="pt-1.5 text-[11px] text-[#94a3b8]">
-              <span className="font-semibold tabular-nums text-[#cbd5e1]">
-                {detailAccList.length}
-              </span>{" "}
-              conti
-              <span className="mx-2 text-[#475569]">·</span>
-              <span className="font-semibold tabular-nums text-[#cbd5e1]">
-                {detailMethods.length}
-              </span>{" "}
-              metodi
-            </p>
-          </div>
-        }
-        onClose={() => {
-          if (!accSubmitting && !pmSubmitting) closeDetailSheet();
-        }}
-      >
-        {detailSheetId && detailIdn ? (
-          <div className="relative mx-auto flex min-h-[48vh] max-w-[420px] flex-col pb-2">
-            <div className="flex flex-1 flex-col gap-6">
+        <BottomSheet
+          open={newIdentityOpen}
+          title="Nuova identità"
+          dismissDisabled={newIdSubmitting}
+          onClose={() => {
+            if (!newIdSubmitting) setNewIdentityOpen(false);
+          }}
+        >
+          <form onSubmit={(e) => void handleNewIdentity(e)} className="flex flex-col gap-3">
+            <input
+              value={newIdentityName}
+              onChange={(e) => setNewIdentityName(e.target.value)}
+              placeholder="Nome identità"
+              className="sm-input min-h-10 text-sm"
+            />
+            {newIdError ? <p className="text-xs text-[#fb7185]">{newIdError}</p> : null}
+            <button type="submit" disabled={newIdSubmitting} className="sm-btn-primary w-full rounded-full">
+              {newIdSubmitting ? "…" : "Crea"}
+            </button>
+          </form>
+        </BottomSheet>
+
+        {identities.length === 0 && !loadError ? (
+          <p className="rounded-xl border border-dashed border-[#273449] py-8 text-center text-xs text-[#94a3b8]">
+            Nessuna identità. Tocca + Identità.
+          </p>
+        ) : filteredIdentities.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-[#273449] py-10 text-center text-xs text-[#64748b]">
+            Nessun risultato
+          </p>
+        ) : (
+          <ul className="flex list-none flex-col gap-2 p-0">
+            {filteredIdentities.map((idn) => {
+              const accList = accountsByPlayer.get(idn.id) ?? [];
+              const methods = paymentMethodsForIdentity(idn.id, paymentMethods);
+              const sumAcc = accList.reduce(
+                (s, a) => s + (Number.parseFloat(String(a.current_balance)) || 0),
+                0,
+              );
+              const sumMeth = methods.reduce(
+                (s, m) => s + (Number.parseFloat(String(m.balance)) || 0),
+                0,
+              );
+              const cassa = sumAcc + sumMeth;
+              return (
+                <li key={idn.id}>
+                  <button
+                    type="button"
+                    onClick={() => openDetailSheet(idn.id)}
+                    className="w-full rounded-2xl border border-[#1e293b] bg-[#0c101c] p-3 text-left shadow-sm transition hover:border-[#334155] active:scale-[0.99]"
+                  >
+                    <p className="truncate text-sm font-semibold text-white">{idn.name}</p>
+                    <div className="mt-2 grid grid-cols-3 gap-1.5">
+                      <StatPill label="Conti" value={String(accList.length)} />
+                      <StatPill label="Metodi" value={String(methods.length)} />
+                      <StatPill
+                        label="Cassa"
+                        value={`${formatMoney(cassa)} €`}
+                        tone={cassa > 0 ? "positive" : cassa < 0 ? "negative" : "default"}
+                      />
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <BottomSheet
+          open={detailSheetId !== null && detailIdn !== null}
+          title={detailIdn?.name ?? "Identità"}
+          dismissDisabled={accSubmitting || pmSubmitting}
+          panelClassName="!max-w-[420px]"
+          headerExtra={
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748b]">
+                Cassa totale
+              </p>
+              <p
+                className={`text-[1.65rem] font-bold leading-tight tracking-tight tabular-nums sm:text-[1.85rem] ${
+                  detailCassa > 0
+                    ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
+                    : detailCassa < 0
+                      ? "text-[#fb7185]"
+                      : "text-[#94a3b8]"
+                }`}
+              >
+                {formatMoney(detailCassa)} €
+              </p>
+              <p className="pt-1.5 text-[11px] text-[#94a3b8]">
+                <span className="font-semibold tabular-nums text-[#cbd5e1]">
+                  {detailAccList.length}
+                </span>{" "}
+                conti
+                <span className="mx-2 text-[#475569]">·</span>
+                <span className="font-semibold tabular-nums text-[#cbd5e1]">
+                  {detailMethods.length}
+                </span>{" "}
+                metodi
+              </p>
+            </div>
+          }
+          onClose={() => {
+            if (!accSubmitting && !pmSubmitting) closeDetailSheet();
+          }}
+        >
+          {detailSheetId && detailIdn ? (
+            <div className="relative mx-auto flex min-h-[48vh] max-w-[420px] flex-col pb-2">
+              <div className="flex flex-1 flex-col gap-6">
               <section>
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#64748b]">
                   Conti
@@ -1523,6 +1520,7 @@ export default function IdentitiesPage() {
         }}
         onConfirm={() => void handleConfirmDelete()}
       />
-    </AppShell>
+      </AppShell>
+    </AuthGate>
   );
 }

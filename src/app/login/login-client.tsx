@@ -2,11 +2,12 @@
 
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
-export default function LoginPage() {
+export default function LoginClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createBrowserSupabaseClient(), []);
 
   const [email, setEmail] = useState("");
@@ -14,96 +15,101 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState<"signin" | "signup" | null>(null);
-  const [reasonMessage, setReasonMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const reason = new URLSearchParams(window.location.search).get("reason");
+  const reason = searchParams.get("reason");
+  const reasonMessage =
+    reason === "pending"
+      ? "Account in attesa di approvazione admin"
+      : reason === "blocked"
+        ? "Account bloccato."
+        : reason === "missing-profile"
+          ? "Profilo non trovato. Contatta admin."
+          : null;
 
-    setReasonMessage(
-      reason === "pending"
-        ? "Account in attesa di approvazione admin"
-        : reason === "blocked"
-          ? "Account bloccato"
-          : reason === "missing-profile"
-            ? "Profilo non trovato. Contatta admin."
-            : null,
-    );
-  }, []);
+  async function checkProfileStatusAfterAuth(): Promise<
+    | { ok: true }
+    | { ok: false; reason: "pending" | "blocked" | "missing-profile" }
+  > {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const handleSignIn = async () => {
-    setLoading("signin");
+    if (!user) return { ok: false, reason: "pending" };
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!profile) return { ok: false, reason: "missing-profile" };
+
+    const status = (profile.status as string | null) ?? null;
+    if (status === "approved") return { ok: true };
+    if (status === "blocked") return { ok: false, reason: "blocked" };
+    return { ok: false, reason: "pending" };
+  }
+
+  async function handleSignIn() {
     setError(null);
     setInfo(null);
-
-    const { data, error } = await supabase.auth.signInWithPassword({
+    setLoading("signin");
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
-    if (error || !data.user) {
-      setError("Credenziali non valide");
-      setLoading(null);
+    setLoading(null);
+    if (signInError) {
+      setError(signInError.message);
       return;
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("status, role")
-      .eq("id", data.user.id)
-      .single();
-
-    if (profileError || !profile) {
-      await supabase.auth.signOut();
-      setError("Profilo non trovato. Contatta admin.");
-      setLoading(null);
-      return;
-    }
-
-    if (profile.status !== "approved") {
+    const gate = await checkProfileStatusAfterAuth();
+    if (!gate.ok) {
       await supabase.auth.signOut();
       setError("Account in attesa di approvazione admin");
-      setLoading(null);
       return;
     }
 
     router.push("/dashboard");
-  };
+    router.refresh();
+  }
 
-  const handleSignUp = async () => {
-    setLoading("signup");
+  async function handleSignUp() {
     setError(null);
     setInfo(null);
-
-    const { error } = await supabase.auth.signUp({
+    setLoading("signup");
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
-
-    if (error) {
-      setError(error.message);
-      setLoading(null);
+    setLoading(null);
+    if (signUpError) {
+      setError(signUpError.message);
       return;
     }
 
-    await supabase.auth.signOut();
+    if (data.session) {
+      await supabase.auth.signOut();
+    }
 
     setInfo("Account creato. Attendi approvazione admin.");
-    setLoading(null);
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-[#050816] px-5 py-12 text-white">
-      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-md flex-col justify-center">
-        <div className="mb-10 text-center">
-          <p className="mb-4 text-sm font-bold uppercase tracking-[0.35em] text-[#a855f7]">
+    <div className="flex min-h-dvh flex-1 flex-col items-center justify-center bg-[#050816] px-3 py-12 sm:px-4 sm:py-16">
+      <div className="sm-app-constrain w-full">
+        <div className="mb-8 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] sm-gradient-text">
             Stake Manager
           </p>
-          <h1 className="text-4xl font-black tracking-tight">
+          <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white">
             Accedi al tuo account
           </h1>
-          <p className="mt-4 text-lg text-[#94a3b8]">
-            Email e password per continuare.
-          </p>
+          <p className="mt-2 text-sm text-[#94a3b8]">Email e password per continuare.</p>
         </div>
 
         <div className="rounded-2xl border border-[#273449] bg-[#111827] p-5 shadow-xl shadow-black/40 sm:p-6">
@@ -115,7 +121,6 @@ export default function LoginPage() {
               {reasonMessage}
             </p>
           ) : null}
-
           <form
             className="space-y-5"
             onSubmit={(e) => {
@@ -186,11 +191,10 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading !== null}
-                className="sm-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
+                className="sm-btn-primary w-full disabled:cursor-not-allowed"
               >
                 {loading === "signin" ? "Accesso…" : "Accedi"}
               </button>
-
               <button
                 type="button"
                 disabled={loading !== null}
@@ -215,3 +219,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

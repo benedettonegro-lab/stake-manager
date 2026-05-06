@@ -174,9 +174,7 @@ export default function PlayerDetailPage() {
     let cancelled = false;
 
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        router.replace("/login");
-      }
+      // DEBUG AUTH: disabilita redirect automatici
     });
 
     void (async () => {
@@ -187,7 +185,6 @@ export default function PlayerDetailPage() {
       if (cancelled) return;
 
       if (!user) {
-        router.replace("/login");
         return;
       }
 

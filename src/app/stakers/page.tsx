@@ -1,6 +1,7 @@
 "use client";
 
 import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/components/app";
+import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
@@ -110,7 +111,7 @@ export default function StakersPage() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((ev) => {
-      if (ev === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
     void (async () => {
       const {
@@ -118,7 +119,6 @@ export default function StakersPage() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await load();
@@ -149,7 +149,6 @@ export default function StakersPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
-      router.replace("/login");
       return;
     }
     const { error } = await supabase.from("stakers").insert({
@@ -229,12 +228,13 @@ export default function StakersPage() {
   }
 
   return (
-    <AppShell title="Staker">
-      {loadError ? (
-        <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-xs text-[#fb7185]">
-          {loadError}
-        </p>
-      ) : null}
+    <AuthGate>
+      <AppShell title="Staker">
+        {loadError ? (
+          <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-xs text-[#fb7185]">
+            {loadError}
+          </p>
+        ) : null}
 
       <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
         <SearchInput
@@ -416,6 +416,7 @@ export default function StakersPage() {
         }}
         onConfirm={() => void handleConfirmDelete()}
       />
-    </AppShell>
+      </AppShell>
+    </AuthGate>
   );
 }

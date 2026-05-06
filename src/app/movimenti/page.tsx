@@ -1,6 +1,7 @@
 "use client";
 
 import { BottomSheet, SearchInput } from "@/components/app";
+import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { paymentMethodTitle } from "@/lib/payment-methods";
@@ -666,7 +667,7 @@ function MovimentiListaContent() {
   useEffect(() => {
     let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") router.replace("/login");
+      // DEBUG AUTH: disabilita redirect automatici
     });
     void (async () => {
       const {
@@ -674,7 +675,6 @@ function MovimentiListaContent() {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        router.replace("/login");
         return;
       }
       await loadReference();
@@ -1388,16 +1388,18 @@ function MovimentiListaContent() {
 
 export default function MovimentiPage() {
   return (
-    <Suspense
-      fallback={
-        <AppShell title="Movimenti">
-          <div className="flex min-h-[30vh] items-center justify-center text-sm text-[#94a3b8]">
-            Caricamento…
-          </div>
-        </AppShell>
-      }
-    >
-      <MovimentiListaContent />
-    </Suspense>
+    <AuthGate>
+      <Suspense
+        fallback={
+          <AppShell title="Movimenti">
+            <div className="flex min-h-[30vh] items-center justify-center text-sm text-[#94a3b8]">
+              Caricamento…
+            </div>
+          </AppShell>
+        }
+      >
+        <MovimentiListaContent />
+      </Suspense>
+    </AuthGate>
   );
 }
