@@ -37,31 +37,6 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // 2) Fetch caller profile and enforce admin+approved
-    const { data: callerProfile, error: callerProfileError } = await supabase
-      .from("profiles")
-      .select("id, role, status")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (callerProfileError) {
-      return Response.json(
-        { error: callerProfileError.message },
-        { status: 500 },
-      );
-    }
-
-    if (
-      !callerProfile ||
-      callerProfile.role !== "admin" ||
-      callerProfile.status !== "approved"
-    ) {
-      return Response.json(
-        { error: "Permessi insufficienti" },
-        { status: 403 },
-      );
-    }
-
     // 3) Parse and validate body
     const body = (await request.json()) as PatchBody;
     const id = typeof body.id === "string" ? body.id : null;
@@ -104,7 +79,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // 4) Update target profile using service role
+    // 4) Use service role for DB access (avoid RLS blocking).
     const { url } = getSupabaseEnv();
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!serviceKey) {
@@ -125,6 +100,31 @@ export async function PATCH(request: Request) {
         },
       },
     });
+
+    // 5) Fetch caller profile and enforce admin+approved (service role, no RLS issues)
+    const { data: callerProfile, error: callerProfileError } = await adminClient
+      .from("profiles")
+      .select("id, role, status")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (callerProfileError) {
+      return Response.json(
+        { error: callerProfileError.message },
+        { status: 500 },
+      );
+    }
+
+    if (
+      !callerProfile ||
+      callerProfile.role !== "admin" ||
+      callerProfile.status !== "approved"
+    ) {
+      return Response.json(
+        { error: "Permessi insufficienti" },
+        { status: 403 },
+      );
+    }
 
     const { data: updated, error: updateError } = await adminClient
       .from("profiles")
