@@ -59,9 +59,7 @@ export default function BookmakersPage() {
 
   useEffect(() => {
     let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange((ev) => {
-      // DEBUG AUTH: disabilita redirect automatici
-    });
+    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
     void (async () => {
       const {
         data: { user },

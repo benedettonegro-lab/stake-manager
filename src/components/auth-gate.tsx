@@ -8,7 +8,6 @@ type ProfileStatus = "pending" | "approved" | "blocked";
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const supabase = useMemo(() => createBrowserSupabaseClient(), []);
   const [allowed, setAllowed] = useState(false);
-  const [blocked, setBlocked] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -21,7 +20,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       if (cancelled) return;
 
       if (!user) {
-        setBlocked("NO_USER");
         return;
       }
 
@@ -35,7 +33,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
       if (error || !profile) {
         await supabase.auth.signOut();
-        setBlocked("MISSING_PROFILE");
         return;
       }
 
@@ -47,7 +44,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       }
 
       await supabase.auth.signOut();
-      setBlocked("NOT_APPROVED");
     }
 
     void run();

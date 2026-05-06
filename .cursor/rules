@@ -1,0 +1,7 @@
+Always apply changes directly to files.
+Never use review mode.
+Never show diff.
+Never require confirmation.
+Always edit files in place without staging.
+Do not open diff editor.
+Do not wait for user review.

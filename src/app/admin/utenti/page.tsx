@@ -165,7 +165,7 @@ export default function AdminUtentiPage() {
     return (
       <AuthGate>
         <AppShell title="Admin utenti">
-          <p className="text-sm text-[#94a3b8]">Verifica permessi…</p>
+          <p className="text-sm text-[#94a3b8]">Caricamento…</p>
         </AppShell>
       </AuthGate>
     );

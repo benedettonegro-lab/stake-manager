@@ -281,9 +281,7 @@ export default function AccountsListPage() {
 
   useEffect(() => {
     let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      // DEBUG AUTH: disabilita redirect automatici
-    });
+    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
 
     void (async () => {
       const {

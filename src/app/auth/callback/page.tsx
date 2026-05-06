@@ -14,7 +14,6 @@ export default async function AuthCallbackPage(props: { searchParams: SearchPara
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // DEBUG AUTH: disabilita redirect automatici.
   // Chiudiamo sempre la sessione e mostriamo una pagina neutra.
   await supabase.auth.signOut();
 
