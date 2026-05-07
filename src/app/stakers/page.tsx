@@ -218,7 +218,7 @@ export default function StakersPage() {
   if (!ready) {
     return (
       <AppShell title="Staker">
-        <div className="flex min-h-[30vh] items-center justify-center text-[18px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#94a3b8] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -229,7 +229,7 @@ export default function StakersPage() {
     <AuthGate>
       <AppShell title="Staker">
         {loadError ? (
-          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[18px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-xs">
+          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[16px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-xs">
             {loadError}
           </p>
         ) : null}
@@ -278,11 +278,11 @@ export default function StakersPage() {
       </BottomSheet>
 
       {rows.length === 0 && !loadError ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[18px] text-[#94a3b8] sm:py-8 sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[16px] text-[#94a3b8] sm:py-8 sm:text-xs">
           Nessuno staker. Tocca + Staker.
         </p>
       ) : filteredRows.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[18px] text-[#64748b] sm:py-10 sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[16px] text-[#64748b] sm:py-10 sm:text-xs">
           Nessun risultato
         </p>
       ) : (
@@ -312,7 +312,7 @@ export default function StakersPage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                      <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                         {s.name}
                       </p>
                       {locked ? (
@@ -321,7 +321,7 @@ export default function StakersPage() {
                         </p>
                       ) : null}
                     </div>
-                    <p className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
+                    <p className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
                       {formatMoney(s.balance)} €
                     </p>
                   </div>
@@ -341,13 +341,13 @@ export default function StakersPage() {
                   <QuickActionButton
                     onClick={() => openEdit(s)}
                     variant="ghost"
-                    className="min-h-[52px] px-4 text-[18px] sm:min-h-8 sm:px-3 sm:text-xs"
+                    className="min-h-[48px] px-4 text-[16px] sm:min-h-8 sm:px-3 sm:text-xs"
                   >
                     Modifica
                   </QuickActionButton>
                   <QuickActionButton
                     variant="danger"
-                    className="min-h-[52px] px-4 text-[18px] sm:min-h-8 sm:px-3 sm:text-xs"
+                    className="min-h-[48px] px-4 text-[16px] sm:min-h-8 sm:px-3 sm:text-xs"
                     disabled={locked}
                     onClick={() => {
                       setDeleteError(null);
@@ -391,7 +391,7 @@ export default function StakersPage() {
               type="button"
               disabled={editSaving}
               onClick={() => setEditing(null)}
-              className="flex min-h-[52px] flex-1 items-center justify-center rounded-full border border-white/[0.08] text-[18px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
+              className="flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-white/[0.08] text-[16px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
             >
               Annulla
             </button>

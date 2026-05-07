@@ -97,11 +97,11 @@ export function GamingAccountCard({
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
+            <h3 className="truncate text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
               {accountName}
             </h3>
             {bookmaker ? (
-              <p className="mt-1.5 truncate text-[15px] text-[#94a3b8] sm:mt-1 sm:text-sm">{bookmaker}</p>
+              <p className="mt-1.5 truncate text-[14px] text-[#94a3b8] sm:mt-1 sm:text-sm">{bookmaker}</p>
             ) : null}
           </div>
           {accountStatus ? (
@@ -113,10 +113,10 @@ export function GamingAccountCard({
           ) : null}
         </div>
         {identityLine ? (
-          <p className="mt-2 truncate text-[15px] text-[#64748b] sm:mt-2 sm:text-sm">{identityLine}</p>
+          <p className="mt-2 truncate text-[14px] text-[#64748b] sm:mt-2 sm:text-sm">{identityLine}</p>
         ) : null}
         <p
-          className={`mt-4 min-w-0 overflow-x-auto whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
+          className={`mt-4 min-w-0 overflow-x-auto whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
         >
           {formatMoney(currentBalance)} €
         </p>
@@ -125,9 +125,9 @@ export function GamingAccountCard({
         </p>
 
         {showInitial ? (
-          <p className="mt-3 text-[15px] text-[#64748b] sm:mt-3 sm:text-sm">
+          <p className="mt-3 text-[14px] text-[#64748b] sm:mt-3 sm:text-sm">
             Iniziale{" "}
-            <span className={`whitespace-nowrap text-[22px] font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
+            <span className={`whitespace-nowrap text-[20px] font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
               {formatMoney(initialBalance!)} €
             </span>
           </p>

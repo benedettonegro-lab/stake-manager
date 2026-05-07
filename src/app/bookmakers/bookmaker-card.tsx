@@ -54,7 +54,7 @@ export function BookmakerCard({
       <div className="min-w-0 flex-1 py-0.5">
         <h3 className="truncate text-lg sm:text-base sm:text-sm font-bold text-white">{b.name}</h3>
         {b.note?.trim() ? (
-          <p className="mt-0.5 line-clamp-2 text-[15px] leading-snug text-[#64748b]">{b.note}</p>
+          <p className="mt-0.5 line-clamp-2 text-[14px] leading-snug text-[#64748b]">{b.note}</p>
         ) : null}
       </div>
       <ActionMenu onEdit={() => onEdit(b)} onDelete={() => onDelete(b)} />

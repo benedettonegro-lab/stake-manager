@@ -424,7 +424,7 @@ export default function AccountsListPage() {
   if (!ready) {
     return (
       <AppShell title="Conti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[18px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[16px] text-[#94a3b8] sm:text-sm">
           <div
             className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
@@ -440,7 +440,7 @@ export default function AccountsListPage() {
       <AppShell title="Conti">
         {loadError ? (
           <p
-            className="mb-5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3.5 text-[18px] text-[#fb7185] sm:mb-4 sm:py-3 sm:text-sm"
+            className="mb-5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3.5 text-[16px] text-[#fb7185] sm:mb-4 sm:py-3 sm:text-sm"
             role="alert"
           >
             {loadError}
@@ -732,7 +732,7 @@ export default function AccountsListPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(a.current_balance)} €
                     </p>
                     <p className="mt-2 text-sm sm:text-xs text-[#94a3b8]">

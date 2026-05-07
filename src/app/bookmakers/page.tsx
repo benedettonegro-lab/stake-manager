@@ -213,7 +213,7 @@ export default function BookmakersPage() {
             </svg>
           </div>
           <p className="text-lg sm:text-base sm:text-sm font-medium text-[#94a3b8]">Nessun bookmaker</p>
-          <p className="mt-2 text-[15px] text-[#475569]">Oppure usa il pulsante + in basso.</p>
+          <p className="mt-2 text-[14px] text-[#475569]">Oppure usa il pulsante + in basso.</p>
           <QuickActionButton variant="primary" className="mt-4" onClick={() => setAddOpen(true)}>
             Aggiungi
           </QuickActionButton>
@@ -256,7 +256,7 @@ export default function BookmakersPage() {
       >
         <form className="flex flex-col gap-3" onSubmit={(e) => void handleAdd(e)}>
           <div className="space-y-1">
-            <label htmlFor="bm-new-name" className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-new-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Nome
             </label>
             <input
@@ -269,7 +269,7 @@ export default function BookmakersPage() {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="bm-new-note" className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-new-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Note <span className="font-normal normal-case text-[#475569]">(opzionale)</span>
             </label>
             <textarea
@@ -298,7 +298,7 @@ export default function BookmakersPage() {
       >
         <form className="flex flex-col gap-3" onSubmit={(e) => void handleSaveEdit(e)}>
           <div className="space-y-1">
-            <label htmlFor="bm-edit-name" className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-edit-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Nome
             </label>
             <input
@@ -310,7 +310,7 @@ export default function BookmakersPage() {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="bm-edit-note" className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-edit-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Note <span className="font-normal normal-case text-[#475569]">(opzionale)</span>
             </label>
             <textarea

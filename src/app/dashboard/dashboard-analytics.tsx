@@ -258,7 +258,7 @@ export function DashboardAnalytics() {
     <div className="flex flex-col gap-5 pb-3 sm:gap-4 sm:pb-2">
       {error ? (
         <p
-          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[15px] text-[#fb7185] sm:text-sm"
+          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[14px] text-[#fb7185] sm:text-sm"
           role="alert"
         >
           {error}
@@ -272,7 +272,7 @@ export function DashboardAnalytics() {
               Cassa totale
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
+              className={`mt-2 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
             >
               {formatMoney(totals.saldoCassaTotale)} €
             </p>
@@ -304,7 +304,7 @@ export function DashboardAnalytics() {
         <div className="mb-3 flex items-center justify-between gap-2 sm:mb-2">
           <h2
             id="dash-recent-heading"
-            className="text-[28px] font-bold uppercase leading-tight tracking-wide text-[#64748b] sm:text-2xl sm:font-semibold sm:tracking-widest"
+            className="text-[26px] font-bold uppercase leading-tight tracking-wide text-[#64748b] sm:text-2xl sm:font-semibold sm:tracking-widest"
           >
             Ultimi eventi
           </h2>
@@ -317,7 +317,7 @@ export function DashboardAnalytics() {
         </div>
         <ul className="flex flex-col gap-3 sm:gap-2">
           {recentEvents.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-white/[0.08] px-3 py-6 text-center text-[15px] text-[#64748b] sm:py-6 sm:text-sm">
+            <li className="rounded-xl border border-dashed border-white/[0.08] px-3 py-6 text-center text-[14px] text-[#64748b] sm:py-6 sm:text-sm">
               Nessuna giocata
             </li>
           ) : (
@@ -332,13 +332,13 @@ export function DashboardAnalytics() {
                   <AppCard href={`/bets#${b.id}`} padding="sm" className="!rounded-xl">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
+                        <p className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
                           {b.event_name?.trim() || "Giocata"}
                         </p>
-                        <p className="mt-1.5 truncate text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">{sub}</p>
+                        <p className="mt-1.5 truncate text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">{sub}</p>
                       </div>
                       <span
-                        className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
+                        className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
                           p > 0 ? "text-[#34d399]" : p < 0 ? "text-[#fb7185]" : "text-[#94a3b8]"
                         }`}
                       >
@@ -369,11 +369,11 @@ export function DashboardAnalytics() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 truncate text-[22px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-2 truncate text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topPlayer.name}
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-2 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topPlayer.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >
@@ -386,7 +386,7 @@ export function DashboardAnalytics() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
         {breakdown.topAccount ? (
@@ -394,11 +394,11 @@ export function DashboardAnalytics() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-2 line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topAccount.name}
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-2 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topAccount.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >
@@ -411,7 +411,7 @@ export function DashboardAnalytics() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
       </section>

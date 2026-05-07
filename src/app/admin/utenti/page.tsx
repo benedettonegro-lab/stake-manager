@@ -49,16 +49,16 @@ function roleLabel(r: ProfileRole): string {
 }
 
 const btnOutline =
-  "rounded-lg border border-white/[0.08] bg-[#121B2F] px-2 py-1.5 text-[15px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-white/[0.14] disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-white/[0.08] bg-[#121B2F] px-2 py-1.5 text-[14px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-white/[0.14] disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPositive =
-  "rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-[15px] font-semibold text-emerald-200 transition active:scale-[0.98] hover:bg-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-[14px] font-semibold text-emerald-200 transition active:scale-[0.98] hover:bg-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnDanger =
-  "rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-[15px] font-semibold text-rose-200 transition active:scale-[0.98] hover:bg-rose-500/15 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-[14px] font-semibold text-rose-200 transition active:scale-[0.98] hover:bg-rose-500/15 disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPurple =
-  "rounded-lg border border-[#a855f7]/45 bg-[#a855f7]/10 px-2 py-1.5 text-[15px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#a855f7]/20 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-[#a855f7]/45 bg-[#a855f7]/10 px-2 py-1.5 text-[14px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#a855f7]/20 disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function AdminUtentiPage() {
   const router = useRouter();
@@ -209,12 +209,12 @@ export default function AdminUtentiPage() {
                         <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">{row.email || "—"}</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${statusBadgeClass(row.status)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[14px] font-semibold uppercase tracking-wide ${statusBadgeClass(row.status)}`}
                           >
                             {statusLabel(row.status)}
                           </span>
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${roleBadgeClass(row.role)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[14px] font-semibold uppercase tracking-wide ${roleBadgeClass(row.role)}`}
                           >
                             {roleLabel(row.role)}
                           </span>

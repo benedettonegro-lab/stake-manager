@@ -364,7 +364,7 @@ export default function PlayerDetailPage() {
           <p className="mt-2 text-sm sm:text-xs text-[#64748b]">Nessuna nota.</p>
         )}
         <div className="mt-4 border-t border-[#1f2937] pt-4">
-          <p className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+          <p className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
             Saldo / balance
           </p>
           <p className={`mt-1 text-2xl font-bold tabular-nums ${balClass}`}>
@@ -375,7 +375,7 @@ export default function PlayerDetailPage() {
 
       {/* 2. Filtri data */}
       <section className="mb-5">
-        <p className="mb-2 text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+        <p className="mb-2 text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
           Periodo
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-1">
@@ -446,26 +446,26 @@ export default function PlayerDetailPage() {
         </h3>
         <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Profitto</dt>
+            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Profitto</dt>
             <dd className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${toneClass(periodSummary.profit)}`}>
               {periodSummary.profit >= 0 ? "+" : ""}
               {formatMoney(periodSummary.profit)} €
             </dd>
           </div>
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Stake</dt>
+            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Stake</dt>
             <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {formatMoney(periodSummary.stake)} €
             </dd>
           </div>
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Scommesse</dt>
+            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Scommesse</dt>
             <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {periodSummary.count}
             </dd>
           </div>
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">ROI</dt>
+            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">ROI</dt>
             <dd
               className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${
                 periodSummary.stake <= 0
@@ -529,34 +529,34 @@ export default function PlayerDetailPage() {
                           <p className="mt-0.5 text-sm sm:text-xs text-[#64748b]">{row.bookmaker}</p>
                         ) : null}
                       </div>
-                      <span className="shrink-0 text-[15px] font-medium uppercase tracking-wide text-[#a855f7]">
+                      <span className="shrink-0 text-[14px] font-medium uppercase tracking-wide text-[#a855f7]">
                         Apri
                       </span>
                     </div>
                     <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <div>
-                        <dt className="text-[15px] uppercase text-[#64748b]">Profitto</dt>
+                        <dt className="text-[14px] uppercase text-[#64748b]">Profitto</dt>
                         <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${toneClass(row.profit)}`}>
                           {row.profit >= 0 ? "+" : ""}
                           {formatMoney(row.profit)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[15px] uppercase text-[#64748b]">Stake</dt>
+                        <dt className="text-[14px] uppercase text-[#64748b]">Stake</dt>
                         <dd className="text-lg sm:text-base sm:text-sm font-bold tabular-nums text-white">
                           {formatMoney(row.stake)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[15px] uppercase text-[#64748b]">N.</dt>
+                        <dt className="text-[14px] uppercase text-[#64748b]">N.</dt>
                         <dd className="text-lg sm:text-base sm:text-sm font-bold text-white">{row.count}</dd>
                       </div>
                       <div>
-                        <dt className="text-[15px] uppercase text-[#64748b]">ROI</dt>
+                        <dt className="text-[14px] uppercase text-[#64748b]">ROI</dt>
                         <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${roiTone}`}>{roi}</dd>
                       </div>
                     </dl>
-                    <p className="mt-3 border-t border-[#1f2937] pt-3 text-[15px] text-[#64748b]">
+                    <p className="mt-3 border-t border-[#1f2937] pt-3 text-[14px] text-[#64748b]">
                       Ultima:{" "}
                       <span className="font-medium text-[#cbd5e1]">
                         {formatShortDate(row.lastPlacedAt)}
@@ -606,14 +606,14 @@ export default function PlayerDetailPage() {
                       {formatMoney(b.profit)} €
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[15px] text-[#64748b]">
+                  <p className="mt-1.5 text-[14px] text-[#64748b]">
                     {formatShortDate(b.placed_at)} · {acc}
                     {b.gaming_accounts && gamingAccountBookmakerDisplay(b.gaming_accounts)
                       ? ` · ${gamingAccountBookmakerDisplay(b.gaming_accounts)}`
                       : ""}{" "}
                     · <span className="uppercase">{b.status}</span>
                   </p>
-                  <p className="mt-1 text-[15px] text-[#94a3b8]">
+                  <p className="mt-1 text-[14px] text-[#94a3b8]">
                     Quota {formatMoney(b.odds)} · Stake{" "}
                     {formatMoney(b.stake)} €
                   </p>

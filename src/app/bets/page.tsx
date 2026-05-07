@@ -449,13 +449,13 @@ function BetTimelineCard({
         <div className="flex items-start justify-between gap-3">
           <time
             dateTime={b.placed_at}
-            className="shrink-0 pt-0.5 text-[15px] font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
+            className="shrink-0 pt-0.5 text-[14px] font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
           >
             {timeStr}
           </time>
           <BetStatusBadge status={b.status} settling={settling} />
         </div>
-        <h3 className="line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
+        <h3 className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
           {b.event_name?.trim() || "—"}
         </h3>
         <p className="truncate text-[12px] font-medium uppercase tracking-[0.14em] text-[#64748b] sm:text-sm sm:tracking-wide">
@@ -472,7 +472,7 @@ function BetTimelineCard({
           </span>
         </p>
         {showResult ? (
-          <p className={`whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
+          <p className={`whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
             {pnl > 0 ? "+" : ""}
             {formatMoney(b.profit)} €
           </p>
@@ -1233,7 +1233,7 @@ function BetsPageContent() {
       >
         <h2
           id="bets-list-heading"
-          className="mb-3 text-[28px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
+          className="mb-3 text-[26px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
@@ -1265,12 +1265,12 @@ function BetsPageContent() {
                 <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-3 sm:pb-2">
                   <h3
                     id={`bet-month-${month.monthKey}`}
-                    className="text-[22px] font-bold capitalize tracking-tight text-[#E6EAF2] sm:text-xl"
+                    className="text-[20px] font-bold capitalize tracking-tight text-[#E6EAF2] sm:text-xl"
                   >
                     {month.monthTitle}
                   </h3>
                   <p
-                    className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
+                    className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
                   >
                     {formatSignedProfitEuro(month.profitTotal)}
                   </p>
@@ -1279,11 +1279,11 @@ function BetsPageContent() {
                 {month.days.map((day) => (
                   <div key={day.dayKey} className="space-y-4 sm:space-y-3">
                     <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-3 sm:pl-2">
-                      <h4 className="text-[15px] font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
+                      <h4 className="text-[14px] font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
                         {day.dayTitle}
                       </h4>
                       <p
-                        className={`shrink-0 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
+                        className={`shrink-0 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
                       >
                         {formatSignedProfitEuro(day.profitTotal)}
                       </p>

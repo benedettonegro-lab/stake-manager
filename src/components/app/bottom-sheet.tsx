@@ -52,7 +52,7 @@ export function BottomSheet({
       >
         <header className="flex shrink-0 items-start justify-between gap-2 border-b border-[#1f2937]/90 px-4 py-4 sm:py-2.5">
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[28px] font-bold leading-tight tracking-tight text-white sm:text-base sm:font-semibold">
+            <h2 className="truncate text-[26px] font-bold leading-tight tracking-tight text-white sm:text-base sm:font-semibold">
               {title}
             </h2>
             {headerExtra ? <div className="mt-2">{headerExtra}</div> : null}

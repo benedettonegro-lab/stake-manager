@@ -59,7 +59,7 @@ export function ConfirmDialog({
       >
         <h2
           id="confirm-dialog-title"
-          className="text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold"
+          className="text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold"
         >
           {title}
         </h2>

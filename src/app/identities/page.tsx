@@ -32,7 +32,7 @@ const idnGlassCard =
   "w-full rounded-2xl border border-white/[0.08] bg-[#0E1525]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_10px_rgba(52,211,153,0.05)] hover:scale-[1.01] active:scale-[0.97] sm:rounded-xl";
 
 const idnActionBtn =
-  "flex min-h-[52px] w-full items-center justify-center rounded-xl border text-[18px] font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
+  "flex min-h-[48px] w-full items-center justify-center rounded-xl border text-[16px] font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
 
 type PaymentType = (typeof PAYMENT_TYPES)[number];
 
@@ -761,7 +761,7 @@ export default function IdentitiesPage() {
   if (!ready) {
     return (
       <AppShell title="Identità">
-        <div className="flex min-h-[30vh] items-center justify-center text-[18px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#94a3b8] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -797,7 +797,7 @@ export default function IdentitiesPage() {
     <AuthGate>
       <AppShell title="Identità">
         {loadError ? (
-          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[18px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-sm">
+          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[16px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-sm">
             {loadError}
           </p>
         ) : null}
@@ -839,11 +839,11 @@ export default function IdentitiesPage() {
         </BottomSheet>
 
         {identities.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[18px] text-[#94a3b8] sm:py-8 sm:text-xs">
+          <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[16px] text-[#94a3b8] sm:py-8 sm:text-xs">
             Nessuna identità. Tocca + Identità.
           </p>
         ) : filteredIdentities.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[18px] text-[#64748b] sm:py-10 sm:text-xs">
+          <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[16px] text-[#64748b] sm:py-10 sm:text-xs">
             Nessun risultato
           </p>
         ) : (
@@ -865,9 +865,9 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     onClick={() => openDetailSheet(idn.id)}
-                    className="w-full rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 text-left shadow-sm transition hover:border-white/[0.08] active:scale-[0.99] sm:p-3"
+                    className="w-full rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 text-left shadow-sm transition hover:border-white/[0.08] active:scale-[0.99] sm:p-3"
                   >
-                    <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                    <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                       {idn.name}
                     </p>
                     <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-2 sm:gap-1.5">
@@ -897,7 +897,7 @@ export default function IdentitiesPage() {
                 Cassa totale
               </p>
               <p
-                className={`text-[30px] font-extrabold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
+                className={`text-[28px] font-extrabold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
                   detailCassa > 0
                     ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
                     : detailCassa < 0
@@ -907,7 +907,7 @@ export default function IdentitiesPage() {
               >
                 {formatMoney(detailCassa)} €
               </p>
-              <p className="pt-2 text-[18px] text-[#94a3b8] sm:pt-1.5 sm:text-xs">
+              <p className="pt-2 text-[16px] text-[#94a3b8] sm:pt-1.5 sm:text-xs">
                 <span className="font-semibold tabular-nums text-[#cbd5e1]">
                   {detailAccList.length}
                 </span>{" "}
@@ -959,15 +959,15 @@ export default function IdentitiesPage() {
                           >
                             <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                                <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {a.account_name}
                                 </p>
-                                <p className="mt-1 truncate text-[18px] text-[#64748b] sm:mt-0.5 sm:text-xs">
+                                <p className="mt-1 truncate text-[16px] text-[#64748b] sm:mt-0.5 sm:text-xs">
                                   {gamingAccountBookmakerDisplay(a) || "—"}
                                 </p>
                               </div>
                               <p
-                                className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(a.current_balance)} €
                               </p>
@@ -1010,17 +1010,17 @@ export default function IdentitiesPage() {
                           >
                             <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                                <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {(m.method_name || "").trim() || "—"}
                                 </p>
                                 {tipo ? (
-                                  <p className="mt-1 truncate text-[18px] text-[#64748b] sm:mt-0.5 sm:text-xs">
+                                  <p className="mt-1 truncate text-[16px] text-[#64748b] sm:mt-0.5 sm:text-xs">
                                     {tipo}
                                   </p>
                                 ) : null}
                               </div>
                               <p
-                                className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(m.balance)} €
                               </p>
@@ -1187,7 +1187,7 @@ export default function IdentitiesPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(accountActions.current_balance)} €
                     </p>
                   </div>
@@ -1274,7 +1274,7 @@ export default function IdentitiesPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(methodActions.balance)} €
                     </p>
                   </div>

@@ -17,7 +17,7 @@ export function FloatingActionButton({
           type="button"
           onClick={onClick}
           aria-label={label}
-          className="pointer-events-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#3d4558] to-[#5c4d7a] text-[30px] font-light leading-none text-white shadow-md shadow-black/30 transition duration-200 hover:scale-105 hover:shadow-lg active:scale-[0.97] sm:h-14 sm:w-14 sm:text-2xl"
+          className="pointer-events-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#3d4558] to-[#5c4d7a] text-[28px] font-light leading-none text-white shadow-md shadow-black/30 transition duration-200 hover:scale-105 hover:shadow-lg active:scale-[0.97] sm:h-14 sm:w-14 sm:text-2xl"
         >
           +
         </button>

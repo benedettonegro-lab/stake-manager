@@ -554,7 +554,7 @@ function TransactionsPage() {
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <span
-                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${
+                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-[14px] font-semibold uppercase tracking-wide ${
                           isWithdrawal
                             ? "border-red-500/40 bg-red-500/10 text-red-400"
                             : "border-[#34d399]/40 bg-[#34d399]/10 text-[#34d399]"
@@ -569,7 +569,7 @@ function TransactionsPage() {
                         </p>
                       ) : null}
                       {t.note ? (
-                        <p className="mt-1 line-clamp-2 text-[15px] text-[#64748b]">{t.note}</p>
+                        <p className="mt-1 line-clamp-2 text-[14px] text-[#64748b]">{t.note}</p>
                       ) : null}
                       {isWithdrawal ? (
                         <div
@@ -587,7 +587,7 @@ function TransactionsPage() {
                               if (!isTransactionStatus(v)) return;
                               void updateWithdrawalStatus(t, v);
                             }}
-                            className="max-w-[11rem] cursor-pointer appearance-none border-0 bg-transparent py-0.5 pl-1 pr-5 text-[15px] font-semibold uppercase tracking-wide text-inherit outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="max-w-[11rem] cursor-pointer appearance-none border-0 bg-transparent py-0.5 pl-1 pr-5 text-[14px] font-semibold uppercase tracking-wide text-inherit outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                             style={{ backgroundImage: "none" }}
                           >
                             {WITHDRAWAL_STATUS_SELECT_OPTIONS.map((opt) => (
@@ -604,7 +604,7 @@ function TransactionsPage() {
                       ) : (
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${transactionStatusBadgeClass(st)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[14px] font-semibold uppercase tracking-wide ${transactionStatusBadgeClass(st)}`}
                           >
                             {transactionStatusLabel(st)}
                           </span>
@@ -618,7 +618,7 @@ function TransactionsPage() {
                       </p>
                       <time
                         dateTime={t.created_at}
-                        className="mt-1 block text-[15px] font-medium uppercase tracking-wide text-[#64748b]"
+                        className="mt-1 block text-[14px] font-medium uppercase tracking-wide text-[#64748b]"
                       >
                         {new Date(t.created_at).toLocaleString("it-IT", {
                           dateStyle: "short",

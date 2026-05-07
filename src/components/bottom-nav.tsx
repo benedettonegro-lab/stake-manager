@@ -16,7 +16,7 @@ function IconHome({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -35,7 +35,7 @@ function IconUsers({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -54,7 +54,7 @@ function IconWallet({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -73,7 +73,7 @@ function IconTicket({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -93,7 +93,7 @@ function IconStaker({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -112,7 +112,7 @@ function IconMore({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[22px] w-[22px] shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden

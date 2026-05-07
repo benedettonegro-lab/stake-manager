@@ -22,7 +22,7 @@ const variants = {
 } as const;
 
 const base =
-  "inline-flex min-h-[48px] items-center justify-center rounded-full border px-5 py-3 text-[16px] font-semibold transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 sm:min-h-10 sm:px-4 sm:py-2 sm:text-sm";
+  "inline-flex min-h-[46px] items-center justify-center rounded-full border px-5 py-2.5 text-[16px] font-semibold transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 sm:min-h-10 sm:px-4 sm:py-2 sm:text-sm";
 
 export function QuickActionButton({
   children,

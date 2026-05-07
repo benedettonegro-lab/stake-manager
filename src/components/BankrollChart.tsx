@@ -164,7 +164,7 @@ function BankrollTooltip({
         backdropFilter: "blur(8px)",
       }}
     >
-      <p className="text-[15px] font-medium text-[#94a3b8]">{dateStr}</p>
+      <p className="text-[14px] font-medium text-[#94a3b8]">{dateStr}</p>
       <p
         className="mt-1 text-lg sm:text-base sm:text-sm font-semibold tabular-nums"
         style={{ color: pos ? GREEN : RED }}
@@ -172,7 +172,7 @@ function BankrollTooltip({
         Bankroll {row.bankroll >= 0 ? "+" : ""}
         {formatMoney(row.bankroll)} €
       </p>
-      <p className="mt-1 text-[15px] tabular-nums text-[#64748b]">
+      <p className="mt-1 text-[14px] tabular-nums text-[#64748b]">
         Δ profit {row.delta >= 0 ? "+" : ""}
         {formatMoney(row.delta)} €
       </p>
@@ -228,7 +228,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
   return (
     <div className="w-full rounded-2xl border border-white/[0.08] bg-transparent px-1 pb-1 pt-3 sm:px-2">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-        <p className="text-[15px] font-semibold uppercase tracking-[0.2em] text-[#64748b]">
+        <p className="text-[14px] font-semibold uppercase tracking-[0.2em] text-[#64748b]">
           Periodo
         </p>
         <div className="flex gap-1 rounded-xl border border-white/[0.08] bg-[#121B2F] p-1">

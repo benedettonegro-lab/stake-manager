@@ -25,12 +25,12 @@ export function StatCard({
         {label}
       </p>
       <p
-        className={`mt-2 min-w-0 overflow-x-auto whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:mt-2 sm:text-2xl sm:font-semibold ${toneClass[tone]}`}
+        className={`mt-2 min-w-0 overflow-x-auto whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none sm:mt-2 sm:text-2xl sm:font-semibold ${toneClass[tone]}`}
       >
         {value}
       </p>
       {sublabel ? (
-        <p className="mt-2 text-[15px] text-[#94a3b8] sm:mt-1 sm:text-sm">{sublabel}</p>
+        <p className="mt-2 text-[14px] text-[#94a3b8] sm:mt-1 sm:text-sm">{sublabel}</p>
       ) : null}
     </div>
   );

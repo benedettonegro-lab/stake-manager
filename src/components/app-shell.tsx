@@ -27,7 +27,7 @@ export function AppShell({
         className={`sm-app-constrain flex-1 px-4 pt-5 sm:px-4 sm:pt-4 ${showBottomNav ? "pb-40 sm:pb-36" : "pb-10"}`}
       >
         {subtitle ? (
-          <p className="mb-5 text-[15px] leading-relaxed text-[#94a3b8] sm:mb-4 sm:text-sm">
+          <p className="mb-5 text-[14px] leading-relaxed text-[#94a3b8] sm:mb-4 sm:text-sm">
             {subtitle}
           </p>
         ) : null}

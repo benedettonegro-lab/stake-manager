@@ -609,32 +609,32 @@ export default function AccountDetailPage() {
       <div className="mb-8 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 sm:p-6">
         <dl className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <dt className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Saldo reale
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${balClass}`}>
               {formatMoney(account.current_balance)} €
             </dd>
-            <dd className="mt-0.5 text-[15px] text-[#64748b]">Saldo conto gioco</dd>
+            <dd className="mt-0.5 text-[14px] text-[#64748b]">Saldo conto gioco</dd>
           </div>
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <dt className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Profitto scommesse
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${profitClass}`}>
               {totalProfit >= 0 ? "+" : ""}
               {formatMoney(totalProfit)} €
             </dd>
-            <dd className="mt-0.5 text-[15px] text-[#64748b]">Somma profit su questo conto</dd>
+            <dd className="mt-0.5 text-[14px] text-[#64748b]">Somma profit su questo conto</dd>
           </div>
           <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <dt className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               ROI conto
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${roiClass}`}>
               {roiStr}
             </dd>
-            <dd className="mt-0.5 text-[15px] text-[#64748b]">Profit ÷ stake totale</dd>
+            <dd className="mt-0.5 text-[14px] text-[#64748b]">Profit ÷ stake totale</dd>
           </div>
         </dl>
         {account.note ? (
@@ -649,7 +649,7 @@ export default function AccountDetailPage() {
         >
           Metodi di pagamento
         </h2>
-        <p className="mt-1 text-[15px] leading-relaxed text-[#64748b]">
+        <p className="mt-1 text-[14px] leading-relaxed text-[#64748b]">
           Elenco per identità (stesso player del conto): usabili su questo conto e sugli altri conti del cliente.
         </p>
 
@@ -684,7 +684,7 @@ export default function AccountDetailPage() {
                       <div className="min-w-0 flex-1">
                         <p className="text-lg sm:text-base sm:text-sm font-semibold text-white">{nome}</p>
                         {displayTipo ? (
-                          <p className="mt-0.5 text-[15px] text-[#94a3b8]">{displayTipo}</p>
+                          <p className="mt-0.5 text-[14px] text-[#94a3b8]">{displayTipo}</p>
                         ) : null}
                         <p className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${mbClass}`}>
                           {formatMoney(m.balance)} €
@@ -705,7 +705,7 @@ export default function AccountDetailPage() {
                       <button
                         type="button"
                         onClick={() => openEditMethod(m)}
-                        className="rounded-lg border border-white/[0.08] bg-[#1e293b] px-2 py-1 text-[15px] font-semibold text-[#e2e8f0]"
+                        className="rounded-lg border border-white/[0.08] bg-[#1e293b] px-2 py-1 text-[14px] font-semibold text-[#e2e8f0]"
                       >
                         Modifica
                       </button>
@@ -715,21 +715,21 @@ export default function AccountDetailPage() {
                           setDeleteMethodError(null);
                           setDeleteMethodTarget(m);
                         }}
-                        className="rounded-lg border border-red-500/40 bg-red-500/10 px-2 py-1 text-[15px] font-semibold text-red-300"
+                        className="rounded-lg border border-red-500/40 bg-red-500/10 px-2 py-1 text-[14px] font-semibold text-red-300"
                       >
                         Elimina
                       </button>
                       <button
                         type="button"
                         onClick={() => openTxDeposit(m.id)}
-                        className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[15px] font-semibold text-emerald-200"
+                        className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[14px] font-semibold text-emerald-200"
                       >
                         Deposita
                       </button>
                       <button
                         type="button"
                         onClick={() => openTxWithdraw(m.id)}
-                        className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[15px] font-semibold text-amber-100"
+                        className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[14px] font-semibold text-amber-100"
                       >
                         Preleva
                       </button>
@@ -837,7 +837,7 @@ export default function AccountDetailPage() {
             <span className="font-medium text-white">{account.account_name}</span>
           </p>
           <div className="space-y-1">
-            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Metodo
             </label>
             <select
@@ -855,7 +855,7 @@ export default function AccountDetailPage() {
             </select>
           </div>
           <div className="space-y-1">
-            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Importo (€)
             </label>
             <input
@@ -869,7 +869,7 @@ export default function AccountDetailPage() {
           </div>
           {txMode === "withdrawal" ? (
             <div className="space-y-1">
-              <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
                 Stato
               </label>
               <select
@@ -886,7 +886,7 @@ export default function AccountDetailPage() {
             </div>
           ) : null}
           <div className="space-y-1">
-            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
               Note (opzionale)
             </label>
             <input
@@ -996,7 +996,7 @@ export default function AccountDetailPage() {
               inputMode="decimal"
               className="sm-input"
             />
-            <p className="text-[15px] text-[#64748b]">
+            <p className="text-[14px] text-[#64748b]">
               Aggiorna solo se allinei manualmente; i movimenti su transazioni modificano anche questo saldo.
             </p>
           </div>

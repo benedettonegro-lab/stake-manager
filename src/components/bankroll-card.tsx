@@ -31,16 +31,16 @@ export function BankrollCard({
     <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/15 sm:p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-[22px] font-bold text-[#E6EAF2] sm:text-xl sm:font-semibold">{title}</p>
+          <p className="text-[20px] font-bold text-[#E6EAF2] sm:text-xl sm:font-semibold">{title}</p>
           {note ? (
-            <p className="mt-1.5 line-clamp-2 text-[15px] text-[#94a3b8] sm:mt-1 sm:text-sm">{note}</p>
+            <p className="mt-1.5 line-clamp-2 text-[14px] text-[#94a3b8] sm:mt-1 sm:text-sm">{note}</p>
           ) : null}
           <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#94a3b8] sm:mt-2 sm:text-xs">{balanceLabel}</p>
-          <p className={`mt-1 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-semibold ${balClass}`}>
+          <p className={`mt-1 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-semibold ${balClass}`}>
             {balanceFormatted} €
           </p>
           {meta ? (
-            <p className="mt-2 text-[15px] text-[#64748b] sm:mt-2 sm:text-sm">{meta}</p>
+            <p className="mt-2 text-[14px] text-[#64748b] sm:mt-2 sm:text-sm">{meta}</p>
           ) : null}
         </div>
         {action ? (

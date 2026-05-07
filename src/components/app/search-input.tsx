@@ -38,7 +38,7 @@ export function SearchInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete="off"
-        className="min-h-14 w-full rounded-xl border border-white/[0.08] bg-[#121B2F] py-3 pl-14 pr-14 text-[17px] text-[#E6EAF2] outline-none transition placeholder:text-[17px] placeholder:text-[#64748b] focus:border-[#a855f7]/35 focus:ring-2 focus:ring-[#a855f7]/08 sm:min-h-[2.75rem] sm:pl-10 sm:pr-10 sm:text-sm sm:placeholder:text-sm"
+        className="min-h-[3.25rem] w-full rounded-xl border border-white/[0.08] bg-[#121B2F] py-2.5 pl-14 pr-14 text-[16px] text-[#E6EAF2] outline-none transition placeholder:text-[16px] placeholder:text-[#64748b] focus:border-[#a855f7]/35 focus:ring-2 focus:ring-[#a855f7]/08 sm:min-h-[2.75rem] sm:py-2.5 sm:pl-10 sm:pr-10 sm:text-sm sm:placeholder:text-sm"
       />
 
       <button
