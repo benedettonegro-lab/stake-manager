@@ -38,14 +38,20 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-[100] flex items-center justify-center"
       role="presentation"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget && !loading) onCancel();
-      }}
     >
+      <button
+        type="button"
+        aria-label="Chiudi"
+        disabled={loading}
+        className="sm-sheet-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm transition enabled:hover:bg-black/70 disabled:cursor-not-allowed"
+        onClick={() => {
+          if (!loading) onCancel();
+        }}
+      />
       <div
-        className="w-full max-w-[430px] rounded-2xl border border-[#273449] bg-[#0d1321] p-4 shadow-2xl shadow-black/50 sm:p-5"
+        className="sm-sheet-panel relative z-10 w-[calc(100%-32px)] max-w-[430px] rounded-2xl border border-white/[0.08] bg-[#121B2F] p-6 shadow-2xl shadow-black/50 sm:p-5"
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
@@ -53,30 +59,30 @@ export function ConfirmDialog({
       >
         <h2
           id="confirm-dialog-title"
-          className="text-base font-semibold text-white"
+          className="text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold"
         >
           {title}
         </h2>
         <p
           id="confirm-dialog-desc"
-          className="mt-2 text-sm leading-relaxed text-[#94a3b8]"
+          className="mt-3 text-base leading-relaxed text-[#94a3b8] sm:mt-2 sm:text-sm"
         >
           {message}
         </p>
         {error ? (
           <p
-            className="mt-3 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+            className="mt-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-base text-[#fb7185] sm:mt-3 sm:py-2 sm:text-sm"
             role="alert"
           >
             {error}
           </p>
         ) : null}
-        <div className="mt-5 flex flex-col-reverse gap-3 sm:mt-6 sm:flex-row sm:justify-end">
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:mt-6 sm:flex-row sm:justify-end">
           <button
             type="button"
             disabled={loading}
             onClick={() => onCancel()}
-            className="min-h-12 rounded-xl border border-[#334155] bg-[#111827] px-4 text-base font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50"
+            className="min-h-[52px] rounded-xl border border-white/[0.08] bg-[#0E1525] px-6 py-4 text-lg font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base"
           >
             {cancelText}
           </button>
@@ -84,7 +90,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={() => void onConfirm()}
-            className={`min-h-12 rounded-xl px-4 text-base font-semibold transition disabled:opacity-50 ${confirmClass}`}
+            className={`min-h-[52px] rounded-xl px-6 py-4 text-lg font-semibold transition disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base ${confirmClass}`}
           >
             {loading ? "Attendi…" : confirmText}
           </button>

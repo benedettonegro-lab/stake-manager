@@ -218,7 +218,7 @@ export default function StakersPage() {
   if (!ready) {
     return (
       <AppShell title="Staker">
-        <div className="flex min-h-[30vh] items-center justify-center text-sm text-[#94a3b8]">
+        <div className="flex min-h-[30vh] items-center justify-center text-[18px] text-[#94a3b8] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -229,12 +229,12 @@ export default function StakersPage() {
     <AuthGate>
       <AppShell title="Staker">
         {loadError ? (
-          <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-xs text-[#fb7185]">
+          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[18px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-xs">
             {loadError}
           </p>
         ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
+      <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -242,7 +242,7 @@ export default function StakersPage() {
         />
       </div>
 
-      <div className="mb-3">
+      <div className="mb-5 sm:mb-3">
         <QuickActionButton variant="primary" onClick={() => setAddOpen(true)}>
           + Staker
         </QuickActionButton>
@@ -256,21 +256,21 @@ export default function StakersPage() {
           if (!submitting) setAddOpen(false);
         }}
       >
-        <form onSubmit={(e) => void handleAdd(e)} className="flex flex-col gap-3">
+        <form onSubmit={(e) => void handleAdd(e)} className="flex flex-col gap-4 sm:gap-3">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
           <input
             value={balStr}
             onChange={(e) => setBalStr(e.target.value)}
             placeholder="Saldo iniziale"
             inputMode="decimal"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
-          {formError ? <p className="text-xs text-[#fb7185]">{formError}</p> : null}
+          {formError ? <p className="text-sm sm:text-xs text-[#fb7185]">{formError}</p> : null}
           <button type="submit" disabled={submitting} className="sm-btn-primary w-full rounded-full">
             {submitting ? "…" : "Crea"}
           </button>
@@ -278,15 +278,15 @@ export default function StakersPage() {
       </BottomSheet>
 
       {rows.length === 0 && !loadError ? (
-        <p className="rounded-xl border border-dashed border-[#273449] py-8 text-center text-xs text-[#94a3b8]">
+        <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[18px] text-[#94a3b8] sm:py-8 sm:text-xs">
           Nessuno staker. Tocca + Staker.
         </p>
       ) : filteredRows.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-[#273449] py-10 text-center text-xs text-[#64748b]">
+        <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[18px] text-[#64748b] sm:py-10 sm:text-xs">
           Nessun risultato
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-4 sm:gap-2">
           {filteredRows.map((s) => {
             const b = Number.parseFloat(s.balance) || 0;
             const locked = s.player_id !== null;
@@ -303,25 +303,29 @@ export default function StakersPage() {
             return (
               <li
                 key={s.id}
-                className="overflow-hidden rounded-2xl border border-[#1e293b] bg-[#0c101c] shadow-sm transition hover:border-[#334155]"
+                className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525] shadow-sm transition hover:border-white/[0.08]"
               >
                 <button
                   type="button"
                   onClick={() => openEdit(s)}
-                  className="w-full px-3 pb-2 pt-3 text-left transition active:bg-[#111827]/80"
+                  className="w-full px-4 pb-4 pt-4 text-left transition active:bg-[#0E1525]/80 sm:px-3 sm:pb-2 sm:pt-3"
                 >
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-white">{s.name}</p>
+                      <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                        {s.name}
+                      </p>
                       {locked ? (
-                        <p className="mt-0.5 text-[9px] text-[#64748b]">Legato identità</p>
+                        <p className="mt-1 text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:mt-0.5 sm:text-xs sm:font-normal sm:tracking-normal sm:normal-case">
+                          Legato identità
+                        </p>
                       ) : null}
                     </div>
-                    <p className={`shrink-0 text-base font-bold tabular-nums ${toneClass(b)}`}>
+                    <p className={`shrink-0 text-[32px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
                       {formatMoney(s.balance)} €
                     </p>
                   </div>
-                  <div className="mt-2 grid grid-cols-3 gap-1.5">
+                  <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-2 sm:gap-1.5">
                     <StatPill label="Giocate" value={String(g.count)} />
                     <StatPill
                       label="P/L"
@@ -333,17 +337,17 @@ export default function StakersPage() {
                     <StatPill label="ROI" value={roi} tone={roiTone} />
                   </div>
                 </button>
-                <div className="flex flex-wrap gap-1.5 border-t border-[#1a2230] px-2.5 py-2">
+                <div className="flex flex-wrap gap-2 border-t border-[#1a2230] px-4 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
                   <QuickActionButton
                     onClick={() => openEdit(s)}
                     variant="ghost"
-                    className="min-h-8 px-3 text-[10px]"
+                    className="min-h-[52px] px-4 text-[18px] sm:min-h-8 sm:px-3 sm:text-xs"
                   >
                     Modifica
                   </QuickActionButton>
                   <QuickActionButton
                     variant="danger"
-                    className="min-h-8 px-3 text-[10px]"
+                    className="min-h-[52px] px-4 text-[18px] sm:min-h-8 sm:px-3 sm:text-xs"
                     disabled={locked}
                     onClick={() => {
                       setDeleteError(null);
@@ -381,13 +385,13 @@ export default function StakersPage() {
             className="sm-input"
             required
           />
-          {editError ? <p className="text-xs text-[#fb7185]">{editError}</p> : null}
+          {editError ? <p className="text-sm sm:text-xs text-[#fb7185]">{editError}</p> : null}
           <div className="flex gap-2">
             <button
               type="button"
               disabled={editSaving}
               onClick={() => setEditing(null)}
-              className="h-10 flex-1 rounded-full border border-[#334155] text-sm font-semibold text-[#e2e8f0]"
+              className="flex min-h-[52px] flex-1 items-center justify-center rounded-full border border-white/[0.08] text-[18px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
             >
               Annulla
             </button>

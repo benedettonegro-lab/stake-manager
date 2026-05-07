@@ -21,5 +21,5 @@ export function transactionStatusBadgeClass(s: TransactionStatus): string {
   if (s === "pending") return "border-amber-500/45 bg-amber-500/12 text-amber-200";
   if (s === "completed") return "border-emerald-500/40 bg-emerald-500/10 text-emerald-200";
   if (s === "rejected") return "border-rose-500/45 bg-rose-500/12 text-rose-200";
-  return "border-[#475569] bg-[#1f2937] text-[#94a3b8]";
+  return "border-[#475569] bg-[#151d2e] text-[#94a3b8]";
 }

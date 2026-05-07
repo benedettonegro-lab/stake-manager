@@ -49,16 +49,16 @@ function roleLabel(r: ProfileRole): string {
 }
 
 const btnOutline =
-  "rounded-lg border border-[#273449] bg-[#0d1321] px-2 py-1.5 text-[11px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-[#475569] disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-white/[0.08] bg-[#121B2F] px-2 py-1.5 text-[15px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-white/[0.14] disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPositive =
-  "rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-[11px] font-semibold text-emerald-200 transition active:scale-[0.98] hover:bg-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-[15px] font-semibold text-emerald-200 transition active:scale-[0.98] hover:bg-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnDanger =
-  "rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-[11px] font-semibold text-rose-200 transition active:scale-[0.98] hover:bg-rose-500/15 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-[15px] font-semibold text-rose-200 transition active:scale-[0.98] hover:bg-rose-500/15 disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPurple =
-  "rounded-lg border border-[#a855f7]/45 bg-[#a855f7]/10 px-2 py-1.5 text-[11px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#a855f7]/20 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-[#a855f7]/45 bg-[#a855f7]/10 px-2 py-1.5 text-[15px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#a855f7]/20 disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function AdminUtentiPage() {
   const router = useRouter();
@@ -165,7 +165,7 @@ export default function AdminUtentiPage() {
     return (
       <AuthGate>
         <AppShell title="Admin utenti">
-          <p className="text-sm text-[#94a3b8]">Caricamento…</p>
+          <p className="text-lg sm:text-base sm:text-sm text-[#94a3b8]">Caricamento…</p>
         </AppShell>
       </AuthGate>
     );
@@ -181,7 +181,7 @@ export default function AdminUtentiPage() {
 
           {listError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fb7185]"
               role="alert"
             >
               {listError}
@@ -190,7 +190,7 @@ export default function AdminUtentiPage() {
 
           {actionError ? (
             <p
-              className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-3 py-2 text-sm text-[#fdba74]"
+              className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fdba74]"
               role="alert"
             >
               {actionError}
@@ -203,18 +203,18 @@ export default function AdminUtentiPage() {
               const busy = busyId === row.id;
               return (
                 <li key={row.id}>
-                  <div className="rounded-2xl border border-[#273449] bg-[#111827]/95 p-3 shadow-lg shadow-black/20 backdrop-blur-sm">
+                  <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525]/95 p-3 shadow-md shadow-black/12 backdrop-blur-sm">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-white">{row.email || "—"}</p>
+                        <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">{row.email || "—"}</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusBadgeClass(row.status)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${statusBadgeClass(row.status)}`}
                           >
                             {statusLabel(row.status)}
                           </span>
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${roleBadgeClass(row.role)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${roleBadgeClass(row.role)}`}
                           >
                             {roleLabel(row.role)}
                           </span>
@@ -271,7 +271,7 @@ export default function AdminUtentiPage() {
           </ul>
 
           {!listError && filtered.length === 0 ? (
-            <p className="text-center text-sm text-[#64748b]">Nessun utente in questo filtro.</p>
+            <p className="text-center text-lg sm:text-base sm:text-sm text-[#64748b]">Nessun utente in questo filtro.</p>
           ) : null}
         </div>
       </AppShell>

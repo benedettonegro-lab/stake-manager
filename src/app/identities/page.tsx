@@ -29,10 +29,10 @@ const PAYMENT_TYPES = [
 
 /** Card glass — info only, azioni in sheet separato */
 const idnGlassCard =
-  "w-full rounded-xl border border-white/[0.06] bg-[#0f1624]/70 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_28px_rgba(52,211,153,0.14)] hover:scale-[1.01] active:scale-[0.97]";
+  "w-full rounded-2xl border border-white/[0.08] bg-[#0E1525]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_10px_rgba(52,211,153,0.05)] hover:scale-[1.01] active:scale-[0.97] sm:rounded-xl";
 
 const idnActionBtn =
-  "flex min-h-12 w-full items-center justify-center rounded-xl border text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
+  "flex min-h-[52px] w-full items-center justify-center rounded-xl border text-[18px] font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
 
 type PaymentType = (typeof PAYMENT_TYPES)[number];
 
@@ -145,6 +145,15 @@ export default function IdentitiesPage() {
   const [deleteTarget, setDeleteTarget] = useState<PaymentMethodRow | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [identityDeleteTarget, setIdentityDeleteTarget] = useState<IdentityRow | null>(null);
+  const [identityDeleteLoading, setIdentityDeleteLoading] = useState(false);
+  const [identityDeleteError, setIdentityDeleteError] = useState<string | null>(null);
+
+  const [identityNameEditing, setIdentityNameEditing] = useState(false);
+  const [identityEditName, setIdentityEditName] = useState("");
+  const [identityEditSaving, setIdentityEditSaving] = useState(false);
+  const [identityEditError, setIdentityEditError] = useState<string | null>(null);
 
   const [txModal, setTxModal] = useState<TxModalState | null>(null);
   const [txPmId, setTxPmId] = useState("");
@@ -333,6 +342,9 @@ export default function IdentitiesPage() {
         setAccName("");
         setAccBookmakerId("");
         setAccInitStr("");
+        setIdentityNameEditing(false);
+        setIdentityEditName("");
+        setIdentityEditError(null);
       }
       return id;
     });
@@ -345,6 +357,9 @@ export default function IdentitiesPage() {
     setAccountActions(null);
     setMethodActions(null);
     setDetailSheetId(null);
+    setIdentityNameEditing(false);
+    setIdentityEditName("");
+    setIdentityEditError(null);
   }, []);
 
   async function handleAddAccount(e: React.FormEvent, playerId: string) {
@@ -698,10 +713,55 @@ export default function IdentitiesPage() {
     await loadData();
   }
 
+  async function handleConfirmDeleteIdentity() {
+    if (!identityDeleteTarget) return;
+    setIdentityDeleteError(null);
+    setIdentityDeleteLoading(true);
+    const removedId = identityDeleteTarget.id;
+    const { error } = await supabase.from("players").delete().eq("id", removedId);
+    setIdentityDeleteLoading(false);
+    if (error) {
+      setIdentityDeleteError(error.message);
+      return;
+    }
+    setIdentityDeleteTarget(null);
+    if (detailSheetId === removedId) {
+      closeDetailSheet();
+    }
+    setTxModal((prev) => (prev?.identityId === removedId ? null : prev));
+    setEditingMethod((prev) =>
+      prev && (prev.player_id === removedId || prev.identity_id === removedId) ? null : prev,
+    );
+    setDeleteTarget((prev) =>
+      prev && (prev.player_id === removedId || prev.identity_id === removedId) ? null : prev,
+    );
+    setDeleteError(null);
+    await loadData();
+  }
+
+  async function handleSaveIdentityName() {
+    if (!detailSheetId) return;
+    const name = identityEditName.trim();
+    if (!name) {
+      setIdentityEditError("Nome obbligatorio.");
+      return;
+    }
+    setIdentityEditSaving(true);
+    setIdentityEditError(null);
+    const { error } = await supabase.from("players").update({ name }).eq("id", detailSheetId);
+    setIdentityEditSaving(false);
+    if (error) {
+      setIdentityEditError(error.message);
+      return;
+    }
+    setIdentityNameEditing(false);
+    await loadData();
+  }
+
   if (!ready) {
     return (
       <AppShell title="Identità">
-        <div className="flex min-h-[30vh] items-center justify-center text-sm text-[#94a3b8]">
+        <div className="flex min-h-[30vh] items-center justify-center text-[18px] text-[#94a3b8] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -737,12 +797,12 @@ export default function IdentitiesPage() {
     <AuthGate>
       <AppShell title="Identità">
         {loadError ? (
-          <p className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]">
+          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[18px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-sm">
             {loadError}
           </p>
         ) : null}
 
-        <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
+        <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
@@ -750,7 +810,7 @@ export default function IdentitiesPage() {
           />
         </div>
 
-        <div className="mb-3">
+        <div className="mb-5 sm:mb-3">
           <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
             + Identità
           </QuickActionButton>
@@ -764,14 +824,14 @@ export default function IdentitiesPage() {
             if (!newIdSubmitting) setNewIdentityOpen(false);
           }}
         >
-          <form onSubmit={(e) => void handleNewIdentity(e)} className="flex flex-col gap-3">
+          <form onSubmit={(e) => void handleNewIdentity(e)} className="flex flex-col gap-4 sm:gap-3">
             <input
               value={newIdentityName}
               onChange={(e) => setNewIdentityName(e.target.value)}
               placeholder="Nome identità"
-              className="sm-input min-h-10 text-sm"
+              className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
             />
-            {newIdError ? <p className="text-xs text-[#fb7185]">{newIdError}</p> : null}
+            {newIdError ? <p className="text-sm sm:text-xs text-[#fb7185]">{newIdError}</p> : null}
             <button type="submit" disabled={newIdSubmitting} className="sm-btn-primary w-full rounded-full">
               {newIdSubmitting ? "…" : "Crea"}
             </button>
@@ -779,15 +839,15 @@ export default function IdentitiesPage() {
         </BottomSheet>
 
         {identities.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-[#273449] py-8 text-center text-xs text-[#94a3b8]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[18px] text-[#94a3b8] sm:py-8 sm:text-xs">
             Nessuna identità. Tocca + Identità.
           </p>
         ) : filteredIdentities.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[#273449] py-10 text-center text-xs text-[#64748b]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[18px] text-[#64748b] sm:py-10 sm:text-xs">
             Nessun risultato
           </p>
         ) : (
-          <ul className="flex list-none flex-col gap-2 p-0">
+          <ul className="flex list-none flex-col gap-4 p-0 sm:gap-2">
             {filteredIdentities.map((idn) => {
               const accList = accountsByPlayer.get(idn.id) ?? [];
               const methods = paymentMethodsForIdentity(idn.id, paymentMethods);
@@ -805,10 +865,12 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     onClick={() => openDetailSheet(idn.id)}
-                    className="w-full rounded-2xl border border-[#1e293b] bg-[#0c101c] p-3 text-left shadow-sm transition hover:border-[#334155] active:scale-[0.99]"
+                    className="w-full rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 text-left shadow-sm transition hover:border-white/[0.08] active:scale-[0.99] sm:p-3"
                   >
-                    <p className="truncate text-sm font-semibold text-white">{idn.name}</p>
-                    <div className="mt-2 grid grid-cols-3 gap-1.5">
+                    <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                      {idn.name}
+                    </p>
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-2 sm:gap-1.5">
                       <StatPill label="Conti" value={String(accList.length)} />
                       <StatPill label="Metodi" value={String(methods.length)} />
                       <StatPill
@@ -827,15 +889,15 @@ export default function IdentitiesPage() {
         <BottomSheet
           open={detailSheetId !== null && detailIdn !== null}
           title={detailIdn?.name ?? "Identità"}
-          dismissDisabled={accSubmitting || pmSubmitting}
+          dismissDisabled={accSubmitting || pmSubmitting || identityEditSaving}
           panelClassName="!max-w-[420px]"
           headerExtra={
-            <div className="space-y-0.5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748b]">
+            <div className="space-y-1 sm:space-y-0.5">
+              <p className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-[0.16em]">
                 Cassa totale
               </p>
               <p
-                className={`text-[1.65rem] font-bold leading-tight tracking-tight tabular-nums sm:text-[1.85rem] ${
+                className={`text-[32px] font-extrabold leading-none tracking-tight tabular-nums sm:text-[1.85rem] sm:font-bold ${
                   detailCassa > 0
                     ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
                     : detailCassa < 0
@@ -845,7 +907,7 @@ export default function IdentitiesPage() {
               >
                 {formatMoney(detailCassa)} €
               </p>
-              <p className="pt-1.5 text-[11px] text-[#94a3b8]">
+              <p className="pt-2 text-[18px] text-[#94a3b8] sm:pt-1.5 sm:text-xs">
                 <span className="font-semibold tabular-nums text-[#cbd5e1]">
                   {detailAccList.length}
                 </span>{" "}
@@ -859,23 +921,23 @@ export default function IdentitiesPage() {
             </div>
           }
           onClose={() => {
-            if (!accSubmitting && !pmSubmitting) closeDetailSheet();
+            if (!accSubmitting && !pmSubmitting && !identityEditSaving) closeDetailSheet();
           }}
         >
           {detailSheetId && detailIdn ? (
             <div className="relative mx-auto flex min-h-[48vh] max-w-[420px] flex-col pb-2">
               <div className="flex flex-1 flex-col gap-6">
               <section>
-                <h3 className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#64748b]">
+                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#64748b] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Conti
                 </h3>
                 {accDeleteError ? (
-                  <p className="mb-2 text-xs text-[#fb7185]">{accDeleteError}</p>
+                  <p className="mb-2 text-sm sm:text-xs text-[#fb7185]">{accDeleteError}</p>
                 ) : null}
                 {detailAccList.length === 0 ? (
-                  <p className="py-1 text-xs text-[#94a3b8]">Nessun conto.</p>
+                  <p className="py-1 text-sm sm:text-xs text-[#94a3b8]">Nessun conto.</p>
                 ) : (
-                  <ul className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-4 sm:gap-3">
                     {detailAccList.map((a) => {
                       const bal = Number.parseFloat(String(a.current_balance)) || 0;
                       const balCls =
@@ -895,17 +957,17 @@ export default function IdentitiesPage() {
                               setAccountActions(a);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                            <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[13px] font-semibold text-white">
+                                <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {a.account_name}
                                 </p>
-                                <p className="mt-0.5 truncate text-[10px] text-[#64748b]">
+                                <p className="mt-1 truncate text-[18px] text-[#64748b] sm:mt-0.5 sm:text-xs">
                                   {gamingAccountBookmakerDisplay(a) || "—"}
                                 </p>
                               </div>
                               <p
-                                className={`shrink-0 text-xl font-bold tabular-nums leading-none sm:text-2xl ${balCls}`}
+                                className={`shrink-0 text-[32px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(a.current_balance)} €
                               </p>
@@ -919,13 +981,13 @@ export default function IdentitiesPage() {
               </section>
 
               <section>
-                <h3 className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#64748b]">
+                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#64748b] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Metodi
                 </h3>
                 {detailMethods.length === 0 ? (
-                  <p className="py-1 text-xs text-[#94a3b8]">Nessun metodo.</p>
+                  <p className="py-1 text-sm sm:text-xs text-[#94a3b8]">Nessun metodo.</p>
                 ) : (
-                  <ul className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-4 sm:gap-3">
                     {detailMethods.map((m) => {
                       const mb = Number.parseFloat(m.balance) || 0;
                       const tipo = (m.type || "").trim();
@@ -946,19 +1008,19 @@ export default function IdentitiesPage() {
                               setMethodActions(m);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                            <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[13px] font-semibold text-white">
+                                <p className="truncate text-[28px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {(m.method_name || "").trim() || "—"}
                                 </p>
                                 {tipo ? (
-                                  <p className="mt-0.5 truncate text-[10px] text-[#64748b]">
+                                  <p className="mt-1 truncate text-[18px] text-[#64748b] sm:mt-0.5 sm:text-xs">
                                     {tipo}
                                   </p>
                                 ) : null}
                               </div>
                               <p
-                                className={`shrink-0 text-xl font-bold tabular-nums leading-none sm:text-2xl ${balCls}`}
+                                className={`shrink-0 text-[32px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(m.balance)} €
                               </p>
@@ -970,19 +1032,88 @@ export default function IdentitiesPage() {
                   </ul>
                 )}
               </section>
+
+              <div className="border-t border-[#1a2230] pt-5">
+                {identityNameEditing ? (
+                  <div className="mx-auto flex max-w-xs flex-col gap-3">
+                    <label className="block">
+                      <span className="mb-1.5 block text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                        Nome identità
+                      </span>
+                      <input
+                        value={identityEditName}
+                        onChange={(e) => setIdentityEditName(e.target.value)}
+                        className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
+                        autoComplete="off"
+                        disabled={identityEditSaving}
+                      />
+                    </label>
+                    {identityEditError ? (
+                      <p className="text-sm sm:text-xs text-[#fb7185]">{identityEditError}</p>
+                    ) : null}
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={identityEditSaving}
+                        onClick={() => {
+                          setIdentityNameEditing(false);
+                          setIdentityEditError(null);
+                        }}
+                        className="h-11 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50"
+                      >
+                        Annulla
+                      </button>
+                      <button
+                        type="button"
+                        disabled={identityEditSaving}
+                        onClick={() => void handleSaveIdentityName()}
+                        className="sm-btn-primary h-11 flex-1 rounded-full text-lg sm:text-sm font-semibold disabled:opacity-50"
+                      >
+                        {identityEditSaving ? "…" : "Salva"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row sm:justify-center">
+                    <QuickActionButton
+                      variant="secondary"
+                      className="min-h-11 flex-1 px-4 text-lg sm:text-sm font-semibold sm:max-w-[200px]"
+                      disabled={accSubmitting || pmSubmitting || identityDeleteLoading}
+                      onClick={() => {
+                        setIdentityEditError(null);
+                        setIdentityEditName(detailIdn.name);
+                        setIdentityNameEditing(true);
+                      }}
+                    >
+                      Modifica
+                    </QuickActionButton>
+                    <QuickActionButton
+                      variant="danger"
+                      className="min-h-11 flex-1 px-4 text-lg sm:text-sm font-semibold sm:max-w-[200px]"
+                      disabled={accSubmitting || pmSubmitting || identityDeleteLoading}
+                      onClick={() => {
+                        setIdentityDeleteError(null);
+                        setIdentityDeleteTarget(detailIdn);
+                      }}
+                    >
+                      Elimina
+                    </QuickActionButton>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="sticky bottom-0 z-[2] mt-8 flex justify-center bg-gradient-to-t from-[#0c101c] via-[#0c101c]/92 to-transparent pb-1 pt-8">
+            <div className="sticky bottom-0 z-[2] mt-8 flex justify-center bg-gradient-to-t from-[#070B14] via-[#070B14]/92 to-transparent pb-1 pt-8">
               <button
                 type="button"
-                disabled={accSubmitting || pmSubmitting}
+                disabled={accSubmitting || pmSubmitting || identityEditSaving}
                 aria-label="Aggiungi conto o metodo"
                 onClick={() => {
                   setAccountActions(null);
                   setMethodActions(null);
                   setFabMenuOpen(true);
                 }}
-                className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/25 to-emerald-600/10 text-2xl font-light text-emerald-100 shadow-[0_0_28px_rgba(16,185,129,0.35)] transition duration-200 ease-out hover:scale-105 hover:shadow-[0_0_36px_rgba(16,185,129,0.45)] active:scale-[0.94] disabled:opacity-40"
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/18 to-emerald-600/8 text-2xl font-light text-emerald-100 shadow-[0_0_10px_rgba(16,185,129,0.1)] transition duration-200 ease-out hover:scale-105 hover:shadow-[0_0_12px_rgba(16,185,129,0.14)] active:scale-[0.94] disabled:opacity-40"
               >
                 +
               </button>
@@ -1004,7 +1135,7 @@ export default function IdentitiesPage() {
           <button
             type="button"
             disabled={accSubmitting || pmSubmitting}
-            className={`${idnActionBtn} border-emerald-500/35 bg-emerald-500/12 text-emerald-100 hover:border-emerald-400/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]`}
+            className={`${idnActionBtn} border-emerald-500/35 bg-emerald-500/12 text-emerald-100 hover:border-emerald-400/50 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)]`}
             onClick={() => {
               setFabMenuOpen(false);
               setAccError(null);
@@ -1018,7 +1149,7 @@ export default function IdentitiesPage() {
           <button
             type="button"
             disabled={accSubmitting || pmSubmitting}
-            className={`${idnActionBtn} border-sky-500/35 bg-sky-500/10 text-sky-100 hover:border-sky-400/45 hover:shadow-[0_0_18px_rgba(14,165,233,0.18)]`}
+            className={`${idnActionBtn} border-sky-500/35 bg-sky-500/10 text-sky-100 hover:border-sky-400/45 hover:shadow-[0_0_8px_rgba(14,165,233,0.07)]`}
             onClick={() => {
               setFabMenuOpen(false);
               setPmError(null);
@@ -1052,8 +1183,8 @@ export default function IdentitiesPage() {
                 detailMethods.length === 0 || accDeleteLoadingId !== null;
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.06] bg-[#0f1624]/60 px-3 py-3 text-center backdrop-blur-sm">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-3 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
                     <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
@@ -1068,7 +1199,7 @@ export default function IdentitiesPage() {
                         ? "Aggiungi un metodo di pagamento"
                         : undefined
                     }
-                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_18px_rgba(16,185,129,0.22)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)] disabled:opacity-35`}
                     onClick={() => {
                       const a = accountActions;
                       setAccountActions(null);
@@ -1085,7 +1216,7 @@ export default function IdentitiesPage() {
                         ? "Aggiungi un metodo di pagamento"
                         : undefined
                     }
-                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_18px_rgba(251,191,36,0.18)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)] disabled:opacity-35`}
                     onClick={() => {
                       const a = accountActions;
                       setAccountActions(null);
@@ -1096,7 +1227,7 @@ export default function IdentitiesPage() {
                   </button>
                   <Link
                     href={`/movimenti?player=${encodeURIComponent(detailSheetId)}&account=${encodeURIComponent(accountActions.id)}`}
-                    className={`${idnActionBtn} border-[#334155] bg-[#151c2a] text-[#e2e8f0] hover:border-[#475569]`}
+                    className={`${idnActionBtn} border-white/[0.08] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.14]`}
                     onClick={() => setAccountActions(null)}
                   >
                     Movimenti
@@ -1104,7 +1235,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={accDeleteLoadingId !== null}
-                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_14px_rgba(248,113,113,0.15)] disabled:opacity-40`}
+                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)] disabled:opacity-40`}
                     onClick={() => {
                       void handleDeleteGamingAccount(accountActions);
                       setAccountActions(null);
@@ -1139,8 +1270,8 @@ export default function IdentitiesPage() {
               const m = methodActions;
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.06] bg-[#0f1624]/60 px-3 py-3 text-center backdrop-blur-sm">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-3 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
                     <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
@@ -1150,7 +1281,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={txFromPmDisabled}
-                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_18px_rgba(16,185,129,0.22)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)] disabled:opacity-35`}
                     onClick={() => {
                       setMethodActions(null);
                       openTxDepositFromMethod(detailSheetId, m);
@@ -1161,7 +1292,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={txFromPmDisabled}
-                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_18px_rgba(251,191,36,0.18)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)] disabled:opacity-35`}
                     onClick={() => {
                       setMethodActions(null);
                       openTxWithdrawFromMethod(detailSheetId, m);
@@ -1181,7 +1312,7 @@ export default function IdentitiesPage() {
                   </button>
                   <button
                     type="button"
-                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_14px_rgba(248,113,113,0.15)]`}
+                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)]`}
                     onClick={() => {
                       setDeleteError(null);
                       setDeleteTarget(m);
@@ -1214,13 +1345,13 @@ export default function IdentitiesPage() {
             value={accName}
             onChange={(e) => setAccName(e.target.value)}
             placeholder="Nome conto"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
           <select
             required
             value={accBookmakerId}
             onChange={(e) => setAccBookmakerId(e.target.value)}
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           >
             <option value="">Bookmaker —</option>
             {bookmakers.map((b) => (
@@ -1234,20 +1365,20 @@ export default function IdentitiesPage() {
             onChange={(e) => setAccInitStr(e.target.value)}
             placeholder="Saldo iniziale (opzionale)"
             inputMode="decimal"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
           {bookmakers.length === 0 ? (
-            <p className="text-[10px] text-[#94a3b8]">
+            <p className="text-sm sm:text-xs text-[#94a3b8]">
               <Link href="/bookmakers" className="text-[#a855f7] underline-offset-2 hover:underline">
                 Configura bookmaker
               </Link>
             </p>
           ) : null}
-          {accError ? <p className="text-xs text-[#fb7185]">{accError}</p> : null}
+          {accError ? <p className="text-sm sm:text-xs text-[#fb7185]">{accError}</p> : null}
           <button
             type="submit"
             disabled={accSubmitting}
-            className="sm-btn-primary mt-1 w-full min-h-10 rounded-full text-sm disabled:opacity-60"
+            className="sm-btn-primary mt-1 w-full min-h-10 rounded-full text-lg sm:text-sm disabled:opacity-60"
           >
             {accSubmitting ? "Salvataggio…" : "Crea conto"}
           </button>
@@ -1271,12 +1402,12 @@ export default function IdentitiesPage() {
             value={pmNome}
             onChange={(e) => setPmNome(e.target.value)}
             placeholder="Nome metodo"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
           <select
             value={pmTipo}
             onChange={(e) => setPmTipo(e.target.value as PaymentType)}
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           >
             {PAYMENT_TYPES.map((t) => (
               <option key={t} value={t}>
@@ -1289,13 +1420,13 @@ export default function IdentitiesPage() {
             onChange={(e) => setPmBalanceStr(e.target.value)}
             placeholder="Saldo iniziale"
             inputMode="decimal"
-            className="sm-input min-h-10 text-sm"
+            className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
-          {pmError ? <p className="text-xs text-[#fb7185]">{pmError}</p> : null}
+          {pmError ? <p className="text-sm sm:text-xs text-[#fb7185]">{pmError}</p> : null}
           <button
             type="submit"
             disabled={pmSubmitting}
-            className="sm-btn-primary mt-1 w-full min-h-10 rounded-full text-sm disabled:opacity-60"
+            className="sm-btn-primary mt-1 w-full min-h-10 rounded-full text-lg sm:text-sm disabled:opacity-60"
           >
             {pmSubmitting ? "Salvataggio…" : "Crea metodo"}
           </button>
@@ -1315,7 +1446,7 @@ export default function IdentitiesPage() {
           <form className="space-y-3" onSubmit={(e) => void handleTxSubmit(e)}>
             {txShowAccPicker ? (
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                   Conto gioco
                 </label>
                 <select
@@ -1326,7 +1457,7 @@ export default function IdentitiesPage() {
                       prev ? { ...prev, accountId: e.target.value } : prev,
                     )
                   }
-                  className="sm-input min-h-10 w-full text-sm"
+                  className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
                 >
                   {txAccList.map((a) => (
                     <option key={a.id} value={a.id}>
@@ -1339,7 +1470,7 @@ export default function IdentitiesPage() {
                 </select>
               </div>
             ) : (
-              <p className="text-xs text-[#94a3b8]">
+              <p className="text-sm sm:text-xs text-[#94a3b8]">
                 Conto:{" "}
                 <span className="font-medium text-white">
                   {txAccountRow?.account_name ?? "—"}
@@ -1350,14 +1481,14 @@ export default function IdentitiesPage() {
               </p>
             )}
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                 Metodo di pagamento
               </label>
               <select
                 required
                 value={txPmId}
                 onChange={(e) => setTxPmId(e.target.value)}
-                className="sm-input min-h-10 w-full text-sm"
+                className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="">—</option>
                 {paymentMethodsForIdentity(txModal.identityId, paymentMethods).map((pm) => (
@@ -1368,7 +1499,7 @@ export default function IdentitiesPage() {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                 Importo (€)
               </label>
               <input
@@ -1377,12 +1508,12 @@ export default function IdentitiesPage() {
                 inputMode="decimal"
                 required
                 placeholder="0,00"
-                className="sm-input min-h-10 w-full text-sm"
+                className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
               />
             </div>
             {txModal.mode === "withdrawal" ? (
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                   Stato
                 </label>
                 <select
@@ -1390,7 +1521,7 @@ export default function IdentitiesPage() {
                   onChange={(e) =>
                     setTxWithdrawStatus(e.target.value as TransactionStatus)
                   }
-                  className="sm-input min-h-10 w-full text-sm"
+                  className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
                 >
                   <option value="completed">Completato</option>
                   <option value="pending">In attesa</option>
@@ -1399,19 +1530,19 @@ export default function IdentitiesPage() {
               </div>
             ) : null}
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                 Note (opzionale)
               </label>
               <input
                 value={txNotes}
                 onChange={(e) => setTxNotes(e.target.value)}
                 placeholder="Riferimento interno…"
-                className="sm-input min-h-10 w-full text-sm"
+                className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
               />
             </div>
             {txSaveDisabledByBalanceIdent && !txError ? (
               <p
-                className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+                className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
                 role="status"
               >
                 {txModal.mode === "deposit"
@@ -1421,7 +1552,7 @@ export default function IdentitiesPage() {
             ) : null}
             {txError ? (
               <p
-                className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+                className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
                 role="alert"
               >
                 {txError}
@@ -1434,14 +1565,14 @@ export default function IdentitiesPage() {
                 onClick={() => {
                   if (!txSubmitting) closeTxModal();
                 }}
-                className="h-10 flex-1 rounded-full border border-[#334155] text-sm font-semibold text-[#e2e8f0]"
+                className="h-10 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
               >
                 Annulla
               </button>
               <button
                 type="submit"
                 disabled={txSubmitting || txSaveDisabledByBalanceIdent}
-                className="sm-btn-primary h-10 flex-1 rounded-full text-sm disabled:cursor-not-allowed disabled:opacity-45"
+                className="sm-btn-primary h-10 flex-1 rounded-full text-lg sm:text-sm disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {txSubmitting ? "…" : "Registra"}
               </button>
@@ -1484,13 +1615,13 @@ export default function IdentitiesPage() {
             inputMode="decimal"
             className="sm-input"
           />
-          {editError ? <p className="text-sm text-[#fb7185]">{editError}</p> : null}
+          {editError ? <p className="text-lg sm:text-sm text-[#fb7185]">{editError}</p> : null}
           <div className="flex gap-2">
             <button
               type="button"
               disabled={editSaving}
               onClick={() => setEditingMethod(null)}
-              className="h-10 flex-1 rounded-full border border-[#334155] text-sm font-semibold text-[#e2e8f0]"
+              className="h-10 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
             >
               Annulla
             </button>
@@ -1517,6 +1648,24 @@ export default function IdentitiesPage() {
           }
         }}
         onConfirm={() => void handleConfirmDelete()}
+      />
+
+      <ConfirmDialog
+        open={identityDeleteTarget !== null}
+        title="Eliminare identità?"
+        message="Vuoi davvero eliminare questa identità?"
+        confirmText="Elimina"
+        cancelText="Annulla"
+        variant="danger"
+        loading={identityDeleteLoading}
+        error={identityDeleteError}
+        onCancel={() => {
+          if (!identityDeleteLoading) {
+            setIdentityDeleteTarget(null);
+            setIdentityDeleteError(null);
+          }
+        }}
+        onConfirm={() => void handleConfirmDeleteIdentity()}
       />
       </AppShell>
     </AuthGate>

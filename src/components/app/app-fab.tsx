@@ -15,7 +15,7 @@ export function AppFab({ href, label = "Azione rapida" }: AppFabProps) {
       <div className="sm-app-constrain flex w-full justify-center px-3">
         <Link
           href={href}
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#5b5cff] to-[#a855f7] text-2xl font-light text-white shadow-lg shadow-[#5b5cff]/35 transition duration-200 hover:scale-105 hover:shadow-xl active:scale-95"
+          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#3d4558] to-[#5c4d7a] text-2xl font-light text-white shadow-md shadow-black/30 transition duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
           aria-label={label}
         >
           +

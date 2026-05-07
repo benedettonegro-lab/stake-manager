@@ -348,9 +348,9 @@ function TransactionsPage() {
   if (!ready) {
     return (
       <AppShell title="Movimenti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -363,7 +363,7 @@ function TransactionsPage() {
     <AppShell title="Movimenti" subtitle="Depositi e prelievi tra conto gioco e metodo.">
       {loadError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {loadError}
@@ -372,10 +372,10 @@ function TransactionsPage() {
 
       <form
         onSubmit={(e) => void handleSave(e)}
-        className="space-y-4 rounded-2xl border border-[#273449] bg-[#111827] p-5 shadow-lg shadow-black/20"
+        className="space-y-4 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 shadow-md shadow-black/12"
       >
         <div className="space-y-1.5">
-          <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+          <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
             Conto gioco
           </label>
           <select
@@ -397,7 +397,7 @@ function TransactionsPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+          <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
             Metodo di pagamento
           </label>
           <select
@@ -421,14 +421,14 @@ function TransactionsPage() {
             ))}
           </select>
           {accountId && methodsForAccount.length === 0 ? (
-            <p className="text-xs text-[#94a3b8]">
+            <p className="text-sm sm:text-xs text-[#94a3b8]">
               Aggiungi un metodo dalla pagina Identità (stesso cliente del conto).
             </p>
           ) : null}
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+          <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
             Tipo movimento
           </label>
           <select
@@ -444,7 +444,7 @@ function TransactionsPage() {
         <div className="space-y-1.5">
           <label
             htmlFor="tx-amount"
-            className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+            className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
           >
             Importo (€)
           </label>
@@ -462,7 +462,7 @@ function TransactionsPage() {
         <div className="space-y-1.5">
           <label
             htmlFor="tx-note"
-            className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+            className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
           >
             Note (opzionale)
           </label>
@@ -477,7 +477,7 @@ function TransactionsPage() {
 
         {formSaveDisabledByBalance && !formError ? (
           <p
-            className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+            className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
             role="status"
           >
             {txnType === "deposit"
@@ -487,7 +487,7 @@ function TransactionsPage() {
         ) : null}
         {formError ? (
           <p
-            className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+            className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fb7185]"
             role="alert"
           >
             {formError}
@@ -512,20 +512,20 @@ function TransactionsPage() {
       <section className="mt-10" aria-labelledby="tx-list-heading">
         <h2
           id="tx-list-heading"
-          className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#64748b]"
+          className="mb-3 text-sm sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#64748b]"
         >
           Ultimi movimenti
         </h2>
         {listActionError ? (
           <p
-            className="mb-3 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+            className="mb-3 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fb7185]"
             role="alert"
           >
             {listActionError}
           </p>
         ) : null}
         {transactions.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[#273449] bg-[#111827]/60 px-4 py-10 text-center text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525]/60 px-4 py-10 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
             Nessun movimento ancora.
           </p>
         ) : (
@@ -549,12 +549,12 @@ function TransactionsPage() {
               return (
                 <li
                   key={t.id}
-                  className="rounded-2xl border border-[#273449] bg-[#111827] px-4 py-4 shadow-md shadow-black/20"
+                  className="rounded-2xl border border-white/[0.08] bg-[#0E1525] px-4 py-4 shadow-md shadow-black/20"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <span
-                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${
                           isWithdrawal
                             ? "border-red-500/40 bg-red-500/10 text-red-400"
                             : "border-[#34d399]/40 bg-[#34d399]/10 text-[#34d399]"
@@ -562,14 +562,14 @@ function TransactionsPage() {
                       >
                         {txnTypeLabel(t.type)}
                       </span>
-                      <p className="mt-2 text-sm font-medium text-white">{accLabel}</p>
+                      <p className="mt-2 text-lg sm:text-base sm:text-sm font-medium text-white">{accLabel}</p>
                       {t.payment_methods ? (
-                        <p className="mt-0.5 text-xs text-[#94a3b8]">
+                        <p className="mt-0.5 text-sm sm:text-xs text-[#94a3b8]">
                           {paymentMethodTitle(t.payment_methods)}
                         </p>
                       ) : null}
                       {t.note ? (
-                        <p className="mt-1 line-clamp-2 text-[10px] text-[#64748b]">{t.note}</p>
+                        <p className="mt-1 line-clamp-2 text-[15px] text-[#64748b]">{t.note}</p>
                       ) : null}
                       {isWithdrawal ? (
                         <div
@@ -587,14 +587,14 @@ function TransactionsPage() {
                               if (!isTransactionStatus(v)) return;
                               void updateWithdrawalStatus(t, v);
                             }}
-                            className="max-w-[11rem] cursor-pointer appearance-none border-0 bg-transparent py-0.5 pl-1 pr-5 text-[10px] font-semibold uppercase tracking-wide text-inherit outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="max-w-[11rem] cursor-pointer appearance-none border-0 bg-transparent py-0.5 pl-1 pr-5 text-[15px] font-semibold uppercase tracking-wide text-inherit outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                             style={{ backgroundImage: "none" }}
                           >
                             {WITHDRAWAL_STATUS_SELECT_OPTIONS.map((opt) => (
                               <option
                                 key={opt.value}
                                 value={opt.value}
-                                className="bg-[#111827] text-[#e2e8f0]"
+                                className="bg-[#0E1525] text-[#e2e8f0]"
                               >
                                 {opt.label}
                               </option>
@@ -604,7 +604,7 @@ function TransactionsPage() {
                       ) : (
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <span
-                            className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${transactionStatusBadgeClass(st)}`}
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-[15px] font-semibold uppercase tracking-wide ${transactionStatusBadgeClass(st)}`}
                           >
                             {transactionStatusLabel(st)}
                           </span>
@@ -618,7 +618,7 @@ function TransactionsPage() {
                       </p>
                       <time
                         dateTime={t.created_at}
-                        className="mt-1 block text-[10px] font-medium uppercase tracking-wide text-[#64748b]"
+                        className="mt-1 block text-[15px] font-medium uppercase tracking-wide text-[#64748b]"
                       >
                         {new Date(t.created_at).toLocaleString("it-IT", {
                           dateStyle: "short",
@@ -642,9 +642,9 @@ export default function TransactionsPageRoute() {
     <Suspense
       fallback={
         <AppShell title="Movimenti" subtitle="Depositi e prelievi tra conto gioco e metodo.">
-          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
             <div
-              className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+              className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
               aria-hidden
             />
             <p>Caricamento…</p>

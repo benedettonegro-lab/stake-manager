@@ -28,19 +28,19 @@ export function BankrollCard({
         : "text-[#94a3b8]";
 
   return (
-    <div className="rounded-2xl border border-[#273449] bg-[#111827] p-4 shadow-lg shadow-black/25">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525] p-6 shadow-md shadow-black/15 sm:p-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-white">{title}</p>
+          <p className="text-2xl font-bold text-white sm:text-xl sm:font-semibold">{title}</p>
           {note ? (
-            <p className="mt-1 line-clamp-2 text-sm text-[#94a3b8]">{note}</p>
+            <p className="mt-2 line-clamp-2 text-base text-[#94a3b8] sm:mt-1 sm:text-sm">{note}</p>
           ) : null}
-          <p className="mt-2 text-xs text-[#94a3b8]">{balanceLabel}</p>
-          <p className={`text-lg font-semibold tabular-nums ${balClass}`}>
+          <p className="mt-3 text-sm text-[#94a3b8] sm:mt-2 sm:text-xs">{balanceLabel}</p>
+          <p className={`mt-1 text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-semibold ${balClass}`}>
             {balanceFormatted} €
           </p>
           {meta ? (
-            <p className="mt-2 text-xs text-[#64748b]">{meta}</p>
+            <p className="mt-3 text-base text-[#64748b] sm:mt-2 sm:text-sm">{meta}</p>
           ) : null}
         </div>
         {action ? (

@@ -486,7 +486,7 @@ export default function AccountDetailPage() {
   if (!accountId) {
     return (
       <AppShell title="Conto">
-        <p className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+        <p className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-amber-200">
           ID conto non valido.
         </p>
       </AppShell>
@@ -496,9 +496,9 @@ export default function AccountDetailPage() {
   if (!ready) {
     return (
       <AppShell title="Conto gioco">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -512,12 +512,12 @@ export default function AccountDetailPage() {
       <AppShell title="Conto gioco">
         <Link
           href="/accounts"
-          className="mb-4 inline-flex text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+          className="mb-4 inline-flex text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
         >
           ← Conti
         </Link>
         <p
-          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {accountError ?? "Conto non disponibile."}
@@ -559,19 +559,19 @@ export default function AccountDetailPage() {
         <div className="flex flex-wrap gap-4">
           <Link
             href="/accounts"
-            className="text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+            className="text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
           >
             ← Conti
           </Link>
           <Link
             href="/identities"
-            className="text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+            className="text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
           >
             Identità
           </Link>
           <Link
             href={`/players/${account.player_id}`}
-            className="text-sm font-medium text-[#94a3b8] underline-offset-4 hover:text-white hover:underline"
+            className="text-lg sm:text-base sm:text-sm font-medium text-[#94a3b8] underline-offset-4 hover:text-white hover:underline"
           >
             Performance
           </Link>
@@ -586,7 +586,7 @@ export default function AccountDetailPage() {
                 : undefined
             }
             onClick={() => openTxDeposit()}
-            className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-sm sm:text-xs font-semibold text-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Deposita
           </button>
@@ -599,63 +599,63 @@ export default function AccountDetailPage() {
                 : undefined
             }
             onClick={() => openTxWithdraw()}
-            className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-100 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-sm sm:text-xs font-semibold text-amber-100 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Preleva
           </button>
         </div>
       </div>
 
-      <div className="mb-8 rounded-2xl border border-[#273449] bg-[#111827] p-5 sm:p-6">
+      <div className="mb-8 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 sm:p-6">
         <dl className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               Saldo reale
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${balClass}`}>
               {formatMoney(account.current_balance)} €
             </dd>
-            <dd className="mt-0.5 text-[10px] text-[#64748b]">Saldo conto gioco</dd>
+            <dd className="mt-0.5 text-[15px] text-[#64748b]">Saldo conto gioco</dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               Profitto scommesse
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${profitClass}`}>
               {totalProfit >= 0 ? "+" : ""}
               {formatMoney(totalProfit)} €
             </dd>
-            <dd className="mt-0.5 text-[10px] text-[#64748b]">Somma profit su questo conto</dd>
+            <dd className="mt-0.5 text-[15px] text-[#64748b]">Somma profit su questo conto</dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               ROI conto
             </dt>
             <dd className={`mt-1 text-xl font-bold tabular-nums sm:text-2xl ${roiClass}`}>
               {roiStr}
             </dd>
-            <dd className="mt-0.5 text-[10px] text-[#64748b]">Profit ÷ stake totale</dd>
+            <dd className="mt-0.5 text-[15px] text-[#64748b]">Profit ÷ stake totale</dd>
           </div>
         </dl>
         {account.note ? (
-          <p className="mt-4 text-sm text-[#94a3b8]">{account.note}</p>
+          <p className="mt-4 text-lg sm:text-base sm:text-sm text-[#94a3b8]">{account.note}</p>
         ) : null}
       </div>
 
       <section className="space-y-4" aria-labelledby="pm-section-title">
         <h2
           id="pm-section-title"
-          className="text-xs font-semibold uppercase tracking-[0.2em] text-[#64748b]"
+          className="text-sm sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#64748b]"
         >
           Metodi di pagamento
         </h2>
-        <p className="mt-1 text-[11px] leading-relaxed text-[#64748b]">
+        <p className="mt-1 text-[15px] leading-relaxed text-[#64748b]">
           Elenco per identità (stesso player del conto): usabili su questo conto e sugli altri conti del cliente.
         </p>
 
         {methodsError ? (
           <p
-            className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+            className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
             role="alert"
           >
             {methodsError}
@@ -663,7 +663,7 @@ export default function AccountDetailPage() {
         ) : null}
 
         {methods.length === 0 && !methodsError ? (
-          <p className="rounded-2xl border border-dashed border-[#273449] bg-[#111827]/60 px-4 py-8 text-center text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525]/60 px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
             Nessun metodo di pagamento. Aggiungine uno con il modulo qui sotto.
           </p>
         ) : (
@@ -677,20 +677,20 @@ export default function AccountDetailPage() {
               return (
                 <li
                   key={m.id}
-                  className="rounded-2xl border border-[#273449] bg-[#111827] p-3.5 sm:p-4"
+                  className="rounded-2xl border border-white/[0.08] bg-[#0E1525] p-3.5 sm:p-4"
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-white">{nome}</p>
+                        <p className="text-lg sm:text-base sm:text-sm font-semibold text-white">{nome}</p>
                         {displayTipo ? (
-                          <p className="mt-0.5 text-[11px] text-[#94a3b8]">{displayTipo}</p>
+                          <p className="mt-0.5 text-[15px] text-[#94a3b8]">{displayTipo}</p>
                         ) : null}
-                        <p className={`mt-1 text-base font-bold tabular-nums ${mbClass}`}>
+                        <p className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${mbClass}`}>
                           {formatMoney(m.balance)} €
                         </p>
                         {m.note ? (
-                          <p className="mt-1 text-xs text-[#94a3b8]">{m.note}</p>
+                          <p className="mt-1 text-sm sm:text-xs text-[#94a3b8]">{m.note}</p>
                         ) : null}
                         <p className="mt-1 text-[9px] uppercase tracking-wide text-[#64748b]">
                           Aggiunto{" "}
@@ -705,7 +705,7 @@ export default function AccountDetailPage() {
                       <button
                         type="button"
                         onClick={() => openEditMethod(m)}
-                        className="rounded-lg border border-[#334155] bg-[#1e293b] px-2 py-1 text-[10px] font-semibold text-[#e2e8f0]"
+                        className="rounded-lg border border-white/[0.08] bg-[#1e293b] px-2 py-1 text-[15px] font-semibold text-[#e2e8f0]"
                       >
                         Modifica
                       </button>
@@ -715,21 +715,21 @@ export default function AccountDetailPage() {
                           setDeleteMethodError(null);
                           setDeleteMethodTarget(m);
                         }}
-                        className="rounded-lg border border-red-500/40 bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300"
+                        className="rounded-lg border border-red-500/40 bg-red-500/10 px-2 py-1 text-[15px] font-semibold text-red-300"
                       >
                         Elimina
                       </button>
                       <button
                         type="button"
                         onClick={() => openTxDeposit(m.id)}
-                        className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold text-emerald-200"
+                        className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[15px] font-semibold text-emerald-200"
                       >
                         Deposita
                       </button>
                       <button
                         type="button"
                         onClick={() => openTxWithdraw(m.id)}
-                        className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[10px] font-semibold text-amber-100"
+                        className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[15px] font-semibold text-amber-100"
                       >
                         Preleva
                       </button>
@@ -741,9 +741,9 @@ export default function AccountDetailPage() {
           </ul>
         )}
 
-        <div className="mt-8 rounded-2xl border border-[#273449] bg-[#111827] p-5 sm:p-6">
-          <h3 className="text-sm font-semibold text-white">Nuovo metodo</h3>
-          <p className="mt-1 text-xs text-[#94a3b8]">
+        <div className="mt-8 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 sm:p-6">
+          <h3 className="text-lg sm:text-base sm:text-sm font-semibold text-white">Nuovo metodo</h3>
+          <p className="mt-1 text-sm sm:text-xs text-[#94a3b8]">
             Saldo iniziale e movimenti: anche tramite depositi/prelievi registrati come{" "}
             <span className="font-mono text-[#cbd5e1]">transactions</span>.
           </p>
@@ -752,7 +752,7 @@ export default function AccountDetailPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="pm-nome"
-                className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+                className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
               >
                 Nome
               </label>
@@ -769,7 +769,7 @@ export default function AccountDetailPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="pm-tipo"
-                className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+                className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
               >
                 Tipo
               </label>
@@ -789,7 +789,7 @@ export default function AccountDetailPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="pm-saldo-iniz"
-                className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+                className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
               >
                 Saldo iniziale (€)
               </label>
@@ -805,7 +805,7 @@ export default function AccountDetailPage() {
 
             {formError ? (
               <p
-                className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+                className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fb7185]"
                 role="alert"
               >
                 {formError}
@@ -832,19 +832,19 @@ export default function AccountDetailPage() {
         }}
       >
         <form className="space-y-3" onSubmit={(e) => void handleTxSubmit(e)}>
-          <p className="text-xs text-[#94a3b8]">
+          <p className="text-sm sm:text-xs text-[#94a3b8]">
             Conto:{" "}
             <span className="font-medium text-white">{account.account_name}</span>
           </p>
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               Metodo
             </label>
             <select
               required
               value={txPmId}
               onChange={(e) => setTxPmId(e.target.value)}
-              className="sm-input min-h-10 w-full text-sm"
+              className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
             >
               <option value="">—</option>
               {methods.map((pm) => (
@@ -855,7 +855,7 @@ export default function AccountDetailPage() {
             </select>
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               Importo (€)
             </label>
             <input
@@ -864,12 +864,12 @@ export default function AccountDetailPage() {
               inputMode="decimal"
               required
               placeholder="0,00"
-              className="sm-input min-h-10 w-full text-sm"
+              className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
             />
           </div>
           {txMode === "withdrawal" ? (
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
                 Stato
               </label>
               <select
@@ -877,7 +877,7 @@ export default function AccountDetailPage() {
                 onChange={(e) =>
                   setTxWithdrawStatus(e.target.value as TransactionStatus)
                 }
-                className="sm-input min-h-10 w-full text-sm"
+                className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="completed">Completato</option>
                 <option value="pending">In attesa</option>
@@ -886,19 +886,19 @@ export default function AccountDetailPage() {
             </div>
           ) : null}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
               Note (opzionale)
             </label>
             <input
               value={txNotes}
               onChange={(e) => setTxNotes(e.target.value)}
               placeholder="Riferimento…"
-              className="sm-input min-h-10 w-full text-sm"
+              className="sm-input min-h-11 w-full text-lg sm:min-h-10 sm:text-sm"
             />
           </div>
           {txSaveDisabledByBalance && !txError ? (
             <p
-              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
               role="status"
             >
               {txMode === "deposit"
@@ -908,7 +908,7 @@ export default function AccountDetailPage() {
           ) : null}
           {txError ? (
             <p
-              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
               role="alert"
             >
               {txError}
@@ -921,14 +921,14 @@ export default function AccountDetailPage() {
               onClick={() => {
                 if (!txSubmitting) closeTxModal();
               }}
-              className="h-10 flex-1 rounded-xl border border-[#334155] text-sm text-[#e2e8f0]"
+              className="h-10 flex-1 rounded-xl border border-white/[0.08] text-lg sm:text-base sm:text-sm text-[#e2e8f0]"
             >
               Annulla
             </button>
             <button
               type="submit"
               disabled={txSubmitting || txSaveDisabledByBalance}
-              className="sm-btn-primary h-10 flex-1 text-sm disabled:cursor-not-allowed disabled:opacity-45"
+              className="sm-btn-primary h-10 flex-1 text-lg sm:text-base sm:text-sm disabled:cursor-not-allowed disabled:opacity-45"
             >
               {txSubmitting ? "…" : "Registra"}
             </button>
@@ -948,7 +948,7 @@ export default function AccountDetailPage() {
           <div className="space-y-1.5">
             <label
               htmlFor="pm-edit-nome"
-              className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
             >
               Nome metodo
             </label>
@@ -964,7 +964,7 @@ export default function AccountDetailPage() {
           <div className="space-y-1.5">
             <label
               htmlFor="pm-edit-tipo"
-              className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
             >
               Tipo
             </label>
@@ -984,7 +984,7 @@ export default function AccountDetailPage() {
           <div className="space-y-1.5">
             <label
               htmlFor="pm-edit-saldo"
-              className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
             >
               Saldo corrente (€)
             </label>
@@ -996,14 +996,14 @@ export default function AccountDetailPage() {
               inputMode="decimal"
               className="sm-input"
             />
-            <p className="text-[10px] text-[#64748b]">
+            <p className="text-[15px] text-[#64748b]">
               Aggiorna solo se allinei manualmente; i movimenti su transazioni modificano anche questo saldo.
             </p>
           </div>
           <div className="space-y-1.5">
             <label
               htmlFor="pm-edit-note"
-              className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
             >
               Note
             </label>
@@ -1018,7 +1018,7 @@ export default function AccountDetailPage() {
           </div>
           {editMethodError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fb7185]"
               role="alert"
             >
               {editMethodError}
@@ -1029,7 +1029,7 @@ export default function AccountDetailPage() {
               type="button"
               disabled={editMethodSaving}
               onClick={() => setEditingMethod(null)}
-              className="h-11 flex-1 rounded-xl border border-[#334155] bg-[#111827] text-sm font-semibold text-[#e2e8f0] disabled:opacity-50"
+              className="h-11 flex-1 rounded-xl border border-white/[0.08] bg-[#0E1525] text-lg sm:text-base sm:text-sm font-semibold text-[#e2e8f0] disabled:opacity-50"
             >
               Annulla
             </button>

@@ -282,7 +282,7 @@ function BetStatusBadge({
 }) {
   if (settling) {
     return (
-      <span className="inline-flex h-7 min-w-[3.5rem] items-center justify-center rounded-md border border-white/10 bg-white/5 px-2">
+      <span className="inline-flex h-9 min-w-[4rem] items-center justify-center rounded-md border border-white/10 bg-white/5 px-2 sm:h-7 sm:min-w-[3.5rem]">
         <span
           className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white/90"
           aria-hidden
@@ -293,7 +293,7 @@ function BetStatusBadge({
   const t = tradeStatusDisplay(status);
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-md border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide transition-colors duration-500 ${t.className}`}
+      className={`inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-md border px-4 py-2 text-sm font-bold uppercase tracking-[0.15em] transition-colors duration-500 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${t.className}`}
     >
       {t.label}
     </span>
@@ -432,7 +432,7 @@ function BetTimelineCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-xl border border-white/[0.08] bg-[#0c101c]/75 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_20px_rgba(52,211,153,0.08)] hover:scale-[1.01] active:scale-[0.97] ${flashClass} ${
+      className={`relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_10px_rgba(52,211,153,0.04)] hover:scale-[1.01] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
         settling ? "pointer-events-none opacity-70" : "cursor-pointer touch-pan-y"
       }`}
       aria-label={`Scommessa ${b.event_name || "evento"}`}
@@ -445,23 +445,23 @@ function BetTimelineCard({
         onOpenDetail(b);
       }}
     >
-      <div className="flex min-w-0 flex-col gap-1.5 px-2.5 py-2">
-        <div className="flex items-start justify-between gap-2">
+      <div className="flex min-w-0 flex-col gap-3.5 px-4 py-5 sm:gap-1.5 sm:px-2.5 sm:py-2">
+        <div className="flex items-start justify-between gap-3">
           <time
             dateTime={b.placed_at}
-            className="shrink-0 pt-0.5 text-[10px] font-semibold tabular-nums text-[#94a3b8]"
+            className="shrink-0 pt-0.5 text-base font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
           >
             {timeStr}
           </time>
           <BetStatusBadge status={b.status} settling={settling} />
         </div>
-        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-white">
+        <h3 className="line-clamp-2 text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold sm:leading-snug">
           {b.event_name?.trim() || "—"}
         </h3>
-        <p className="truncate text-[9px] font-medium uppercase tracking-wide text-[#64748b]">
+        <p className="truncate text-base font-medium uppercase tracking-[0.15em] text-[#64748b] sm:text-sm sm:tracking-wide">
           {bookmakerAccountSmall(b)}
         </p>
-        <p className="text-[10px] text-[#94a3b8]">
+        <p className="text-base text-[#94a3b8] sm:text-sm">
           <span className="font-semibold tabular-nums text-white">
             {formatMoney(b.stake)} €
           </span>
@@ -472,7 +472,7 @@ function BetTimelineCard({
           </span>
         </p>
         {showResult ? (
-          <p className={`text-[11px] font-bold tabular-nums ${profitClass}`}>
+          <p className={`text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
             {pnl > 0 ? "+" : ""}
             {formatMoney(b.profit)} €
           </p>
@@ -1144,9 +1144,9 @@ function BetsPageContent() {
   if (!ready) {
     return (
       <AppShell title="Giocate">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#94a3b8]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -1168,7 +1168,7 @@ function BetsPageContent() {
 
       {loadError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {loadError}
@@ -1177,14 +1177,14 @@ function BetsPageContent() {
 
       {refertoError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-sm text-[#fb7185]"
           role="alert"
         >
           Stato scommessa: {refertoError}
         </p>
       ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2.5 backdrop-blur-md">
+      <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -1199,7 +1199,7 @@ function BetsPageContent() {
         <h2 id="bets-analytics-heading" className="sr-only">
           Riepilogo giocate
         </h2>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border border-white/[0.07] bg-[#0c101c]/70 px-3 py-2 text-[11px] backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.07] bg-[#0E1525]/72 px-4 py-3 text-base backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
           <span className="text-[#94a3b8]">
             Giocate{" "}
             <strong className="tabular-nums text-white">
@@ -1233,7 +1233,7 @@ function BetsPageContent() {
       >
         <h2
           id="bets-list-heading"
-          className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]"
+          className="mb-4 text-3xl font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
@@ -1247,48 +1247,48 @@ function BetsPageContent() {
           </div>
         ) : null}
         {bets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[#273449] bg-[#111827]/50 px-3 py-8 text-center text-xs text-[#94a3b8]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525]/50 px-3 py-8 text-center text-sm sm:text-xs text-[#94a3b8]">
             Nessuna giocata. Tocca + per aggiungerne una.
           </p>
         ) : filteredBets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[#273449] bg-[#111827]/50 px-3 py-10 text-center text-xs text-[#64748b]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525]/50 px-3 py-10 text-center text-sm sm:text-xs text-[#64748b]">
             Nessun risultato
           </p>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-10 sm:space-y-8">
             {betGroups.map((month) => (
               <section
                 key={month.monthKey}
-                className="space-y-5"
+                className="space-y-6 sm:space-y-5"
                 aria-labelledby={`bet-month-${month.monthKey}`}
               >
-                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-2">
+                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-3 sm:pb-2">
                   <h3
                     id={`bet-month-${month.monthKey}`}
-                    className="text-sm font-bold capitalize tracking-tight text-white"
+                    className="text-2xl font-bold capitalize tracking-tight text-white sm:text-xl"
                   >
                     {month.monthTitle}
                   </h3>
                   <p
-                    className={`shrink-0 text-xs font-bold tabular-nums ${headerProfitClass(month.profitTotal)}`}
+                    className={`shrink-0 text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
                   >
                     {formatSignedProfitEuro(month.profitTotal)}
                   </p>
                 </header>
 
                 {month.days.map((day) => (
-                  <div key={day.dayKey} className="space-y-3">
-                    <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-2">
-                      <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#94a3b8]">
+                  <div key={day.dayKey} className="space-y-4 sm:space-y-3">
+                    <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-3 sm:pl-2">
+                      <h4 className="text-xl font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
                         {day.dayTitle}
                       </h4>
                       <p
-                        className={`text-[10px] font-bold tabular-nums ${headerProfitClass(day.profitTotal)}`}
+                        className={`text-2xl font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
                       >
                         {formatSignedProfitEuro(day.profitTotal)}
                       </p>
                     </div>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="flex flex-col gap-4 sm:gap-3">
                       {day.bets.map((b) => (
                         <li key={b.id}>
                           <BetTimelineCard
@@ -1328,14 +1328,14 @@ function BetsPageContent() {
         <form onSubmit={(e) => void handleSave(e)} className="space-y-3">
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#94a3b8]">
                 Conto
               </label>
               <select
                 required
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="">—</option>
                 {accounts.map((a) => (
@@ -1349,14 +1349,14 @@ function BetsPageContent() {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#94a3b8]">
                 Staker
               </label>
               <select
                 required
                 value={stakerId}
                 onChange={(e) => setStakerId(e.target.value)}
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="">—</option>
                 {stakers.map((s) => (
@@ -1371,7 +1371,7 @@ function BetsPageContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="event_name"
-              className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
             >
               Nome evento
             </label>
@@ -1387,7 +1387,7 @@ function BetsPageContent() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
                 Quota
               </label>
               <input
@@ -1400,7 +1400,7 @@ function BetsPageContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
                 Stake (€)
               </label>
               <input
@@ -1413,7 +1413,7 @@ function BetsPageContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
                 Stato
               </label>
               <select
@@ -1434,7 +1434,7 @@ function BetsPageContent() {
           oddsNum > 0 &&
           !Number.isNaN(stakeNum) &&
           stakeNum > 0 ? (
-            <p className="text-[11px] text-[#94a3b8]">
+            <p className="text-sm sm:text-xs text-[#94a3b8]">
               Profit{" "}
               <span className={`font-semibold tabular-nums ${profitPreviewClass}`}>
                 {formatMoney(previewProfit)} €
@@ -1444,7 +1444,7 @@ function BetsPageContent() {
 
           {newBetStakeExceedsBalance && !formError ? (
             <p
-              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-xs text-[#fb7185]"
+              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
               role="status"
             >
               Saldo conto insufficiente
@@ -1453,7 +1453,7 @@ function BetsPageContent() {
 
           {formError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-sm text-[#fb7185]"
               role="alert"
             >
               {formError}
@@ -1488,7 +1488,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-account"
-                className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
               >
                 Conto
               </label>
@@ -1497,7 +1497,7 @@ function BetsPageContent() {
                 required
                 value={editGamingAccountId}
                 onChange={(e) => setEditGamingAccountId(e.target.value)}
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="">—</option>
                 {accounts.map((a) => (
@@ -1513,7 +1513,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-staker"
-                className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
               >
                 Staker
               </label>
@@ -1522,7 +1522,7 @@ function BetsPageContent() {
                 required
                 value={editStakerId}
                 onChange={(e) => setEditStakerId(e.target.value)}
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               >
                 <option value="">—</option>
                 {stakers.map((s) => (
@@ -1537,7 +1537,7 @@ function BetsPageContent() {
           <div className="space-y-1">
             <label
               htmlFor="bet-detail-event"
-              className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
             >
               Nome evento
             </label>
@@ -1546,7 +1546,7 @@ function BetsPageContent() {
               value={editEventName}
               onChange={(e) => setEditEventName(e.target.value)}
               required
-              className="sm-input min-h-10 text-sm"
+              className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
             />
           </div>
 
@@ -1554,7 +1554,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-odds"
-                className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
               >
                 Quota
               </label>
@@ -1564,13 +1564,13 @@ function BetsPageContent() {
                 onChange={(e) => setEditOddsStr(e.target.value)}
                 required
                 inputMode="decimal"
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               />
             </div>
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-stake"
-                className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
               >
                 Stake (€)
               </label>
@@ -1580,13 +1580,13 @@ function BetsPageContent() {
                 onChange={(e) => setEditStakeStr(e.target.value)}
                 required
                 inputMode="decimal"
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               />
             </div>
             <div className="space-y-1 sm:col-span-1">
               <label
                 htmlFor="bet-detail-status"
-                className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
               >
                 Stato
               </label>
@@ -1594,7 +1594,7 @@ function BetsPageContent() {
                 id="bet-detail-status"
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value as BetStatus)}
-                className="sm-input min-h-10 text-sm"
+                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -1608,7 +1608,7 @@ function BetsPageContent() {
           <div className="space-y-1">
             <label
               htmlFor="bet-detail-note"
-              className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]"
+              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
             >
               Note (opzionale)
             </label>
@@ -1617,13 +1617,13 @@ function BetsPageContent() {
               value={editNote}
               onChange={(e) => setEditNote(e.target.value)}
               rows={2}
-              className="sm-input min-h-[4rem] resize-y text-sm"
+              className="sm-input min-h-[4rem] resize-y text-lg sm:text-sm"
             />
           </div>
 
           {editError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-sm text-[#fb7185]"
               role="alert"
             >
               {editError}
@@ -1640,7 +1640,7 @@ function BetsPageContent() {
           <button
             type="button"
             disabled={editSaving || settlingBetId === editingBet?.id}
-            className="min-h-12 w-full rounded-2xl border border-red-500/50 bg-red-600/10 text-sm font-bold text-red-200 transition hover:bg-red-600/20 active:scale-[0.99] disabled:opacity-50"
+            className="min-h-12 w-full rounded-2xl border border-red-500/50 bg-red-600/10 text-lg sm:text-sm font-bold text-red-200 transition hover:bg-red-600/20 active:scale-[0.99] disabled:opacity-50"
             onClick={() => {
               if (!editingBet) return;
               const b = editingBet;
@@ -1677,11 +1677,11 @@ function BetsPageContent() {
               const settlingThis = settlingBetId === sb.id;
               return (
                 <div className="space-y-4">
-                  <div className="space-y-2 rounded-xl border border-[#273449] bg-[#111827]/80 px-3 py-3">
-                    <p className="line-clamp-2 text-sm font-semibold leading-snug text-white">
+                  <div className="space-y-2 rounded-xl border border-white/[0.08] bg-[#0E1525]/80 px-3 py-3">
+                    <p className="line-clamp-2 text-lg sm:text-sm font-semibold leading-snug text-white">
                       {sb.event_name?.trim() || "—"}
                     </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#94a3b8]">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-xs text-[#94a3b8]">
                       <span>
                         Stake{" "}
                         <span className="font-semibold tabular-nums text-white">
@@ -1695,7 +1695,7 @@ function BetsPageContent() {
                         </span>
                       </span>
                     </div>
-                    <p className="text-xs text-[#94a3b8]">
+                    <p className="text-sm sm:text-xs text-[#94a3b8]">
                       Profit previsto{" "}
                       <span className={`font-bold tabular-nums ${headerProfitClass}`}>
                         {formatSignedProfitEuro(headerProfit)}
@@ -1717,7 +1717,7 @@ function BetsPageContent() {
                           key={st}
                           type="button"
                           disabled={settlingThis}
-                          className={`flex min-h-14 w-full flex-col items-stretch justify-center rounded-2xl px-4 py-3 text-left text-base font-bold transition disabled:opacity-50 ${sheetButtonClass}`}
+                          className={`flex min-h-14 w-full flex-col items-stretch justify-center rounded-2xl px-4 py-3 text-left text-lg sm:text-base font-bold transition disabled:opacity-50 ${sheetButtonClass}`}
                           onClick={() => {
                             setStatusSheetBet(null);
                             if (sb.status === st) return;
@@ -1726,7 +1726,7 @@ function BetsPageContent() {
                         >
                           <span>{label}</span>
                           <span
-                            className={`mt-0.5 text-xs font-semibold tabular-nums ${rowCls}`}
+                            className={`mt-0.5 text-sm sm:text-xs font-semibold tabular-nums ${rowCls}`}
                           >
                             {formatSignedProfitEuro(rowProfit)}
                           </span>
@@ -1772,9 +1772,9 @@ export default function BetsPage() {
       <Suspense
         fallback={
           <AppShell title="Giocate">
-            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#94a3b8]">
               <div
-                className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+                className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
                 aria-hidden
               />
               <p>Caricamento…</p>

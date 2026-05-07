@@ -6,7 +6,7 @@ export default function ClientiPage() {
       <h1 className="text-2xl font-semibold tracking-tight text-foreground">
         Clienti
       </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-2 text-lg sm:text-base sm:text-sm text-zinc-600 dark:text-zinc-400">
         Creazione e gestione ID clienti — in arrivo.
       </p>
     </AppShell>

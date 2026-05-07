@@ -213,7 +213,7 @@ export default function NuovaScommessaPage() {
   if (!ready) {
     return (
       <AppShell>
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-zinc-500">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-zinc-500">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
           Caricamento…
         </div>
@@ -227,18 +227,18 @@ export default function NuovaScommessaPage() {
         <div>
           <Link
             href="/scommesse"
-            className="text-sm font-medium text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-400"
+            className="text-lg sm:text-base sm:text-sm font-medium text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-400"
           >
             ← Scommesse
           </Link>
-          <h1 className="mt-3 text-xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-xl">
             Nuova scommessa
           </h1>
         </div>
 
         {loadError ? (
           <p
-            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-lg sm:text-base sm:text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
             role="alert"
           >
             {loadError}
@@ -248,14 +248,14 @@ export default function NuovaScommessaPage() {
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <form className="space-y-5" onSubmit={(e) => void handleSubmit(e)}>
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Conto gioco
               </label>
               <select
                 required
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               >
                 <option value="">— Seleziona —</option>
                 {accounts.map((a) => (
@@ -272,14 +272,14 @@ export default function NuovaScommessaPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Staker
               </label>
               <select
                 required
                 value={stakerId}
                 onChange={(e) => setStakerId(e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               >
                 <option value="">— Seleziona —</option>
                 {stakers.map((s) => (
@@ -293,7 +293,7 @@ export default function NuovaScommessaPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="event_name"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300"
               >
                 Nome evento
               </label>
@@ -302,7 +302,7 @@ export default function NuovaScommessaPage() {
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
                 required
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
                 placeholder="Es. Milan — Napoli 1X2"
               />
             </div>
@@ -311,7 +311,7 @@ export default function NuovaScommessaPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="quota"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Quota (decimale)
                 </label>
@@ -321,14 +321,14 @@ export default function NuovaScommessaPage() {
                   onChange={(e) => setOddsStr(e.target.value)}
                   required
                   inputMode="decimal"
-                  className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                  className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
                   placeholder="2,10"
                 />
               </div>
               <div className="space-y-1.5">
                 <label
                   htmlFor="stake"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Stake (€)
                 </label>
@@ -338,20 +338,20 @@ export default function NuovaScommessaPage() {
                   onChange={(e) => setStakeStr(e.target.value)}
                   required
                   inputMode="decimal"
-                  className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                  className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
                   placeholder="10,00"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="block text-lg sm:text-base sm:text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Stato
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as BetStatus)}
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-lg sm:text-base sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               >
                 {BET_STATUSES.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -366,7 +366,7 @@ export default function NuovaScommessaPage() {
             oddsNum > 0 &&
             !Number.isNaN(stakeNum) &&
             stakeNum > 0 ? (
-              <p className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
+              <p className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm sm:text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
                 Profit previsto (allineato al DB):{" "}
                 <span className="font-medium tabular-nums text-zinc-900 dark:text-zinc-100">
                   {formatMoney(previewProfit(status, stakeNum, oddsNum))} €
@@ -379,7 +379,7 @@ export default function NuovaScommessaPage() {
 
             {newBetStakeExceedsBalanceNuova && !formError ? (
               <p
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm sm:text-xs text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
                 role="status"
               >
                 Saldo conto insufficiente
@@ -387,7 +387,7 @@ export default function NuovaScommessaPage() {
             ) : null}
             {formError ? (
               <p
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-lg sm:text-base sm:text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
                 role="alert"
               >
                 {formError}
@@ -395,7 +395,7 @@ export default function NuovaScommessaPage() {
             ) : null}
             {doneMsg ? (
               <p
-                className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-100"
+                className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-lg sm:text-base sm:text-sm text-emerald-900 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-100"
                 role="status"
               >
                 {doneMsg}
@@ -405,7 +405,7 @@ export default function NuovaScommessaPage() {
             <button
               type="submit"
               disabled={submitting || newBetStakeExceedsBalanceNuova}
-              className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-400"
+              className="w-full rounded-lg bg-emerald-600 py-2.5 text-lg sm:text-base sm:text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-400"
             >
               {submitting ? "Salvataggio…" : "Salva scommessa"}
             </button>

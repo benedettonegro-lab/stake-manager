@@ -19,7 +19,7 @@ export type BottomSheetProps = {
 };
 
 /**
- * Bottom sheet premium (stesso comportamento di SheetModal) con animazione entrata.
+ * Modale a pannello (overlay + contenuto centrato) con animazione entrata.
  */
 export function BottomSheet({
   open,
@@ -36,23 +36,23 @@ export function BottomSheet({
 
   return (
     <div
-      className={`fixed inset-0 flex items-end justify-center sm:items-center sm:p-4 ${stackClassName}`}
+      className={`fixed inset-0 flex items-center justify-center ${stackClassName}`}
     >
       <button
         type="button"
         aria-label="Chiudi"
         disabled={dismissDisabled}
-        className="sm-sheet-backdrop absolute inset-0 bg-black/70 backdrop-blur-sm transition enabled:hover:bg-black/80 disabled:cursor-not-allowed"
+        className="sm-sheet-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm transition enabled:hover:bg-black/70 disabled:cursor-not-allowed"
         onClick={() => {
           if (!dismissDisabled) onClose();
         }}
       />
       <div
-        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-full max-w-[430px] flex-col rounded-t-3xl border border-[#273449] bg-[#0c101c]/95 shadow-2xl backdrop-blur-md sm:rounded-2xl ${panelClassName}`}
+        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-[calc(100%-32px)] max-w-[430px] flex-col rounded-2xl border border-white/[0.08] bg-[#0E1525]/95 shadow-2xl backdrop-blur-md ${panelClassName}`}
       >
-        <header className="flex shrink-0 items-start justify-between gap-2 border-b border-[#1f2937]/90 px-4 py-2.5">
+        <header className="flex shrink-0 items-start justify-between gap-2 border-b border-[#1f2937]/90 px-4 py-4 sm:py-2.5">
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-base font-semibold tracking-tight text-white">
+            <h2 className="truncate text-[28px] font-bold leading-tight tracking-tight text-white sm:text-base sm:font-semibold">
               {title}
             </h2>
             {headerExtra ? <div className="mt-2">{headerExtra}</div> : null}
@@ -61,7 +61,7 @@ export function BottomSheet({
             type="button"
             disabled={dismissDisabled}
             onClick={() => onClose()}
-            className="flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-full text-[#94a3b8] transition duration-150 ease-out hover:bg-[#1f2937] hover:text-white hover:shadow-[0_0_12px_rgba(148,163,184,0.2)] active:scale-[0.96] disabled:opacity-40"
+            className="flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-full text-[#94a3b8] transition duration-150 ease-out hover:bg-white/[0.05] hover:text-[#E6EAF2] hover:shadow-[0_0_6px_rgba(148,163,184,0.08)] active:scale-[0.96] disabled:opacity-40"
             aria-label="Chiudi"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -75,7 +75,7 @@ export function BottomSheet({
           </button>
         </header>
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-2.5">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:py-2.5">
             {children}
           </div>
           {footer ? (

@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --sm-bg: #050816;
-  --sm-card: #111827;
-  --sm-card-secondary: #1f2937;
-  --sm-border: #273449;
-  --sm-gradient-from: #5b5cff;
-  --sm-gradient-to: #a855f7;
+  --sm-bg: #070b14;
+  --sm-card: #0e1525;
+  /** Superfici sollevate (input, hover) */
+  --sm-card-secondary: #121b2f;
+  --sm-border: rgba(255, 255, 255, 0.08);
+  /** Accento viola tenue; gradienti brand molto soft */
+  --sm-gradient-from: #3d4558;
+  --sm-gradient-to: #5a4f78;
+  --sm-accent-violet: #a855f7;
   --sm-positive: #34d399;
   --sm-negative: #fb7185;
   --sm-muted: #94a3b8;
-  --sm-text: #f8fafc;
+  --sm-text: #e6eaf2;
   /** Larghezza massima app (desktop centrato); sotto 430px occupa tutta la larghezza */
   --sm-app-max-width: 430px;
   --sm-touch-min: 48px;
@@ -42,12 +45,19 @@ body {
   background-color: var(--sm-bg);
   color: var(--sm-text);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
 }
 
 /* Gradiente primario (testo o bordo) */
 .sm-gradient-text {
-  background: linear-gradient(135deg, var(--sm-gradient-from), var(--sm-gradient-to));
+  background: linear-gradient(
+    135deg,
+    #d1d7e5 0%,
+    #b6b9c9 42%,
+    rgba(168, 133, 247, 0.72) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -58,8 +68,8 @@ body {
   border-radius: 1rem;
   background: linear-gradient(
     135deg,
-    rgba(91, 92, 255, 0.45),
-    rgba(168, 85, 247, 0.35)
+    rgba(168, 133, 247, 0.12),
+    rgba(255, 255, 255, 0.06)
   );
   padding: 1px;
 }
@@ -76,16 +86,36 @@ body {
   border: 1px solid var(--sm-border);
   background: var(--sm-card-secondary);
   padding: 0.75rem 1rem;
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.35;
   color: var(--sm-text);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+@media (max-width: 639.98px) {
+  .sm-input {
+    min-height: 3.75rem;
+    font-size: 1.125rem;
+    padding: 0.9rem 1.15rem;
+  }
+
+  .sm-input::placeholder {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .sm-input {
+    font-size: 1rem;
+    min-height: var(--sm-touch-min);
+    padding: 0.75rem 1rem;
+  }
+}
+
 .sm-input:focus {
-  border-color: rgba(91, 92, 255, 0.6);
-  box-shadow: 0 0 0 3px rgba(91, 92, 255, 0.15);
+  border-color: rgba(168, 133, 247, 0.35);
+  box-shadow: 0 0 0 2px rgba(168, 133, 247, 0.06);
 }
 
 .sm-input::placeholder {
@@ -117,9 +147,19 @@ textarea.sm-input {
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
-  box-shadow: 0 10px 40px -10px rgba(91, 92, 255, 0.45);
+  color: #f8fafc;
+  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.45);
   transition: opacity 0.15s, transform 0.15s;
+}
+
+@media (max-width: 639.98px) {
+  .sm-btn-primary {
+    min-height: 3.25rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    line-height: 1.35;
+    font-weight: 600;
+  }
 }
 
 .sm-btn-primary:hover:not(:disabled) {
@@ -138,7 +178,7 @@ textarea.sm-input {
   min-height: 2.25rem;
   border-radius: 9999px;
   padding: 0 1rem;
-  font-size: 0.75rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   transition:
     transform 0.15s ease,
@@ -149,6 +189,12 @@ textarea.sm-input {
 
 .sm-pill:active:not(:disabled) {
   transform: scale(0.97);
+}
+
+@media (min-width: 640px) {
+  .sm-pill {
+    font-size: 0.75rem;
+  }
 }
 
 @keyframes sm-sheet-backdrop-in {
@@ -163,11 +209,11 @@ textarea.sm-input {
 @keyframes sm-sheet-panel-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
@@ -214,8 +260,8 @@ textarea.sm-input {
   }
   40% {
     box-shadow:
-      inset 0 0 0 1px rgba(52, 211, 153, 0.55),
-      0 0 28px rgba(52, 211, 153, 0.35);
+      inset 0 0 0 1px rgba(52, 211, 153, 0.28),
+      0 0 10px rgba(52, 211, 153, 0.09);
   }
   100% {
     box-shadow: inset 0 0 0 0 transparent;
@@ -228,8 +274,8 @@ textarea.sm-input {
   }
   40% {
     box-shadow:
-      inset 0 0 0 1px rgba(251, 113, 133, 0.55),
-      0 0 28px rgba(251, 113, 133, 0.32);
+      inset 0 0 0 1px rgba(251, 113, 133, 0.28),
+      0 0 10px rgba(251, 113, 133, 0.08);
   }
   100% {
     box-shadow: inset 0 0 0 0 transparent;
@@ -248,5 +294,38 @@ textarea.sm-input {
   .sm-bet-flash-profit,
   .sm-bet-flash-loss {
     animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 18px;
+  }
+
+  body {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 18px !important;
+  }
+
+  .mobile-stat {
+    font-size: 32px !important;
+    font-weight: 800;
+  }
+
+  .mobile-card-title {
+    font-size: 28px !important;
+    font-weight: 700;
+  }
+
+  .mobile-label {
+    font-size: 14px !important;
+    letter-spacing: 0.12em;
   }
 }

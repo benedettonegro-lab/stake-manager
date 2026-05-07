@@ -8,14 +8,19 @@ const items = [
   { href: "/identities", label: "ID", match: ["/identities"] },
   { href: "/accounts", label: "Conti", match: ["/accounts", "/conti"] },
   { href: "/stakers", label: "Staker", match: ["/stakers"] },
-  { href: "/bets", label: "Giocate", match: ["/bets", "/scommesse"] },
+  { href: "/bets", label: "Giocate", match: ["/bets", "/giocate", "/scommesse"] },
   { href: "/altro", label: "Altro", match: ["/altro", "/bookmakers", "/movimenti", "/transactions", "/players", "/clienti"] },
 ] as const;
 
 function IconHome({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <path
         d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-10.5z"
         stroke={c}
@@ -29,7 +34,12 @@ function IconHome({ active }: { active: boolean }) {
 function IconUsers({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <path
         d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
         stroke={c}
@@ -43,7 +53,12 @@ function IconUsers({ active }: { active: boolean }) {
 function IconWallet({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <path
         d="M19 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2M19 7h-4a2 2 0 00-2 2v4a2 2 0 002 2h4M19 7V9a2 2 0 012 2v0a2 2 0 01-2 2"
         stroke={c}
@@ -57,7 +72,12 @@ function IconWallet({ active }: { active: boolean }) {
 function IconTicket({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <path
         d="M3 7h3l2-3h8l2 3h3v10h-3l-2 3H8l-2-3H3V7z"
         stroke={c}
@@ -72,7 +92,12 @@ function IconTicket({ active }: { active: boolean }) {
 function IconStaker({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <path
         d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.5-6.3 4.5 2.3-7-6-4.6h7.6L12 2z"
         stroke={c}
@@ -86,7 +111,12 @@ function IconStaker({ active }: { active: boolean }) {
 function IconMore({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
       <circle cx="6" cy="12" r="1.75" fill={c} />
       <circle cx="12" cy="12" r="1.75" fill={c} />
       <circle cx="18" cy="12" r="1.75" fill={c} />
@@ -101,10 +131,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1e293b] bg-[#080c18]/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.08] bg-[#070B14]/96 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-md sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
       aria-label="Navigazione principale"
     >
-      <div className="sm-app-constrain grid min-h-[50px] grid-cols-6 items-stretch px-0.5">
+      <div className="sm-app-constrain grid min-h-[76px] grid-cols-6 items-stretch px-1 sm:min-h-[50px] sm:px-0.5">
         {items.map((item, i) => {
           const Icon = icons[i];
           const active = item.match.some(
@@ -114,12 +144,12 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex min-h-[48px] min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl py-1 transition duration-150 active:scale-95 ${
+              className={`flex min-h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:py-1 ${
                 active ? "text-[#c4b5fd]" : "text-[#64748b] hover:text-[#cbd5e1]"
               }`}
             >
               <Icon active={active} />
-              <span className="max-w-full truncate px-0.5 text-[8px] font-semibold uppercase tracking-wide">
+              <span className="max-w-full truncate px-0.5 text-[13px] font-semibold uppercase leading-tight tracking-wide sm:text-xs sm:tracking-[0.15em]">
                 {item.label}
               </span>
             </Link>

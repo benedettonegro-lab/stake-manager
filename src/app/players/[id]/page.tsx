@@ -295,12 +295,12 @@ export default function PlayerDetailPage() {
       <AppShell title="Player">
         <Link
           href="/players"
-          className="mb-4 inline-flex min-h-12 items-center text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
         >
           ← Torna ai players
         </Link>
         <p
-          className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-sm text-amber-200"
+          className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-amber-200"
           role="alert"
         >
           ID player non valido.
@@ -312,9 +312,9 @@ export default function PlayerDetailPage() {
   if (!ready) {
     return (
       <AppShell title="Player">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -328,12 +328,12 @@ export default function PlayerDetailPage() {
       <AppShell title="Player">
         <Link
           href="/players"
-          className="mb-4 inline-flex min-h-12 items-center text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
         >
           ← Torna ai players
         </Link>
         <p
-          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {playerError ?? "Player non disponibile."}
@@ -350,21 +350,21 @@ export default function PlayerDetailPage() {
     <AppShell title={player.name} subtitle="Performance e scommesse per periodo.">
       <Link
         href="/players"
-        className="mb-4 inline-flex min-h-12 items-center text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+        className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
       >
         ← Torna ai players
       </Link>
 
       {/* 1. Header player */}
-      <header className="mb-6 rounded-2xl border border-[#273449] bg-[#111827] p-4 shadow-lg shadow-black/20">
-        <h2 className="text-lg font-bold text-white">{player.name}</h2>
+      <header className="mb-6 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/12">
+        <h2 className="text-2xl font-bold text-white sm:text-lg">{player.name}</h2>
         {player.note ? (
-          <p className="mt-2 text-sm leading-relaxed text-[#94a3b8]">{player.note}</p>
+          <p className="mt-2 text-lg sm:text-base sm:text-sm leading-relaxed text-[#94a3b8]">{player.note}</p>
         ) : (
-          <p className="mt-2 text-xs text-[#64748b]">Nessuna nota.</p>
+          <p className="mt-2 text-sm sm:text-xs text-[#64748b]">Nessuna nota.</p>
         )}
         <div className="mt-4 border-t border-[#1f2937] pt-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+          <p className="text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
             Saldo / balance
           </p>
           <p className={`mt-1 text-2xl font-bold tabular-nums ${balClass}`}>
@@ -375,7 +375,7 @@ export default function PlayerDetailPage() {
 
       {/* 2. Filtri data */}
       <section className="mb-5">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+        <p className="mb-2 text-[15px] font-semibold uppercase tracking-wide text-[#64748b]">
           Periodo
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-1">
@@ -386,10 +386,10 @@ export default function PlayerDetailPage() {
                 key={id}
                 type="button"
                 onClick={() => setDatePreset(id)}
-                className={`shrink-0 rounded-full border px-4 py-2.5 text-sm font-semibold transition active:opacity-90 ${
+                className={`shrink-0 rounded-full border px-4 py-2.5 text-lg sm:text-base sm:text-sm font-semibold transition active:opacity-90 ${
                   active
                     ? "border-[#a855f7]/50 bg-[#a855f7]/15 text-[#e9d5ff]"
-                    : "border-[#334155] bg-[#1e293b] text-[#cbd5e1] hover:border-[#475569]"
+                    : "border-white/[0.08] bg-[#1e293b] text-[#cbd5e1] hover:border-white/[0.14]"
                 }`}
               >
                 {label}
@@ -400,7 +400,7 @@ export default function PlayerDetailPage() {
         {datePreset === "custom" ? (
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
                 Dal
               </label>
               <input
@@ -411,7 +411,7 @@ export default function PlayerDetailPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
                 Al
               </label>
               <input
@@ -422,7 +422,7 @@ export default function PlayerDetailPage() {
               />
             </div>
             {(!customFrom || !customTo) && (
-              <p className="text-xs text-[#64748b] sm:col-span-2">
+              <p className="text-sm sm:text-xs text-[#64748b] sm:col-span-2">
                 Seleziona data inizio e fine per applicare il filtro.
               </p>
             )}
@@ -432,7 +432,7 @@ export default function PlayerDetailPage() {
 
       {betsError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {betsError}
@@ -440,34 +440,34 @@ export default function PlayerDetailPage() {
       ) : null}
 
       {/* 3. Riepilogo bilancio periodo */}
-      <section className="mb-6 rounded-2xl border border-[#273449] bg-[#111827] p-4 shadow-lg shadow-black/15">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+      <section className="mb-6 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/10">
+        <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
           Riepilogo periodo
         </h3>
         <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase text-[#64748b]">Profitto</dt>
-            <dd className={`mt-1 text-base font-bold tabular-nums ${toneClass(periodSummary.profit)}`}>
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Profitto</dt>
+            <dd className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${toneClass(periodSummary.profit)}`}>
               {periodSummary.profit >= 0 ? "+" : ""}
               {formatMoney(periodSummary.profit)} €
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase text-[#64748b]">Stake</dt>
-            <dd className="mt-1 text-base font-bold tabular-nums text-white">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Stake</dt>
+            <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {formatMoney(periodSummary.stake)} €
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase text-[#64748b]">Scommesse</dt>
-            <dd className="mt-1 text-base font-bold tabular-nums text-white">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">Scommesse</dt>
+            <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {periodSummary.count}
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
-            <dt className="text-[10px] font-semibold uppercase text-[#64748b]">ROI</dt>
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+            <dt className="text-[15px] font-semibold uppercase text-[#64748b]">ROI</dt>
             <dd
-              className={`mt-1 text-base font-bold tabular-nums ${
+              className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${
                 periodSummary.stake <= 0
                   ? "text-[#94a3b8]"
                   : periodSummary.profit > 0
@@ -486,18 +486,18 @@ export default function PlayerDetailPage() {
       {/* 4. Bilancio per conto gioco */}
       <section className="mb-6">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+          <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
             Per conto gioco
           </h3>
           <Link
             href="/accounts"
-            className="text-xs font-medium text-[#a855f7] underline-offset-4 hover:underline"
+            className="text-sm sm:text-xs font-medium text-[#a855f7] underline-offset-4 hover:underline"
           >
             Conti gioco →
           </Link>
         </div>
         {byAccountRows.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[#273449] bg-[#111827] px-4 py-8 text-center text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
             Nessuna scommessa in questo periodo. I conti si creano in{" "}
             <Link href="/accounts" className="font-medium text-[#a855f7] underline">
               Conti gioco
@@ -520,43 +520,43 @@ export default function PlayerDetailPage() {
                 <li key={row.gaming_account_id}>
                   <Link
                     href={`/accounts/${row.gaming_account_id}`}
-                    className="block rounded-2xl border border-[#273449] bg-[#111827] p-4 shadow-md shadow-black/20 transition hover:border-[#5b5cff]/35 active:opacity-95"
+                    className="block rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/20 transition hover:border-[#a855f7]/22 active:opacity-95"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-semibold text-white">{row.account_name}</p>
                         {row.bookmaker ? (
-                          <p className="mt-0.5 text-xs text-[#64748b]">{row.bookmaker}</p>
+                          <p className="mt-0.5 text-sm sm:text-xs text-[#64748b]">{row.bookmaker}</p>
                         ) : null}
                       </div>
-                      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-[#a855f7]">
+                      <span className="shrink-0 text-[15px] font-medium uppercase tracking-wide text-[#a855f7]">
                         Apri
                       </span>
                     </div>
                     <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <div>
-                        <dt className="text-[10px] uppercase text-[#64748b]">Profitto</dt>
-                        <dd className={`text-sm font-bold tabular-nums ${toneClass(row.profit)}`}>
+                        <dt className="text-[15px] uppercase text-[#64748b]">Profitto</dt>
+                        <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${toneClass(row.profit)}`}>
                           {row.profit >= 0 ? "+" : ""}
                           {formatMoney(row.profit)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[10px] uppercase text-[#64748b]">Stake</dt>
-                        <dd className="text-sm font-bold tabular-nums text-white">
+                        <dt className="text-[15px] uppercase text-[#64748b]">Stake</dt>
+                        <dd className="text-lg sm:text-base sm:text-sm font-bold tabular-nums text-white">
                           {formatMoney(row.stake)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[10px] uppercase text-[#64748b]">N.</dt>
-                        <dd className="text-sm font-bold text-white">{row.count}</dd>
+                        <dt className="text-[15px] uppercase text-[#64748b]">N.</dt>
+                        <dd className="text-lg sm:text-base sm:text-sm font-bold text-white">{row.count}</dd>
                       </div>
                       <div>
-                        <dt className="text-[10px] uppercase text-[#64748b]">ROI</dt>
-                        <dd className={`text-sm font-bold tabular-nums ${roiTone}`}>{roi}</dd>
+                        <dt className="text-[15px] uppercase text-[#64748b]">ROI</dt>
+                        <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${roiTone}`}>{roi}</dd>
                       </div>
                     </dl>
-                    <p className="mt-3 border-t border-[#1f2937] pt-3 text-[11px] text-[#64748b]">
+                    <p className="mt-3 border-t border-[#1f2937] pt-3 text-[15px] text-[#64748b]">
                       Ultima:{" "}
                       <span className="font-medium text-[#cbd5e1]">
                         {formatShortDate(row.lastPlacedAt)}
@@ -574,14 +574,14 @@ export default function PlayerDetailPage() {
 
       {/* 5. Ultime scommesse */}
       <section>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+        <h3 className="mb-3 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
           Ultime scommesse
           <span className="ml-2 font-normal normal-case text-[#64748b]">
             (nel periodo selezionato, max 25)
           </span>
         </h3>
         {latestBets.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[#273449] bg-[#111827] px-4 py-8 text-center text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
             Nessuna scommessa da mostrare.
           </p>
         ) : (
@@ -593,27 +593,27 @@ export default function PlayerDetailPage() {
               return (
                 <li
                   key={b.id}
-                  className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3"
+                  className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className="min-w-0 flex-1 line-clamp-2 text-sm font-medium text-white">
+                    <p className="min-w-0 flex-1 line-clamp-2 text-lg sm:text-base sm:text-sm font-medium text-white">
                       {b.event_name?.trim() || "—"}
                     </p>
                     <span
-                      className={`shrink-0 text-sm font-bold tabular-nums ${pnlClass}`}
+                      className={`shrink-0 text-lg sm:text-base sm:text-sm font-bold tabular-nums ${pnlClass}`}
                     >
                       {pnl >= 0 ? "+" : ""}
                       {formatMoney(b.profit)} €
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[11px] text-[#64748b]">
+                  <p className="mt-1.5 text-[15px] text-[#64748b]">
                     {formatShortDate(b.placed_at)} · {acc}
                     {b.gaming_accounts && gamingAccountBookmakerDisplay(b.gaming_accounts)
                       ? ` · ${gamingAccountBookmakerDisplay(b.gaming_accounts)}`
                       : ""}{" "}
                     · <span className="uppercase">{b.status}</span>
                   </p>
-                  <p className="mt-1 text-[11px] text-[#94a3b8]">
+                  <p className="mt-1 text-[15px] text-[#94a3b8]">
                     Quota {formatMoney(b.odds)} · Stake{" "}
                     {formatMoney(b.stake)} €
                   </p>

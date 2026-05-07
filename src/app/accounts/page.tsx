@@ -67,10 +67,10 @@ const ACCOUNT_STATUS_LABEL: Record<GamingAccountStatus, string> = {
 
 /** Lista conti — glass compatto (allineato a identità) */
 const accListCardClass =
-  "w-full cursor-pointer rounded-xl border border-white/[0.06] bg-[#0f1624]/70 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_28px_rgba(52,211,153,0.14)] hover:scale-[1.02] active:scale-[0.99]";
+  "w-full cursor-pointer rounded-xl border border-white/[0.08] bg-[#0E1525]/72 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_10px_rgba(52,211,153,0.05)] hover:scale-[1.02] active:scale-[0.99]";
 
 const accActionBtnClass =
-  "flex min-h-12 w-full items-center justify-center rounded-xl border text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
+  "flex min-h-12 w-full items-center justify-center rounded-xl border text-lg sm:text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
 
 function parseAmount(s: string): number {
   return Number.parseFloat(s.replace(",", "."));
@@ -424,9 +424,9 @@ export default function AccountsListPage() {
   if (!ready) {
     return (
       <AppShell title="Conti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[18px] text-[#94a3b8] sm:text-sm">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[#5b5cff] border-t-transparent"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -440,14 +440,14 @@ export default function AccountsListPage() {
       <AppShell title="Conti">
         {loadError ? (
           <p
-            className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-sm text-[#fb7185]"
+            className="mb-5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3.5 text-[18px] text-[#fb7185] sm:mb-4 sm:py-3 sm:text-sm"
             role="alert"
           >
             {loadError}
           </p>
         ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-3 mb-2 border-b border-[#1a1f2e] bg-[#050816]/95 px-3 py-2 backdrop-blur-md">
+      <div className="sticky top-14 z-[25] -mx-4 mb-3 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -455,7 +455,7 @@ export default function AccountsListPage() {
         />
       </div>
 
-      <section className="mb-2 grid grid-cols-3 gap-1.5">
+      <section className="mb-4 grid grid-cols-3 gap-2.5 sm:mb-2 sm:gap-1.5">
         <StatPill
           className="!px-2 !py-1.5"
           label="Conti"
@@ -476,7 +476,7 @@ export default function AccountsListPage() {
         />
       </section>
 
-      <div className="mb-2 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-3 sm:mb-2 sm:gap-2">
         <QuickActionButton variant="primary" onClick={() => setCreateOpen(true)}>
           + Conto
         </QuickActionButton>
@@ -498,7 +498,7 @@ export default function AccountsListPage() {
       >
         <form className="grid gap-3" onSubmit={(e) => void handleCreateAccount(e)}>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
               Identità
             </label>
             <select
@@ -515,20 +515,20 @@ export default function AccountsListPage() {
               ))}
             </select>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#0d1321] px-3 py-3">
+          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
             {!createPlayerId ? (
-              <p className="text-xs text-[#94a3b8]">Seleziona identità.</p>
+              <p className="text-sm sm:text-xs text-[#94a3b8]">Seleziona identità.</p>
             ) : methodsPlayerLoading ? (
-              <p className="text-xs text-[#94a3b8]">Caricamento…</p>
+              <p className="text-sm sm:text-xs text-[#94a3b8]">Caricamento…</p>
             ) : (
               <>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                   Conti
                 </p>
                 {accountsForCreatePlayer.length === 0 ? (
-                  <p className="mt-2 text-sm text-[#94a3b8]">Nessun conto ancora per questo player.</p>
+                  <p className="mt-2 text-lg sm:text-sm text-[#94a3b8]">Nessun conto ancora per questo player.</p>
                 ) : (
-                  <ul className="mt-2 space-y-1.5 text-xs text-[#cbd5e1]">
+                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#cbd5e1]">
                     {accountsForCreatePlayer.map((ga) => (
                       <li key={ga.id} className="truncate">
                         {ga.account_name}
@@ -539,13 +539,13 @@ export default function AccountsListPage() {
                     ))}
                   </ul>
                 )}
-                  <p className="mt-4 text-[10px] font-semibold uppercase tracking-wide text-[#64748b]">
+                  <p className="mt-4 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                   Metodi
                 </p>
                 {methodsForSelectedPlayer.length === 0 ? (
-                  <p className="mt-2 text-sm text-[#94a3b8]">Nessun metodo pagamento</p>
+                  <p className="mt-2 text-lg sm:text-sm text-[#94a3b8]">Nessun metodo pagamento</p>
                 ) : (
-                  <ul className="mt-2 space-y-1.5 text-xs text-[#cbd5e1]">
+                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#cbd5e1]">
                     {methodsForSelectedPlayer.map((m) => (
                       <li key={m.id} className="flex justify-between gap-2">
                         <span className="truncate">{paymentMethodTitle(m)}</span>
@@ -561,7 +561,7 @@ export default function AccountsListPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Nome conto
               </label>
               <input
@@ -573,7 +573,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Bookmaker
               </label>
               <select
@@ -590,7 +590,7 @@ export default function AccountsListPage() {
                 ))}
               </select>
               {bookmakers.length === 0 ? (
-                <p className="text-xs text-[#94a3b8]">
+                <p className="text-sm sm:text-xs text-[#94a3b8]">
                   <Link href="/bookmakers" className="text-[#a855f7] underline-offset-2 hover:underline">
                     Aggiungi bookmakers
                   </Link>
@@ -598,7 +598,7 @@ export default function AccountsListPage() {
               ) : null}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Saldo iniziale
               </label>
               <input
@@ -611,7 +611,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Stato conto
               </label>
               <select
@@ -628,7 +628,7 @@ export default function AccountsListPage() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
               Note
             </label>
             <textarea
@@ -641,7 +641,7 @@ export default function AccountsListPage() {
           </div>
           {createError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185]"
+              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-sm text-[#fb7185]"
               role="alert"
             >
               {createError}
@@ -654,19 +654,19 @@ export default function AccountsListPage() {
       </BottomSheet>
 
       <section className="min-w-0">
-        <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+        <h2 className="mb-2 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
           I tuoi conti
         </h2>
         {accounts.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-[#273449] bg-[#0c101c] px-3 py-10 text-center text-xs text-[#94a3b8]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525] px-3 py-10 text-center text-sm sm:text-xs text-[#94a3b8]">
             Nessun conto. Tocca + Conto per aggiungerne uno.
           </p>
         ) : filteredAccounts.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[#273449] bg-[#0c101c] px-3 py-10 text-center text-xs text-[#64748b]">
+          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525] px-3 py-10 text-center text-sm sm:text-xs text-[#64748b]">
             Nessun risultato
           </p>
         ) : (
-          <ul className="flex list-none flex-col gap-2 p-0 pb-2">
+          <ul className="flex list-none flex-col gap-4 p-0 pb-2 sm:gap-2">
             {filteredAccounts.map((a) => {
               const bm = gamingAccountBookmakerDisplay(a);
               const idn = identityNameById.get(a.identity_id) ?? "—";
@@ -682,13 +682,13 @@ export default function AccountsListPage() {
                   <button type="button" onClick={() => setDetailAccount(a)} className={accListCardClass}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1 text-left">
-                        <p className="truncate text-[13px] font-semibold text-white">
+                        <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">
                           {a.account_name}
                           {bm ? (
                             <span className="font-medium text-[#94a3b8]">{` (${bm})`}</span>
                           ) : null}
                         </p>
-                        <p className="mt-1 truncate text-[11px] text-[#64748b]">{idn}</p>
+                        <p className="mt-1 truncate text-sm sm:text-xs text-[#64748b]">{idn}</p>
                       </div>
                       <p
                         className={`shrink-0 text-right text-lg font-bold tabular-nums leading-none tracking-tight sm:text-xl ${balCls}`}
@@ -728,39 +728,39 @@ export default function AccountsListPage() {
               const accIdEnc = encodeURIComponent(a.id);
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.06] bg-[#0f1624]/60 px-3 py-4 text-center backdrop-blur-sm">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-4 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                       Saldo
                     </p>
                     <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
                       {formatMoney(a.current_balance)} €
                     </p>
-                    <p className="mt-2 text-[11px] text-[#94a3b8]">
+                    <p className="mt-2 text-sm sm:text-xs text-[#94a3b8]">
                       {bm ? <span>{bm}</span> : null}
                       {bm ? <span className="text-[#475569]"> · </span> : null}
                       <span>{idn}</span>
                     </p>
-                    <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-[#64748b]">
+                    <p className="mt-1.5 text-sm sm:text-xs font-medium uppercase tracking-wide text-[#64748b]">
                       {ACCOUNT_STATUS_LABEL[st]}
                     </p>
                   </div>
                   <Link
                     href={`/transactions?account=${accIdEnc}&type=deposit`}
-                    className={`${accActionBtnClass} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_18px_rgba(16,185,129,0.22)]`}
+                    className={`${accActionBtnClass} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)]`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Deposita
                   </Link>
                   <Link
                     href={`/transactions?account=${accIdEnc}&type=withdrawal`}
-                    className={`${accActionBtnClass} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_18px_rgba(251,191,36,0.18)]`}
+                    className={`${accActionBtnClass} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)]`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Preleva
                   </Link>
                   <Link
                     href={`/transactions?account=${accIdEnc}`}
-                    className={`${accActionBtnClass} border-[#334155] bg-[#151c2a] text-[#e2e8f0] hover:border-[#475569]`}
+                    className={`${accActionBtnClass} border-white/[0.08] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.14]`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Movimenti
@@ -778,7 +778,7 @@ export default function AccountsListPage() {
                   </button>
                   <button
                     type="button"
-                    className={`${accActionBtnClass} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_14px_rgba(248,113,113,0.15)]`}
+                    className={`${accActionBtnClass} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)]`}
                     onClick={() => {
                       setDetailAccount(null);
                       setDeleteTarget(a);
@@ -803,7 +803,7 @@ export default function AccountsListPage() {
         {editing ? (
           <form className="space-y-4" onSubmit={(e) => void handleSaveEdit(e)}>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Nome conto
               </label>
               <input
@@ -814,7 +814,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Bookmaker
               </label>
               <select
@@ -839,7 +839,7 @@ export default function AccountsListPage() {
               ) : null}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Stato conto
               </label>
               <select
@@ -855,7 +855,7 @@ export default function AccountsListPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
                 Note
               </label>
               <textarea
@@ -866,7 +866,7 @@ export default function AccountsListPage() {
               />
             </div>
             {editError ? (
-              <p className="text-sm text-[#fb7185]" role="alert">
+              <p className="text-lg sm:text-sm text-[#fb7185]" role="alert">
                 {editError}
               </p>
             ) : null}

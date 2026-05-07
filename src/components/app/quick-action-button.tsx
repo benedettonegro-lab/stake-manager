@@ -14,15 +14,15 @@ type QuickActionButtonProps = {
 
 const variants = {
   primary:
-    "border-transparent bg-gradient-to-r from-[#5b5cff] to-[#a855f7] text-white shadow-lg shadow-[#5b5cff]/25",
+    "border-transparent bg-gradient-to-r from-[#3d4558] to-[#5c4d7a] text-white shadow-md shadow-black/25",
   secondary:
-    "border-[#334155] bg-[#1e293b] text-[#e2e8f0] hover:border-[#475569]",
-  ghost: "border-[#273449] bg-transparent text-[#94a3b8] hover:border-[#475569] hover:text-white",
+    "border-white/[0.08] bg-[#121B2F] text-[#E6EAF2] hover:border-white/[0.14]",
+  ghost: "border-white/[0.08] bg-transparent text-[#94a3b8] hover:border-white/[0.14] hover:text-[#E6EAF2]",
   danger: "border-[#fb7185]/40 bg-[#fb7185]/10 text-[#fda4af] hover:bg-[#fb7185]/20",
 } as const;
 
 const base =
-  "inline-flex min-h-10 items-center justify-center rounded-full border px-4 text-xs font-semibold transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45";
+  "inline-flex min-h-[52px] items-center justify-center rounded-full border px-6 py-4 text-lg font-semibold transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 sm:min-h-10 sm:px-4 sm:py-2 sm:text-sm";
 
 export function QuickActionButton({
   children,

@@ -21,13 +21,15 @@ export function AppShell({
   showBrand,
 }: AppShellProps) {
   return (
-    <div className="flex min-h-dvh flex-col bg-[#050816] text-white">
+    <div className="flex min-h-dvh flex-col bg-[#070B14] text-[#E6EAF2]">
       <TopBar title={title} showBrand={showBrand} />
       <main
-        className={`sm-app-constrain flex-1 px-3 pt-3 sm:px-4 sm:pt-4 ${showBottomNav ? "pb-36" : "pb-10"}`}
+        className={`sm-app-constrain flex-1 px-4 pt-5 sm:px-4 sm:pt-4 ${showBottomNav ? "pb-48 sm:pb-36" : "pb-10"}`}
       >
         {subtitle ? (
-          <p className="mb-4 text-sm leading-relaxed text-[#94a3b8]">{subtitle}</p>
+          <p className="mb-5 text-[18px] leading-relaxed text-[#94a3b8] sm:mb-4 sm:text-sm">
+            {subtitle}
+          </p>
         ) : null}
         {children}
       </main>
