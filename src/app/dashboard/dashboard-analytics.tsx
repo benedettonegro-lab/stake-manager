@@ -102,7 +102,7 @@ function topEntry(
 function toneClass(n: number, neutralZero = true): string {
   if (n > 0) return "text-[#34d399]";
   if (n < 0) return "text-red-400";
-  return neutralZero ? "text-[#94a3b8]" : "text-white";
+  return neutralZero ? "text-[#8B93A7]" : "text-white";
 }
 
 export function DashboardAnalytics() {
@@ -240,13 +240,13 @@ export function DashboardAnalytics() {
       ? "text-[#34d399]"
       : roiTone === "negative"
         ? "text-red-400"
-        : "text-[#94a3b8]";
+        : "text-[#8B93A7]";
 
   if (!ready) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 py-12 text-lg sm:text-base text-[#94a3b8] sm:text-sm">
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 py-12 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
         <div
-          className="h-9 w-9 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
+          className="h-9 w-9 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
           aria-hidden
         />
         <p>Caricamento panoramica…</p>
@@ -255,7 +255,7 @@ export function DashboardAnalytics() {
   }
 
   return (
-    <div className="flex flex-col gap-5 pb-3 sm:gap-4 sm:pb-2">
+    <div className="flex flex-col gap-3 pb-2 sm:gap-4 sm:pb-2">
       {error ? (
         <p
           className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[14px] text-[#fb7185] sm:text-sm"
@@ -267,8 +267,8 @@ export function DashboardAnalytics() {
 
       <section aria-label="Cassa totale">
         <div className="sm-gradient-border">
-          <div className="sm-gradient-inner p-4 sm:px-4 sm:py-4">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-widest">
+          <div className="sm-gradient-inner px-3 py-3 sm:p-4">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-widest">
               Cassa totale
             </p>
             <p
@@ -280,7 +280,7 @@ export function DashboardAnalytics() {
         </div>
       </section>
 
-      <section aria-label="Indicatori" className="grid grid-cols-2 gap-3 sm:gap-2">
+      <section aria-label="Indicatori" className="grid grid-cols-2 gap-2 sm:gap-2">
         <StatPill label="Conti gioco" value={`${formatMoney(totals.saldoConti)} €`} />
         <StatPill label="Metodi" value={`${formatMoney(totals.saldoMetodi)} €`} />
         <StatPill
@@ -291,7 +291,7 @@ export function DashboardAnalytics() {
         <StatPill label="ROI" value={totals.roiLabel} tone={roiTone === "positive" ? "positive" : roiTone === "negative" ? "negative" : "default"} />
       </section>
 
-      <div className="flex flex-wrap gap-3 sm:gap-2">
+      <div className="flex flex-wrap gap-2 sm:gap-2">
         <QuickActionButton href="/bets?nuova=1" variant="primary">
           + Giocata
         </QuickActionButton>
@@ -301,23 +301,23 @@ export function DashboardAnalytics() {
       </div>
 
       <section aria-labelledby="dash-recent-heading">
-        <div className="mb-3 flex items-center justify-between gap-2 sm:mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2 sm:mb-2">
           <h2
             id="dash-recent-heading"
-            className="text-[26px] font-bold uppercase leading-tight tracking-wide text-[#64748b] sm:text-2xl sm:font-semibold sm:tracking-widest"
+            className="text-[26px] font-bold uppercase leading-tight tracking-wide text-[#8B93A7] sm:text-2xl sm:font-semibold sm:tracking-widest"
           >
             Ultimi eventi
           </h2>
           <Link
             href="/bets"
-            className="text-[16px] font-semibold text-[#a855f7] transition hover:text-[#c4b5fd] sm:text-sm"
+            className="text-[16px] font-semibold text-[#A970FF] transition hover:text-[#B89EFF] sm:text-sm"
           >
             Tutte
           </Link>
         </div>
-        <ul className="flex flex-col gap-3 sm:gap-2">
+        <ul className="flex flex-col gap-2 sm:gap-2">
           {recentEvents.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-white/[0.08] px-3 py-6 text-center text-[14px] text-[#64748b] sm:py-6 sm:text-sm">
+            <li className="rounded-xl border border-dashed border-white/[0.06] px-3 py-6 text-center text-[14px] text-[#8B93A7] sm:py-6 sm:text-sm">
               Nessuna giocata
             </li>
           ) : (
@@ -329,24 +329,24 @@ export function DashboardAnalytics() {
                 : "Conto";
               return (
                 <li key={b.id}>
-                  <AppCard href={`/bets#${b.id}`} padding="sm" className="!rounded-xl">
+                  <AppCard href={`/bets#${b.id}`} padding="sm">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
                           {b.event_name?.trim() || "Giocata"}
                         </p>
-                        <p className="mt-1.5 truncate text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">{sub}</p>
+                        <p className="mt-1.5 truncate text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">{sub}</p>
                       </div>
                       <span
                         className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
-                          p > 0 ? "text-[#34d399]" : p < 0 ? "text-[#fb7185]" : "text-[#94a3b8]"
+                          p > 0 ? "text-[#34d399]" : p < 0 ? "text-[#fb7185]" : "text-[#8B93A7]"
                         }`}
                       >
                         {p > 0 ? "+" : ""}
                         {formatMoney(p)} €
                       </span>
                     </div>
-                    <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#475569] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
+                    <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#6B7385] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
                       {new Intl.DateTimeFormat("it-IT", {
                         day: "2-digit",
                         month: "short",
@@ -363,10 +363,10 @@ export function DashboardAnalytics() {
         </ul>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 sm:gap-2" aria-label="Best">
+      <section className="grid grid-cols-2 gap-2 sm:gap-2" aria-label="Best">
         {breakdown.topPlayer ? (
           <AppCard href={`/players/${breakdown.topPlayer.id}`} padding="sm">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
             <p className="mt-2 truncate text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
@@ -383,15 +383,15 @@ export function DashboardAnalytics() {
           </AppCard>
         ) : (
           <AppCard padding="sm">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
         {breakdown.topAccount ? (
           <AppCard href={`/accounts/${breakdown.topAccount.id}`} padding="sm">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
             <p className="mt-2 line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
@@ -408,10 +408,10 @@ export function DashboardAnalytics() {
           </AppCard>
         ) : (
           <AppCard padding="sm">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 text-[14px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
       </section>

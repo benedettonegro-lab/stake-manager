@@ -27,7 +27,7 @@ function formatMoney(value: string | number): string {
 function toneClass(n: number): string {
   if (n > 0) return "text-[#34d399]";
   if (n < 0) return "text-[#fb7185]";
-  return "text-[#94a3b8]";
+  return "text-[#8B93A7]";
 }
 
 function formatRoi(totalProfit: number, totalStake: number): string {
@@ -218,7 +218,7 @@ export default function StakersPage() {
   if (!ready) {
     return (
       <AppShell title="Staker">
-        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#8B93A7] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -234,7 +234,7 @@ export default function StakersPage() {
           </p>
         ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+      <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -278,11 +278,11 @@ export default function StakersPage() {
       </BottomSheet>
 
       {rows.length === 0 && !loadError ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[16px] text-[#94a3b8] sm:py-8 sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-[16px] text-[#8B93A7] sm:py-8 sm:text-xs">
           Nessuno staker. Tocca + Staker.
         </p>
       ) : filteredRows.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[16px] text-[#64748b] sm:py-10 sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-12 text-center text-[16px] text-[#8B93A7] sm:py-10 sm:text-xs">
           Nessun risultato
         </p>
       ) : (
@@ -303,12 +303,12 @@ export default function StakersPage() {
             return (
               <li
                 key={s.id}
-                className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525] shadow-sm transition hover:border-white/[0.08]"
+                className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B] shadow-sm transition hover:border-white/[0.06]"
               >
                 <button
                   type="button"
                   onClick={() => openEdit(s)}
-                  className="w-full px-4 pb-4 pt-4 text-left transition active:bg-[#0E1525]/80 sm:px-3 sm:pb-2 sm:pt-3"
+                  className="w-full px-3 pb-3 pt-3 text-left transition active:bg-[#11182B]/80 sm:px-3 sm:pb-2 sm:pt-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -316,7 +316,7 @@ export default function StakersPage() {
                         {s.name}
                       </p>
                       {locked ? (
-                        <p className="mt-1 text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:mt-0.5 sm:text-xs sm:font-normal sm:tracking-normal sm:normal-case">
+                        <p className="mt-1 text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:mt-0.5 sm:text-xs sm:font-normal sm:tracking-normal sm:normal-case">
                           Legato identità
                         </p>
                       ) : null}
@@ -325,7 +325,7 @@ export default function StakersPage() {
                       {formatMoney(s.balance)} €
                     </p>
                   </div>
-                  <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-2 sm:gap-1.5">
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-2 sm:gap-1.5">
                     <StatPill label="Giocate" value={String(g.count)} />
                     <StatPill
                       label="P/L"
@@ -337,7 +337,7 @@ export default function StakersPage() {
                     <StatPill label="ROI" value={roi} tone={roiTone} />
                   </div>
                 </button>
-                <div className="flex flex-wrap gap-2 border-t border-[#1a2230] px-4 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
+                <div className="flex flex-wrap gap-2 border-t border-[#141C2A] px-4 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
                   <QuickActionButton
                     onClick={() => openEdit(s)}
                     variant="ghost"
@@ -391,7 +391,7 @@ export default function StakersPage() {
               type="button"
               disabled={editSaving}
               onClick={() => setEditing(null)}
-              className="flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-white/[0.08] text-[16px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
+              className="flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-white/[0.06] text-[16px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
             >
               Annulla
             </button>

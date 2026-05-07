@@ -158,13 +158,13 @@ function BankrollTooltip({
   const pos = row.bankroll >= 0;
   return (
     <div
-      className="rounded-xl border border-white/[0.08] px-3 py-2.5 shadow-md shadow-black/20"
+      className="rounded-xl border border-white/[0.06] px-3 py-2.5 shadow-md shadow-black/20"
       style={{
         backgroundColor: "rgba(17, 24, 39, 0.96)",
         backdropFilter: "blur(8px)",
       }}
     >
-      <p className="text-[14px] font-medium text-[#94a3b8]">{dateStr}</p>
+      <p className="text-[14px] font-medium text-[#8B93A7]">{dateStr}</p>
       <p
         className="mt-1 text-lg sm:text-base sm:text-sm font-semibold tabular-nums"
         style={{ color: pos ? GREEN : RED }}
@@ -172,7 +172,7 @@ function BankrollTooltip({
         Bankroll {row.bankroll >= 0 ? "+" : ""}
         {formatMoney(row.bankroll)} €
       </p>
-      <p className="mt-1 text-[14px] tabular-nums text-[#64748b]">
+      <p className="mt-1 text-[14px] tabular-nums text-[#8B93A7]">
         Δ profit {row.delta >= 0 ? "+" : ""}
         {formatMoney(row.delta)} €
       </p>
@@ -217,7 +217,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
   if (fullSeries.length === 0) {
     return (
       <div
-        className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-white/[0.08] bg-transparent px-4 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]"
+        className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-white/[0.06] bg-transparent px-4 text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]"
         role="status"
       >
         Nessun dato disponibile
@@ -226,12 +226,12 @@ export function BankrollChart({ bets }: BankrollChartProps) {
   }
 
   return (
-    <div className="w-full rounded-2xl border border-white/[0.08] bg-transparent px-1 pb-1 pt-3 sm:px-2">
+    <div className="w-full rounded-2xl border border-white/[0.06] bg-transparent px-1 pb-1 pt-3 sm:px-2">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-        <p className="text-[14px] font-semibold uppercase tracking-[0.2em] text-[#64748b]">
+        <p className="text-[14px] font-semibold uppercase tracking-[0.2em] text-[#8B93A7]">
           Periodo
         </p>
-        <div className="flex gap-1 rounded-xl border border-white/[0.08] bg-[#121B2F] p-1">
+        <div className="flex gap-1 rounded-xl border border-white/[0.06] bg-[#131C31] p-1">
           {PERIOD_OPTIONS.map((opt) => (
             <button
               key={opt.id}
@@ -239,8 +239,8 @@ export function BankrollChart({ bets }: BankrollChartProps) {
               onClick={() => setPeriod(opt.id)}
               className={`rounded-lg px-3 py-1.5 text-sm sm:text-xs font-semibold transition-colors ${
                 period === opt.id
-                  ? "bg-[#151d2e] text-white shadow-sm"
-                  : "text-[#94a3b8] hover:text-white"
+                  ? "bg-[#131C31] text-white shadow-sm"
+                  : "text-[#8B93A7] hover:text-white"
               }`}
             >
               {opt.label}
@@ -273,7 +273,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
             domain={["dataMin", "dataMax"]}
             scale="time"
             tick={{
-              fill: "#94a3b8",
+              fill: "#8B93A7",
               fontSize: 10,
             }}
             tickLine={false}
@@ -290,7 +290,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
             dataKey="bankroll"
             domain={yDomain}
             tick={{
-              fill: "#94a3b8",
+              fill: "#8B93A7",
               fontSize: 10,
             }}
             tickLine={false}
@@ -298,7 +298,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
             tickFormatter={(v: number) => `${formatMoney(v)}`}
             width={56}
           />
-          <ReferenceLine y={0} stroke="#475569" strokeDasharray="4 4" />
+          <ReferenceLine y={0} stroke="#6B7385" strokeDasharray="4 4" />
           <Tooltip
             content={<BankrollTooltip />}
             cursor={{
@@ -323,7 +323,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
             strokeWidth={2.5}
             dot={{
               r: 4,
-              fill: "#070B14",
+              fill: "#0A1020",
               stroke,
               strokeWidth: 2,
             }}
@@ -331,7 +331,7 @@ export function BankrollChart({ bets }: BankrollChartProps) {
               r: 6,
               stroke,
               strokeWidth: 2,
-              fill: "#070B14",
+              fill: "#0A1020",
             }}
             isAnimationActive
             animationDuration={600}

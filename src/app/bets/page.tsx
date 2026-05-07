@@ -219,7 +219,7 @@ function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
 function headerProfitClass(n: number): string {
   if (n > 0) return "text-[#34d399]";
   if (n < 0) return "text-[#fb7185]";
-  return "text-[#94a3b8]";
+  return "text-[#8B93A7]";
 }
 
 function formatSignedProfitEuro(n: number): string {
@@ -245,30 +245,30 @@ function tradeStatusDisplay(status: BetStatus): { label: string; className: stri
       return {
         label: "VINTA",
         className:
-          "border-emerald-500/45 bg-emerald-500/15 text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.18)]",
+          "border-emerald-500/45 bg-emerald-500/15 text-emerald-300 shadow-sm",
       };
     case "lost":
       return {
         label: "PERSA",
         className:
-          "border-red-500/45 bg-red-500/12 text-red-200 shadow-[0_0_12px_rgba(248,113,113,0.15)]",
+          "border-red-500/45 bg-red-500/12 text-red-200 shadow-sm",
       };
     case "open":
       return {
         label: "APERTA",
-        className: "border-white/[0.12] bg-white/[0.06] text-[#cbd5e1]",
+        className: "border-white/[0.12] bg-white/[0.06] text-[#B4BCCC]",
       };
     case "void":
       return {
         label: "PUSH",
         className:
-          "border-sky-500/45 bg-sky-600/20 text-sky-200 shadow-[0_0_12px_rgba(56,189,248,0.2)]",
+          "border-sky-500/45 bg-sky-600/20 text-sky-200 shadow-sm",
       };
     default:
       return {
         label: "CASH",
         className:
-          "border-amber-500/40 bg-amber-500/10 text-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.12)]",
+          "border-amber-500/40 bg-amber-500/10 text-amber-200 shadow-sm",
       };
   }
 }
@@ -363,7 +363,7 @@ function BetTimelineCard({
       ? "text-[#34d399]"
       : pnl < 0
         ? "text-[#fb7185]"
-        : "text-[#94a3b8]";
+        : "text-[#8B93A7]";
   const showResult = b.status !== "open";
   const flashClass =
     flash === "profit" ? "sm-bet-flash-profit" : flash === "loss" ? "sm-bet-flash-loss" : "";
@@ -432,7 +432,7 @@ function BetTimelineCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_10px_rgba(52,211,153,0.04)] hover:scale-[1.01] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
+      className={`relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#11182B]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_6px_rgba(52,211,153,0.03)] hover:scale-[1.005] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
         settling ? "pointer-events-none opacity-70" : "cursor-pointer touch-pan-y"
       }`}
       aria-label={`Scommessa ${b.event_name || "evento"}`}
@@ -445,11 +445,11 @@ function BetTimelineCard({
         onOpenDetail(b);
       }}
     >
-      <div className="flex min-w-0 flex-col gap-2.5 px-4 py-4 sm:gap-1.5 sm:px-2.5 sm:py-2">
+      <div className="flex min-w-0 flex-col gap-2 px-3 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
         <div className="flex items-start justify-between gap-3">
           <time
             dateTime={b.placed_at}
-            className="shrink-0 pt-0.5 text-[14px] font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
+            className="shrink-0 pt-0.5 text-[14px] font-semibold tabular-nums text-[#8B93A7] sm:text-sm"
           >
             {timeStr}
           </time>
@@ -458,14 +458,14 @@ function BetTimelineCard({
         <h3 className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
           {b.event_name?.trim() || "—"}
         </h3>
-        <p className="truncate text-[12px] font-medium uppercase tracking-[0.14em] text-[#64748b] sm:text-sm sm:tracking-wide">
+        <p className="truncate text-[12px] font-medium uppercase tracking-[0.14em] text-[#8B93A7] sm:text-sm sm:tracking-wide">
           {bookmakerAccountSmall(b)}
         </p>
-        <p className="text-[16px] text-[#94a3b8] sm:text-sm">
+        <p className="text-[16px] text-[#8B93A7] sm:text-sm">
           <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">
             {formatMoney(b.stake)} €
           </span>
-          <span className="mx-1.5 text-[#475569]">·</span>
+          <span className="mx-1.5 text-[#6B7385]">·</span>
           <span>
             quota{" "}
             <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">{formatMoney(b.odds)}</span>
@@ -725,7 +725,7 @@ function BetsPageContent() {
       ? "text-[#34d399]"
       : roiTone === "negative"
         ? "text-[#fb7185]"
-        : "text-[#94a3b8]";
+        : "text-[#8B93A7]";
 
   const oddsNum = Number.parseFloat(oddsStr.replace(",", "."));
   const stakeNum = Number.parseFloat(stakeStr.replace(",", "."));
@@ -1144,9 +1144,9 @@ function BetsPageContent() {
   if (!ready) {
     return (
       <AppShell title="Giocate">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#8B93A7]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -1161,7 +1161,7 @@ function BetsPageContent() {
       ? "text-[#34d399]"
       : previewProfit < 0
         ? "text-[#fb7185]"
-        : "text-[#94a3b8]";
+        : "text-[#8B93A7]";
 
   return (
     <AppShell title="Giocate">
@@ -1184,7 +1184,7 @@ function BetsPageContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+      <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -1199,17 +1199,17 @@ function BetsPageContent() {
         <h2 id="bets-analytics-heading" className="sr-only">
           Riepilogo giocate
         </h2>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.07] bg-[#0E1525]/72 px-3 py-2.5 text-[16px] backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
-          <span className="text-[#94a3b8]">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.06] bg-[#11182B]/72 px-3 py-2.5 text-[16px] backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
+          <span className="text-[#8B93A7]">
             Giocate{" "}
             <strong className="whitespace-nowrap tabular-nums text-[#E6EAF2]">
               {new Intl.NumberFormat("it-IT").format(stats.count)}
             </strong>
           </span>
-          <span className="text-[#475569]" aria-hidden>
+          <span className="text-[#6B7385]" aria-hidden>
             ·
           </span>
-          <span className="text-[#94a3b8]">
+          <span className="text-[#8B93A7]">
             Profit{" "}
             <strong
               className={`whitespace-nowrap tabular-nums ${headerProfitClass(stats.totalProfit)}`}
@@ -1217,10 +1217,10 @@ function BetsPageContent() {
               {formatSignedProfitEuro(stats.totalProfit)}
             </strong>
           </span>
-          <span className="text-[#475569]" aria-hidden>
+          <span className="text-[#6B7385]" aria-hidden>
             ·
           </span>
-          <span className="text-[#94a3b8]">
+          <span className="text-[#8B93A7]">
             ROI{" "}
             <strong className={`whitespace-nowrap tabular-nums ${roiTextClass}`}>{roiStr}</strong>
           </span>
@@ -1228,17 +1228,17 @@ function BetsPageContent() {
       </section>
 
       <section
-        className="mb-6 w-full max-w-[420px] px-0 sm:mx-auto"
+        className="mb-4 w-full max-w-[420px] px-0 sm:mx-auto"
         aria-labelledby="bets-list-heading"
       >
         <h2
           id="bets-list-heading"
-          className="mb-3 text-[26px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
+          className="mb-2 text-[26px] font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
         {accounts.length > 0 ? (
-          <div className="mb-3">
+          <div className="mb-2">
             <FilterChips
               items={accountFilterChips}
               value={filterAccountId}
@@ -1247,22 +1247,22 @@ function BetsPageContent() {
           </div>
         ) : null}
         {bets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525]/50 px-3 py-8 text-center text-sm sm:text-xs text-[#94a3b8]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-3 py-8 text-center text-sm sm:text-xs text-[#8B93A7]">
             Nessuna giocata. Tocca + per aggiungerne una.
           </p>
         ) : filteredBets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525]/50 px-3 py-10 text-center text-sm sm:text-xs text-[#64748b]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
             Nessun risultato
           </p>
         ) : (
-          <div className="space-y-10 sm:space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {betGroups.map((month) => (
               <section
                 key={month.monthKey}
-                className="space-y-6 sm:space-y-5"
+                className="space-y-4 sm:space-y-5"
                 aria-labelledby={`bet-month-${month.monthKey}`}
               >
-                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-3 sm:pb-2">
+                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2">
                   <h3
                     id={`bet-month-${month.monthKey}`}
                     className="text-[20px] font-bold capitalize tracking-tight text-[#E6EAF2] sm:text-xl"
@@ -1277,9 +1277,9 @@ function BetsPageContent() {
                 </header>
 
                 {month.days.map((day) => (
-                  <div key={day.dayKey} className="space-y-4 sm:space-y-3">
+                  <div key={day.dayKey} className="space-y-3 sm:space-y-3">
                     <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-3 sm:pl-2">
-                      <h4 className="text-[14px] font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
+                      <h4 className="text-[14px] font-bold uppercase tracking-wide text-[#8B93A7] sm:text-lg">
                         {day.dayTitle}
                       </h4>
                       <p
@@ -1288,7 +1288,7 @@ function BetsPageContent() {
                         {formatSignedProfitEuro(day.profitTotal)}
                       </p>
                     </div>
-                    <ul className="flex flex-col gap-4 sm:gap-3">
+                    <ul className="flex flex-col gap-2.5 sm:gap-3">
                       {day.bets.map((b) => (
                         <li key={b.id}>
                           <BetTimelineCard
@@ -1325,10 +1325,10 @@ function BetsPageContent() {
         }}
         dismissDisabled={submitting}
       >
-        <form onSubmit={(e) => void handleSave(e)} className="space-y-3">
+        <form onSubmit={(e) => void handleSave(e)} className="space-y-2 sm:space-y-3">
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#8B93A7]">
                 Conto
               </label>
               <select
@@ -1349,7 +1349,7 @@ function BetsPageContent() {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#8B93A7]">
                 Staker
               </label>
               <select
@@ -1371,7 +1371,7 @@ function BetsPageContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="event_name"
-              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]"
             >
               Nome evento
             </label>
@@ -1387,7 +1387,7 @@ function BetsPageContent() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                 Quota
               </label>
               <input
@@ -1400,7 +1400,7 @@ function BetsPageContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                 Stake (€)
               </label>
               <input
@@ -1413,7 +1413,7 @@ function BetsPageContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                 Stato
               </label>
               <select
@@ -1434,7 +1434,7 @@ function BetsPageContent() {
           oddsNum > 0 &&
           !Number.isNaN(stakeNum) &&
           stakeNum > 0 ? (
-            <p className="text-sm sm:text-xs text-[#94a3b8]">
+            <p className="text-sm sm:text-xs text-[#8B93A7]">
               Profit{" "}
               <span className={`font-semibold tabular-nums ${profitPreviewClass}`}>
                 {formatMoney(previewProfit)} €
@@ -1483,12 +1483,12 @@ function BetsPageContent() {
           }
         }}
       >
-        <form className="space-y-3" onSubmit={(e) => void handleSaveBetEdit(e)}>
+        <form className="space-y-2 sm:space-y-3" onSubmit={(e) => void handleSaveBetEdit(e)}>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-account"
-                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
               >
                 Conto
               </label>
@@ -1513,7 +1513,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-staker"
-                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
               >
                 Staker
               </label>
@@ -1537,7 +1537,7 @@ function BetsPageContent() {
           <div className="space-y-1">
             <label
               htmlFor="bet-detail-event"
-              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
             >
               Nome evento
             </label>
@@ -1554,7 +1554,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-odds"
-                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
               >
                 Quota
               </label>
@@ -1570,7 +1570,7 @@ function BetsPageContent() {
             <div className="space-y-1">
               <label
                 htmlFor="bet-detail-stake"
-                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
               >
                 Stake (€)
               </label>
@@ -1586,7 +1586,7 @@ function BetsPageContent() {
             <div className="space-y-1 sm:col-span-1">
               <label
                 htmlFor="bet-detail-status"
-                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+                className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
               >
                 Stato
               </label>
@@ -1608,7 +1608,7 @@ function BetsPageContent() {
           <div className="space-y-1">
             <label
               htmlFor="bet-detail-note"
-              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]"
+              className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]"
             >
               Note (opzionale)
             </label>
@@ -1673,15 +1673,15 @@ function BetsPageContent() {
                   ? "text-[#34d399]"
                   : headerProfit < 0
                     ? "text-[#fb7185]"
-                    : "text-[#94a3b8]";
+                    : "text-[#8B93A7]";
               const settlingThis = settlingBetId === sb.id;
               return (
                 <div className="space-y-4">
-                  <div className="space-y-2 rounded-xl border border-white/[0.08] bg-[#0E1525]/80 px-3 py-3">
+                  <div className="space-y-2 rounded-xl border border-white/[0.06] bg-[#11182B]/80 px-3 py-3">
                     <p className="line-clamp-2 text-lg sm:text-sm font-semibold leading-snug text-white">
                       {sb.event_name?.trim() || "—"}
                     </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-xs text-[#94a3b8]">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-xs text-[#8B93A7]">
                       <span>
                         Stake{" "}
                         <span className="font-semibold tabular-nums text-white">
@@ -1695,7 +1695,7 @@ function BetsPageContent() {
                         </span>
                       </span>
                     </div>
-                    <p className="text-sm sm:text-xs text-[#94a3b8]">
+                    <p className="text-sm sm:text-xs text-[#8B93A7]">
                       Profit previsto{" "}
                       <span className={`font-bold tabular-nums ${headerProfitClass}`}>
                         {formatSignedProfitEuro(headerProfit)}
@@ -1772,9 +1772,9 @@ export default function BetsPage() {
       <Suspense
         fallback={
           <AppShell title="Giocate">
-            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#94a3b8]">
+            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#8B93A7]">
               <div
-                className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
+                className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
                 aria-hidden
               />
               <p>Caricamento…</p>

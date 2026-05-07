@@ -67,7 +67,7 @@ const ACCOUNT_STATUS_LABEL: Record<GamingAccountStatus, string> = {
 
 /** Lista conti — glass compatto (allineato a identità) */
 const accListCardClass =
-  "w-full cursor-pointer rounded-xl border border-white/[0.08] bg-[#0E1525]/72 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_10px_rgba(52,211,153,0.05)] hover:scale-[1.02] active:scale-[0.99]";
+  "w-full cursor-pointer rounded-xl border border-white/[0.06] bg-[#11182B]/72 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.02] active:scale-[0.99]";
 
 const accActionBtnClass =
   "flex min-h-12 w-full items-center justify-center rounded-xl border text-lg sm:text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
@@ -424,9 +424,9 @@ export default function AccountsListPage() {
   if (!ready) {
     return (
       <AppShell title="Conti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[16px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[16px] text-[#8B93A7] sm:text-sm">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -447,7 +447,7 @@ export default function AccountsListPage() {
           </p>
         ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-4 mb-3 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
+      <div className="sticky top-12 z-[25] -mx-3 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -498,7 +498,7 @@ export default function AccountsListPage() {
       >
         <form className="grid gap-3" onSubmit={(e) => void handleCreateAccount(e)}>
           <div className="space-y-1.5">
-            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
               Identità
             </label>
             <select
@@ -515,20 +515,20 @@ export default function AccountsListPage() {
               ))}
             </select>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
+          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
             {!createPlayerId ? (
-              <p className="text-sm sm:text-xs text-[#94a3b8]">Seleziona identità.</p>
+              <p className="text-sm sm:text-xs text-[#8B93A7]">Seleziona identità.</p>
             ) : methodsPlayerLoading ? (
-              <p className="text-sm sm:text-xs text-[#94a3b8]">Caricamento…</p>
+              <p className="text-sm sm:text-xs text-[#8B93A7]">Caricamento…</p>
             ) : (
               <>
-                <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                   Conti
                 </p>
                 {accountsForCreatePlayer.length === 0 ? (
-                  <p className="mt-2 text-lg sm:text-sm text-[#94a3b8]">Nessun conto ancora per questo player.</p>
+                  <p className="mt-2 text-lg sm:text-sm text-[#8B93A7]">Nessun conto ancora per questo player.</p>
                 ) : (
-                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#cbd5e1]">
+                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#B4BCCC]">
                     {accountsForCreatePlayer.map((ga) => (
                       <li key={ga.id} className="truncate">
                         {ga.account_name}
@@ -539,17 +539,17 @@ export default function AccountsListPage() {
                     ))}
                   </ul>
                 )}
-                  <p className="mt-4 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                  <p className="mt-4 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                   Metodi
                 </p>
                 {methodsForSelectedPlayer.length === 0 ? (
-                  <p className="mt-2 text-lg sm:text-sm text-[#94a3b8]">Nessun metodo pagamento</p>
+                  <p className="mt-2 text-lg sm:text-sm text-[#8B93A7]">Nessun metodo pagamento</p>
                 ) : (
-                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#cbd5e1]">
+                  <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#B4BCCC]">
                     {methodsForSelectedPlayer.map((m) => (
                       <li key={m.id} className="flex justify-between gap-2">
                         <span className="truncate">{paymentMethodTitle(m)}</span>
-                        <span className="shrink-0 tabular-nums text-[#94a3b8]">
+                        <span className="shrink-0 tabular-nums text-[#8B93A7]">
                           {formatMoney(m.balance)} €
                         </span>
                       </li>
@@ -561,7 +561,7 @@ export default function AccountsListPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Nome conto
               </label>
               <input
@@ -573,7 +573,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Bookmaker
               </label>
               <select
@@ -590,15 +590,15 @@ export default function AccountsListPage() {
                 ))}
               </select>
               {bookmakers.length === 0 ? (
-                <p className="text-sm sm:text-xs text-[#94a3b8]">
-                  <Link href="/bookmakers" className="text-[#a855f7] underline-offset-2 hover:underline">
+                <p className="text-sm sm:text-xs text-[#8B93A7]">
+                  <Link href="/bookmakers" className="text-[#A970FF] underline-offset-2 hover:underline">
                     Aggiungi bookmakers
                   </Link>
                 </p>
               ) : null}
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Saldo iniziale
               </label>
               <input
@@ -611,7 +611,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Stato conto
               </label>
               <select
@@ -628,7 +628,7 @@ export default function AccountsListPage() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
               Note
             </label>
             <textarea
@@ -654,15 +654,15 @@ export default function AccountsListPage() {
       </BottomSheet>
 
       <section className="min-w-0">
-        <h2 className="mb-2 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+        <h2 className="mb-2 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7]">
           I tuoi conti
         </h2>
         {accounts.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525] px-3 py-10 text-center text-sm sm:text-xs text-[#94a3b8]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B] px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
             Nessun conto. Tocca + Conto per aggiungerne uno.
           </p>
         ) : filteredAccounts.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] bg-[#0E1525] px-3 py-10 text-center text-sm sm:text-xs text-[#64748b]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B] px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
             Nessun risultato
           </p>
         ) : (
@@ -675,7 +675,7 @@ export default function AccountsListPage() {
                 bal > 0
                   ? "text-emerald-400"
                   : bal === 0
-                    ? "text-[#94a3b8]"
+                    ? "text-[#8B93A7]"
                     : "text-[#fb7185]";
               return (
                 <li key={a.id} className="min-w-0">
@@ -685,10 +685,10 @@ export default function AccountsListPage() {
                         <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">
                           {a.account_name}
                           {bm ? (
-                            <span className="font-medium text-[#94a3b8]">{` (${bm})`}</span>
+                            <span className="font-medium text-[#8B93A7]">{` (${bm})`}</span>
                           ) : null}
                         </p>
-                        <p className="mt-1 truncate text-sm sm:text-xs text-[#64748b]">{idn}</p>
+                        <p className="mt-1 truncate text-sm sm:text-xs text-[#8B93A7]">{idn}</p>
                       </div>
                       <p
                         className={`shrink-0 text-right text-lg font-bold tabular-nums leading-none tracking-tight sm:text-xl ${balCls}`}
@@ -720,54 +720,54 @@ export default function AccountsListPage() {
               const bal = Number.parseFloat(a.current_balance) || 0;
               const balCls =
                 bal > 0
-                  ? "text-emerald-400 drop-shadow-[0_0_18px_rgba(52,211,153,0.35)]"
+                  ? "text-emerald-400"
                   : bal === 0
-                    ? "text-[#94a3b8]"
+                    ? "text-[#8B93A7]"
                     : "text-[#fb7185]";
               const st = a.account_status ?? "active";
               const accIdEnc = encodeURIComponent(a.id);
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-4 text-center backdrop-blur-sm">
-                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-4 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7]">
                       Saldo
                     </p>
                     <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(a.current_balance)} €
                     </p>
-                    <p className="mt-2 text-sm sm:text-xs text-[#94a3b8]">
+                    <p className="mt-2 text-sm sm:text-xs text-[#8B93A7]">
                       {bm ? <span>{bm}</span> : null}
-                      {bm ? <span className="text-[#475569]"> · </span> : null}
+                      {bm ? <span className="text-[#6B7385]"> · </span> : null}
                       <span>{idn}</span>
                     </p>
-                    <p className="mt-1.5 text-sm sm:text-xs font-medium uppercase tracking-wide text-[#64748b]">
+                    <p className="mt-1.5 text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                       {ACCOUNT_STATUS_LABEL[st]}
                     </p>
                   </div>
                   <Link
                     href={`/transactions?account=${accIdEnc}&type=deposit`}
-                    className={`${accActionBtnClass} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)]`}
+                    className={`${accActionBtnClass} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-sm`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Deposita
                   </Link>
                   <Link
                     href={`/transactions?account=${accIdEnc}&type=withdrawal`}
-                    className={`${accActionBtnClass} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)]`}
+                    className={`${accActionBtnClass} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-sm`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Preleva
                   </Link>
                   <Link
                     href={`/transactions?account=${accIdEnc}`}
-                    className={`${accActionBtnClass} border-white/[0.08] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.14]`}
+                    className={`${accActionBtnClass} border-white/[0.06] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.12]`}
                     onClick={() => setDetailAccount(null)}
                   >
                     Movimenti
                   </Link>
                   <button
                     type="button"
-                    className={`${accActionBtnClass} border-white/12 bg-transparent text-[#cbd5e1] hover:border-white/25 hover:bg-white/[0.04]`}
+                    className={`${accActionBtnClass} border-white/12 bg-transparent text-[#B4BCCC] hover:border-white/25 hover:bg-white/[0.04]`}
                     onClick={() => {
                       const row = a;
                       setDetailAccount(null);
@@ -778,7 +778,7 @@ export default function AccountsListPage() {
                   </button>
                   <button
                     type="button"
-                    className={`${accActionBtnClass} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)]`}
+                    className={`${accActionBtnClass} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-sm`}
                     onClick={() => {
                       setDetailAccount(null);
                       setDeleteTarget(a);
@@ -803,7 +803,7 @@ export default function AccountsListPage() {
         {editing ? (
           <form className="space-y-4" onSubmit={(e) => void handleSaveEdit(e)}>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Nome conto
               </label>
               <input
@@ -814,7 +814,7 @@ export default function AccountsListPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Bookmaker
               </label>
               <select
@@ -839,7 +839,7 @@ export default function AccountsListPage() {
               ) : null}
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Stato conto
               </label>
               <select
@@ -855,7 +855,7 @@ export default function AccountsListPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Note
               </label>
               <textarea

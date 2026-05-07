@@ -18,7 +18,7 @@ export default async function AuthCallbackPage(props: { searchParams: SearchPara
   await supabase.auth.signOut();
 
   return (
-    <div className="flex min-h-[50vh] items-center justify-center px-4 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+    <div className="flex min-h-[50vh] items-center justify-center px-4 text-lg sm:text-base sm:text-sm text-[#8B93A7]">
       Callback completato. Torna a <a className="underline" href="/login">/login</a>.
     </div>
   );

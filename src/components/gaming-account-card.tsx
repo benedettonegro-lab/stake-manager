@@ -14,7 +14,7 @@ function formatMoney(value: string | number): string {
 function toneClass(n: number): string {
   if (n > 0) return "text-[#34d399]";
   if (n < 0) return "text-[#fb7185]";
-  return "text-[#94a3b8]";
+  return "text-[#8B93A7]";
 }
 
 export type GamingAccountStatus = "active" | "paused" | "closed";
@@ -28,7 +28,7 @@ const STATUS_LABEL: Record<GamingAccountStatus, string> = {
 function statusBadgeClass(s: GamingAccountStatus): string {
   if (s === "active") return "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
   if (s === "paused") return "border-amber-500/40 bg-amber-500/10 text-amber-200";
-  return "border-[#64748b]/50 bg-[#151d2e] text-[#94a3b8]";
+  return "border-[#8B93A7]/50 bg-[#131C31] text-[#8B93A7]";
 }
 
 export type GamingAccountCardProps = {
@@ -90,10 +90,10 @@ export function GamingAccountCard({
           : ("default" as const);
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525] shadow-sm shadow-black/15 transition hover:border-white/[0.12]">
+    <article className="overflow-hidden rounded-xl border border-white/[0.06] bg-[#11182B] shadow-sm shadow-black/12 transition hover:border-white/[0.1] sm:rounded-2xl sm:shadow-black/15">
       <Link
         href={`/accounts/${accountId}`}
-        className="block p-5 transition active:bg-[#0E1525]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
+        className="block px-3.5 py-3.5 transition active:bg-[#11182B]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -101,7 +101,7 @@ export function GamingAccountCard({
               {accountName}
             </h3>
             {bookmaker ? (
-              <p className="mt-1.5 truncate text-[14px] text-[#94a3b8] sm:mt-1 sm:text-sm">{bookmaker}</p>
+              <p className="mt-1.5 truncate text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">{bookmaker}</p>
             ) : null}
           </div>
           {accountStatus ? (
@@ -113,19 +113,19 @@ export function GamingAccountCard({
           ) : null}
         </div>
         {identityLine ? (
-          <p className="mt-2 truncate text-[14px] text-[#64748b] sm:mt-2 sm:text-sm">{identityLine}</p>
+          <p className="mt-2 truncate text-[14px] text-[#8B93A7] sm:mt-2 sm:text-sm">{identityLine}</p>
         ) : null}
         <p
-          className={`mt-4 min-w-0 overflow-x-auto whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
+          className={`mt-3 min-w-0 overflow-x-auto whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
         >
           {formatMoney(currentBalance)} €
         </p>
-        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#475569] sm:text-xs sm:font-medium sm:tracking-wide">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#6B7385] sm:text-xs sm:font-medium sm:tracking-wide">
           Saldo conto
         </p>
 
         {showInitial ? (
-          <p className="mt-3 text-[14px] text-[#64748b] sm:mt-3 sm:text-sm">
+          <p className="mt-3 text-[14px] text-[#8B93A7] sm:mt-3 sm:text-sm">
             Iniziale{" "}
             <span className={`whitespace-nowrap text-[20px] font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
               {formatMoney(initialBalance!)} €
@@ -133,7 +133,7 @@ export function GamingAccountCard({
           </p>
         ) : null}
 
-        <div className="mt-4 grid grid-cols-4 gap-2 sm:mt-3 sm:gap-1.5">
+        <div className="mt-3 grid grid-cols-4 gap-1.5 sm:mt-3 sm:gap-1.5">
           <StatPill
             className="!px-2 !py-1.5"
             label="Dep."
@@ -158,7 +158,7 @@ export function GamingAccountCard({
         </div>
       </Link>
 
-      <div className="flex flex-wrap gap-2 border-t border-white/[0.08] p-4 sm:gap-1.5 sm:px-3 sm:py-2.5">
+      <div className="flex flex-wrap gap-1.5 border-t border-white/[0.06] px-3 py-3 sm:gap-1.5 sm:px-3 sm:py-2.5">
         {movementsHrefBase ? (
           <>
             <QuickActionButton

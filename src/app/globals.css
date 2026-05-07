@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --sm-bg: #070b14;
-  --sm-card: #0e1525;
+  --sm-bg: #0A1020;
+  --sm-card: #11182B;
   /** Superfici sollevate (input, hover) */
-  --sm-card-secondary: #121b2f;
-  --sm-border: rgba(255, 255, 255, 0.08);
+  --sm-card-secondary: #131C31;
+  --sm-border: rgba(255, 255, 255, 0.06);
   /** Accento viola tenue; gradienti brand molto soft */
-  --sm-gradient-from: #3d4558;
-  --sm-gradient-to: #5a4f78;
-  --sm-accent-violet: #a855f7;
+  --sm-gradient-from: #3a4152;
+  --sm-gradient-to: #4d4662;
+  --sm-accent-violet: #A970FF;
   --sm-positive: #34d399;
   --sm-negative: #fb7185;
-  --sm-muted: #94a3b8;
+  --sm-muted: #8B93A7;
   --sm-text: #e6eaf2;
   /** Larghezza massima app (desktop centrato); sotto 430px occupa tutta la larghezza */
   --sm-app-max-width: 430px;
@@ -54,9 +54,9 @@ body {
 .sm-gradient-text {
   background: linear-gradient(
     135deg,
-    #d1d7e5 0%,
-    #b6b9c9 42%,
-    rgba(168, 133, 247, 0.72) 100%
+    #d8dde8 0%,
+    #b9c0d0 42%,
+    rgba(169, 112, 255, 0.45) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -68,8 +68,8 @@ body {
   border-radius: 1rem;
   background: linear-gradient(
     135deg,
-    rgba(168, 133, 247, 0.12),
-    rgba(255, 255, 255, 0.06)
+    rgba(169, 112, 255, 0.07),
+    rgba(255, 255, 255, 0.04)
   );
   padding: 1px;
 }
@@ -77,6 +77,16 @@ body {
 .sm-gradient-border > .sm-gradient-inner {
   border-radius: calc(1rem - 1px);
   background: var(--sm-card);
+}
+
+@media (max-width: 639.98px) {
+  .sm-gradient-border {
+    border-radius: 0.875rem;
+  }
+
+  .sm-gradient-border > .sm-gradient-inner {
+    border-radius: calc(0.875rem - 1px);
+  }
 }
 
 .sm-input {
@@ -95,9 +105,10 @@ body {
 
 @media (max-width: 639.98px) {
   .sm-input {
-    min-height: 3.5rem;
+    min-height: 3.25rem;
+    border-radius: 0.625rem;
     font-size: 1rem;
-    padding: 0.6875rem 0.9375rem;
+    padding: 0.625rem 0.875rem;
   }
 
   .sm-input::placeholder {
@@ -114,8 +125,8 @@ body {
 }
 
 .sm-input:focus {
-  border-color: rgba(168, 133, 247, 0.35);
-  box-shadow: 0 0 0 2px rgba(168, 133, 247, 0.06);
+  border-color: rgba(169, 112, 255, 0.28);
+  box-shadow: 0 0 0 2px rgba(169, 112, 255, 0.04);
 }
 
 .sm-input::placeholder {
@@ -125,7 +136,7 @@ body {
 
 select.sm-input {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238B93A7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.85rem center;
   background-size: 1.125rem;
@@ -148,17 +159,19 @@ textarea.sm-input {
   font-size: 1rem;
   font-weight: 600;
   color: #f8fafc;
-  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 20px -8px rgba(8, 12, 24, 0.45);
   transition: opacity 0.15s, transform 0.15s;
 }
 
 @media (max-width: 639.98px) {
   .sm-btn-primary {
     min-height: 3rem;
-    padding: 0.75rem 1.25rem;
+    border-radius: 0.625rem;
+    padding: 0.625rem 1rem;
     font-size: 1rem;
     line-height: 1.35;
     font-weight: 600;
+    box-shadow: 0 2px 10px -4px rgba(8, 12, 24, 0.4);
   }
 }
 
@@ -260,8 +273,8 @@ textarea.sm-input {
   }
   40% {
     box-shadow:
-      inset 0 0 0 1px rgba(52, 211, 153, 0.28),
-      0 0 10px rgba(52, 211, 153, 0.09);
+      inset 0 0 0 1px rgba(52, 211, 153, 0.18),
+      0 1px 6px rgba(52, 211, 153, 0.04);
   }
   100% {
     box-shadow: inset 0 0 0 0 transparent;
@@ -274,8 +287,8 @@ textarea.sm-input {
   }
   40% {
     box-shadow:
-      inset 0 0 0 1px rgba(251, 113, 133, 0.28),
-      0 0 10px rgba(251, 113, 133, 0.08);
+      inset 0 0 0 1px rgba(251, 113, 133, 0.18),
+      0 1px 6px rgba(251, 113, 133, 0.04);
   }
   100% {
     box-shadow: inset 0 0 0 0 transparent;

@@ -33,7 +33,7 @@ export function ConfirmDialog({
       : variant === "success"
         ? "border border-[#34d399]/45 bg-[#34d399]/12 text-[#a7f3d0] hover:bg-[#34d399]/22"
         : variant === "neutral"
-          ? "border border-[#475569] bg-[#1e293b] text-[#e2e8f0] hover:bg-[#334155]"
+          ? "border border-[#6B7385] bg-[#1e293b] text-[#e2e8f0] hover:bg-[#334155]"
           : "sm-btn-primary";
 
   return (
@@ -45,13 +45,13 @@ export function ConfirmDialog({
         type="button"
         aria-label="Chiudi"
         disabled={loading}
-        className="sm-sheet-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm transition enabled:hover:bg-black/70 disabled:cursor-not-allowed"
+        className="sm-sheet-backdrop absolute inset-0 bg-[#050812]/65 backdrop-blur-sm transition enabled:hover:bg-[#050812]/78 disabled:cursor-not-allowed"
         onClick={() => {
           if (!loading) onCancel();
         }}
       />
       <div
-        className="sm-sheet-panel relative z-10 w-[calc(100%-32px)] max-w-[430px] rounded-2xl border border-white/[0.08] bg-[#121B2F] p-6 shadow-2xl shadow-black/50 sm:p-5"
+        className="sm-sheet-panel relative z-10 w-[calc(100%-32px)] max-w-[430px] rounded-2xl border border-white/[0.06] bg-[#131C31] p-6 shadow-xl shadow-black/22 sm:p-5"
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
@@ -65,7 +65,7 @@ export function ConfirmDialog({
         </h2>
         <p
           id="confirm-dialog-desc"
-          className="mt-3 text-base leading-relaxed text-[#94a3b8] sm:mt-2 sm:text-sm"
+          className="mt-3 text-base leading-relaxed text-[#8B93A7] sm:mt-2 sm:text-sm"
         >
           {message}
         </p>
@@ -82,7 +82,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={() => onCancel()}
-            className="min-h-[48px] rounded-xl border border-white/[0.08] bg-[#0E1525] px-5 py-3 text-[16px] font-semibold text-[#e2e8f0] transition hover:bg-[#151d2e] disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base"
+            className="min-h-[48px] rounded-xl border border-white/[0.06] bg-[#11182B] px-5 py-3 text-[16px] font-semibold text-[#e2e8f0] transition hover:bg-[#131C31] disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base"
           >
             {cancelText}
           </button>

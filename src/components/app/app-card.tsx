@@ -12,10 +12,10 @@ type AppCardProps = {
   padding?: "sm" | "md";
 };
 
-const pad = { sm: "p-4 sm:p-3", md: "p-5 sm:p-4" } as const;
+const pad = { sm: "p-3 sm:p-3", md: "px-4 py-3.5 sm:p-4" } as const;
 
 const baseClass =
-  "block w-full min-w-0 rounded-2xl border border-white/[0.08] bg-[#0E1525]/95 text-left shadow-sm shadow-black/20 transition duration-200 active:scale-[0.99] hover:border-white/[0.08] hover:bg-white/[0.04]";
+  "block w-full min-w-0 rounded-xl border border-white/[0.06] bg-[#11182B]/95 text-left shadow-sm shadow-black/15 transition duration-200 active:scale-[0.99] hover:border-white/[0.06] hover:bg-white/[0.04] sm:rounded-2xl sm:shadow-black/20";
 
 export function AppCard({
   children,

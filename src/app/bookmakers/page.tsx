@@ -180,7 +180,7 @@ export default function BookmakersPage() {
   if (!ready) {
     return (
       <AppShell title="Bookmakers">
-        <div className="flex min-h-[30vh] items-center justify-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+        <div className="flex min-h-[30vh] items-center justify-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
           Caricamento…
         </div>
       </AppShell>
@@ -192,7 +192,7 @@ export default function BookmakersPage() {
 
   return (
     <AppShell title="Bookmakers">
-      <div className="sticky top-14 z-[25] -mx-3 mb-3 border-b border-white/[0.08] bg-[#070B14]/95 px-3 py-2.5 backdrop-blur-md">
+      <div className="sticky top-12 z-[25] -mx-3 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14">
         <SearchInput value={searchQuery} onChange={setSearchQuery} />
       </div>
 
@@ -203,23 +203,23 @@ export default function BookmakersPage() {
       ) : null}
 
       {emptyDb ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525]/82 px-6 py-14 pb-28 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/82 px-6 py-14 pb-28 text-center">
           <div
-            className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-[#0E1525] text-[#64748b]"
+            className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.06] bg-[#11182B] text-[#8B93A7]"
             aria-hidden
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M4 19h16M6 16h12M8 5h8l2 11H6L8 5z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <p className="text-lg sm:text-base sm:text-sm font-medium text-[#94a3b8]">Nessun bookmaker</p>
-          <p className="mt-2 text-[14px] text-[#475569]">Oppure usa il pulsante + in basso.</p>
+          <p className="text-lg sm:text-base sm:text-sm font-medium text-[#8B93A7]">Nessun bookmaker</p>
+          <p className="mt-2 text-[14px] text-[#6B7385]">Oppure usa il pulsante + in basso.</p>
           <QuickActionButton variant="primary" className="mt-4" onClick={() => setAddOpen(true)}>
             Aggiungi
           </QuickActionButton>
         </div>
       ) : emptyFilter ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-sm sm:text-xs text-[#64748b]">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
           Nessun risultato per «{searchQuery.trim()}»
         </p>
       ) : (
@@ -256,7 +256,7 @@ export default function BookmakersPage() {
       >
         <form className="flex flex-col gap-3" onSubmit={(e) => void handleAdd(e)}>
           <div className="space-y-1">
-            <label htmlFor="bm-new-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-new-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
               Nome
             </label>
             <input
@@ -269,8 +269,8 @@ export default function BookmakersPage() {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="bm-new-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
-              Note <span className="font-normal normal-case text-[#475569]">(opzionale)</span>
+            <label htmlFor="bm-new-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
+              Note <span className="font-normal normal-case text-[#6B7385]">(opzionale)</span>
             </label>
             <textarea
               id="bm-new-note"
@@ -298,7 +298,7 @@ export default function BookmakersPage() {
       >
         <form className="flex flex-col gap-3" onSubmit={(e) => void handleSaveEdit(e)}>
           <div className="space-y-1">
-            <label htmlFor="bm-edit-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
+            <label htmlFor="bm-edit-name" className="text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
               Nome
             </label>
             <input
@@ -310,8 +310,8 @@ export default function BookmakersPage() {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="bm-edit-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
-              Note <span className="font-normal normal-case text-[#475569]">(opzionale)</span>
+            <label htmlFor="bm-edit-note" className="text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
+              Note <span className="font-normal normal-case text-[#6B7385]">(opzionale)</span>
             </label>
             <textarea
               id="bm-edit-note"
@@ -327,7 +327,7 @@ export default function BookmakersPage() {
               type="button"
               disabled={editSaving}
               onClick={() => setEditing(null)}
-              className="h-12 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-base sm:text-sm font-semibold text-[#e2e8f0] transition active:scale-[0.98]"
+              className="h-12 flex-1 rounded-full border border-white/[0.06] text-lg sm:text-base sm:text-sm font-semibold text-[#e2e8f0] transition active:scale-[0.98]"
             >
               Annulla
             </button>

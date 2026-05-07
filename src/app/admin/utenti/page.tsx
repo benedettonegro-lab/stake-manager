@@ -34,8 +34,8 @@ function statusBadgeClass(s: ProfileStatus): string {
 }
 
 function roleBadgeClass(r: ProfileRole): string {
-  if (r === "admin") return "border-[#a855f7]/45 bg-[#1a1428]/90 text-[#e9d5ff]";
-  return "border-white/10 bg-[#121a28] text-[#94a3b8]";
+  if (r === "admin") return "border-[#A970FF]/45 bg-[#151B2E]/90 text-[#e9d5ff]";
+  return "border-white/10 bg-[#121a28] text-[#8B93A7]";
 }
 
 function statusLabel(s: ProfileStatus): string {
@@ -49,7 +49,7 @@ function roleLabel(r: ProfileRole): string {
 }
 
 const btnOutline =
-  "rounded-lg border border-white/[0.08] bg-[#121B2F] px-2 py-1.5 text-[14px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-white/[0.14] disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-white/[0.06] bg-[#131C31] px-2 py-1.5 text-[14px] font-semibold text-[#e2e8f0] transition active:scale-[0.98] hover:border-white/[0.12] disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPositive =
   "rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-[14px] font-semibold text-emerald-200 transition active:scale-[0.98] hover:bg-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-40";
@@ -58,7 +58,7 @@ const btnDanger =
   "rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-[14px] font-semibold text-rose-200 transition active:scale-[0.98] hover:bg-rose-500/15 disabled:cursor-not-allowed disabled:opacity-40";
 
 const btnPurple =
-  "rounded-lg border border-[#a855f7]/45 bg-[#a855f7]/10 px-2 py-1.5 text-[14px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#a855f7]/20 disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-lg border border-[#A970FF]/45 bg-[#A970FF]/10 px-2 py-1.5 text-[14px] font-semibold text-[#e9d5ff] transition active:scale-[0.98] hover:bg-[#A970FF]/20 disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function AdminUtentiPage() {
   const router = useRouter();
@@ -165,7 +165,7 @@ export default function AdminUtentiPage() {
     return (
       <AuthGate>
         <AppShell title="Admin utenti">
-          <p className="text-lg sm:text-base sm:text-sm text-[#94a3b8]">Caricamento…</p>
+          <p className="text-lg sm:text-base sm:text-sm text-[#8B93A7]">Caricamento…</p>
         </AppShell>
       </AuthGate>
     );
@@ -203,7 +203,7 @@ export default function AdminUtentiPage() {
               const busy = busyId === row.id;
               return (
                 <li key={row.id}>
-                  <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525]/95 p-3 shadow-md shadow-black/12 backdrop-blur-sm">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#11182B]/95 p-3 shadow-md shadow-black/12 backdrop-blur-sm">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">{row.email || "—"}</p>
@@ -271,7 +271,7 @@ export default function AdminUtentiPage() {
           </ul>
 
           {!listError && filtered.length === 0 ? (
-            <p className="text-center text-lg sm:text-base sm:text-sm text-[#64748b]">Nessun utente in questo filtro.</p>
+            <p className="text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">Nessun utente in questo filtro.</p>
           ) : null}
         </div>
       </AppShell>

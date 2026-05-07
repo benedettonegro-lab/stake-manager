@@ -35,7 +35,7 @@ export function ActionMenu({ onEdit, onDelete, disabled }: ActionMenuProps) {
         aria-haspopup="menu"
         aria-label="Menu azioni"
         onClick={() => !disabled && setOpen((o) => !o)}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/[0.08] bg-[#1a2230] text-[#94a3b8] transition hover:border-white/[0.14] hover:text-white active:scale-95 disabled:opacity-40"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/[0.06] bg-[#141C2A] text-[#8B93A7] transition hover:border-white/[0.12] hover:text-white active:scale-95 disabled:opacity-40"
       >
         <span className="text-lg leading-none" aria-hidden>
           ⋯
@@ -44,7 +44,7 @@ export function ActionMenu({ onEdit, onDelete, disabled }: ActionMenuProps) {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-1 min-w-[10.5rem] overflow-hidden rounded-xl border border-white/[0.08] bg-[#121B2F] py-1 shadow-md shadow-black/25"
+          className="absolute right-0 top-full z-40 mt-1 min-w-[10.5rem] overflow-hidden rounded-xl border border-white/[0.06] bg-[#131C31] py-1 shadow-md shadow-black/25"
         >
           <button
             type="button"

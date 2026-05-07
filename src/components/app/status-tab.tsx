@@ -8,7 +8,7 @@ const stripClass: Record<BetStatusTabVariant, string> = {
   open: "bg-gradient-to-b from-[#2563eb] to-[#1d4ed8]",
   won: "bg-[#059669]",
   lost: "bg-gradient-to-b from-[#dc2626] to-[#b91c1c]",
-  void: "bg-[#475569]",
+  void: "bg-[#6B7385]",
   cashout: "bg-[#6d28d9]",
 };
 

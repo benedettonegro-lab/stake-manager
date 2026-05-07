@@ -283,7 +283,7 @@ function signedTotalLabel(n: number): string {
 function totalHeaderClass(n: number): string {
   if (n > 0) return "text-emerald-400";
   if (n < 0) return "text-[#fb7185]";
-  return "text-[#94a3b8]";
+  return "text-[#8B93A7]";
 }
 
 function txStatus(t: TxRow): TransactionStatus {
@@ -379,10 +379,10 @@ function txMatchesLiveSearch(
 }
 
 const movRowClass =
-  "w-full cursor-pointer rounded-2xl border border-white/[0.08] bg-[#0E1525]/72 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color,transform] duration-150 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_8px_rgba(52,211,153,0.04)] hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#a855f7]/18 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
+  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color,transform] duration-150 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/18 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
 
 const movRowClassInvalid =
-  "w-full cursor-pointer rounded-2xl border border-white/[0.05] bg-[#0E1525]/55 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color] duration-150 ease-out hover:border-white/[0.1] hover:bg-[#0E1525]/70 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#a855f7]/16 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
+  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/55 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color] duration-150 ease-out hover:border-white/[0.1] hover:bg-[#11182B]/70 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/16 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
 
 const wdStatusPickBtn =
   "flex min-h-[3rem] w-full items-center justify-center rounded-xl border px-4 text-lg font-semibold transition duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm";
@@ -391,14 +391,14 @@ const wdStatusPickBtnIdle =
   "border-white/[0.1] bg-[#121a28]/85 text-[#e2e8f0] hover:border-white/18 hover:bg-[#151e2e]";
 
 const wdStatusPickBtnCurrent =
-  "border-[#a855f7]/50 bg-[#1a1428]/95 text-white ring-1 ring-[#a855f7]/25";
+  "border-[#A970FF]/50 bg-[#151B2E]/95 text-white ring-1 ring-[#A970FF]/25";
 
 /** Filtri avanzati: testo ≥18px su mobile, compatto da sm */
 const compactCtrl =
-  "mt-0.5 flex min-h-[44px] w-full items-center rounded-lg border border-white/[0.08] bg-[#121B2F]/90 px-3 text-lg text-[#e2e8f0] outline-none transition duration-150 placeholder:text-[#64748b] focus:border-[#a855f7]/30 focus:ring-1 focus:ring-[#a855f7]/08 sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:px-2 sm:text-xs";
+  "mt-0.5 flex min-h-[44px] w-full items-center rounded-lg border border-white/[0.06] bg-[#131C31]/90 px-3 text-lg text-[#e2e8f0] outline-none transition duration-150 placeholder:text-[#8B93A7] focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:px-2 sm:text-xs";
 
 const dateInputGlass =
-  "min-h-[44px] w-full min-w-0 flex-1 rounded-lg border border-white/[0.08] bg-[#121B2F]/90 py-2 pl-9 pr-3 text-lg text-[#e2e8f0] outline-none transition focus:border-[#a855f7]/30 focus:ring-1 focus:ring-[#a855f7]/08 [color-scheme:dark] sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:py-1 sm:pr-2 sm:text-xs";
+  "min-h-[44px] w-full min-w-0 flex-1 rounded-lg border border-white/[0.06] bg-[#131C31]/90 py-2 pl-9 pr-3 text-lg text-[#e2e8f0] outline-none transition focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 [color-scheme:dark] sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:py-1 sm:pr-2 sm:text-xs";
 
 function MovimentiListaContent() {
   const router = useRouter();
@@ -744,8 +744,8 @@ function MovimentiListaContent() {
   if (!ready) {
     return (
       <AppShell title="Movimenti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-2 text-lg sm:text-base text-[#94a3b8] sm:text-sm">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#a855f7] border-t-transparent" />
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-2 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#A970FF] border-t-transparent" />
           Caricamento…
         </div>
       </AppShell>
@@ -762,7 +762,7 @@ function MovimentiListaContent() {
 
   const calendarIcon = (
     <svg
-      className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748b]"
+      className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8B93A7]"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -792,7 +792,7 @@ function MovimentiListaContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-14 z-[25] -mx-4 mb-2 space-y-2 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:px-4 sm:py-2">
+      <div className="sticky top-12 z-[25] -mx-3 mb-2 space-y-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -800,7 +800,7 @@ function MovimentiListaContent() {
         />
 
         <div>
-          <p className="mb-1 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs">
+          <p className="mb-1 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs">
             Periodo
           </p>
           <div className="flex gap-1 overflow-x-auto scroll-smooth pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -813,8 +813,8 @@ function MovimentiListaContent() {
                   onClick={() => setPeriodPreset(value)}
                   className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-sm font-semibold transition duration-150 ease-out active:scale-[0.97] sm:px-2.5 sm:py-1 sm:text-xs ${
                     active
-                      ? "border-[#a855f7]/55 bg-[#a855f7]/25 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)] ring-1 ring-[#a855f7]/30"
-                      : "border-white/[0.08] bg-[#121B2F]/80 text-[#94a3b8] hover:border-white/[0.14] hover:text-[#e2e8f0]"
+                      ? "border-[#A970FF]/40 bg-[#A970FF]/16 text-white shadow-sm ring-1 ring-[#A970FF]/12"
+                      : "border-white/[0.06] bg-[#131C31]/80 text-[#8B93A7] hover:border-white/[0.12] hover:text-[#e2e8f0]"
                   }`}
                 >
                   {label}
@@ -824,13 +824,13 @@ function MovimentiListaContent() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-white/[0.08] bg-[#0E1525]/60 px-2 py-2 backdrop-blur-sm">
-          <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+        <div className="rounded-lg border border-white/[0.06] bg-[#11182B]/60 px-2 py-2 backdrop-blur-sm">
+          <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
             Intervallo date
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
             <div className="min-w-0 flex-1 space-y-0.5">
-              <span className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+              <span className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
                 Da
               </span>
               <div className="relative">
@@ -847,7 +847,7 @@ function MovimentiListaContent() {
               </div>
             </div>
             <div className="min-w-0 flex-1 space-y-0.5">
-              <span className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+              <span className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
                 A
               </span>
               <div className="relative">
@@ -871,16 +871,16 @@ function MovimentiListaContent() {
         <button
           type="button"
           onClick={() => setFiltersOpen((o) => !o)}
-          className="rounded-full border border-white/[0.08] bg-[#121B2F]/80 px-4 py-2 text-lg sm:text-sm font-semibold text-[#cbd5e1] transition duration-150 ease-out hover:border-white/[0.14] hover:text-white active:scale-[0.98] sm:px-3 sm:py-1.5 sm:text-xs"
+          className="rounded-full border border-white/[0.06] bg-[#131C31]/80 px-4 py-2 text-lg sm:text-sm font-semibold text-[#B4BCCC] transition duration-150 ease-out hover:border-white/[0.12] hover:text-white active:scale-[0.98] sm:px-3 sm:py-1.5 sm:text-xs"
         >
           {filtersOpen ? "Nascondi filtri" : "Filtri avanzati"}
         </button>
       </div>
 
       {filtersOpen ? (
-        <div className="mb-2 space-y-2 rounded-lg border border-white/[0.08] bg-[#0E1525]/72 p-2.5 shadow-sm backdrop-blur-md">
+        <div className="mb-2 space-y-2 rounded-lg border border-white/[0.06] bg-[#11182B]/72 p-2.5 shadow-sm backdrop-blur-md">
           <div className="grid gap-1.5 sm:grid-cols-2">
-            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Identità
               <select
                 value={filterPlayer}
@@ -899,7 +899,7 @@ function MovimentiListaContent() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Conto
               <select
                 value={filterAccount}
@@ -915,7 +915,7 @@ function MovimentiListaContent() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Metodo
               <select
                 value={filterMethod}
@@ -934,7 +934,7 @@ function MovimentiListaContent() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Tipo
               <select
                 value={filterType}
@@ -948,7 +948,7 @@ function MovimentiListaContent() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Stato (vista)
               <select
                 value={filterStatus}
@@ -966,7 +966,7 @@ function MovimentiListaContent() {
             </label>
           </div>
           <div className="grid gap-1.5 sm:grid-cols-2">
-            <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Importo min €
               <input
                 value={amountMinStr}
@@ -976,7 +976,7 @@ function MovimentiListaContent() {
                 className={compactCtrl}
               />
             </label>
-            <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b] sm:text-xs">
+            <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Importo max €
               <input
                 value={amountMaxStr}
@@ -991,15 +991,15 @@ function MovimentiListaContent() {
       ) : null}
 
       <section
-        className={`mb-2 rounded-lg border border-white/[0.08] bg-[#0a0e16]/55 px-2.5 py-2 backdrop-blur-sm transition-opacity duration-200 ease-out ${
+        className={`mb-2 rounded-lg border border-white/[0.06] bg-[#0C1324]/55 px-2.5 py-2 backdrop-blur-sm transition-opacity duration-200 ease-out ${
           loadingList && fetchedRows.length > 0 ? "opacity-[0.88]" : "opacity-100"
         }`}
         aria-label="Risultati filtrati"
       >
-        <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#64748b] sm:text-xs">
+        <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs">
           Risultati filtrati
         </p>
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-lg sm:text-base leading-snug text-[#94a3b8] sm:text-xs sm:leading-tight">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-lg sm:text-base leading-snug text-[#8B93A7] sm:text-xs sm:leading-tight">
           <span>
             Depositi{" "}
             <strong className="ml-0.5 tabular-nums text-emerald-300">
@@ -1020,7 +1020,7 @@ function MovimentiListaContent() {
                   ? "text-indigo-300"
                   : stats.netCompleted < 0
                     ? "text-[#fb7185]"
-                    : "text-[#94a3b8]"
+                    : "text-[#8B93A7]"
               }`}
             >
               {stats.netCompleted > 0 ? "+" : ""}
@@ -1046,11 +1046,11 @@ function MovimentiListaContent() {
           <div className="mx-auto h-2 max-w-[180px] animate-pulse rounded-full bg-[#1e293b]/60" />
         </div>
       ) : emptyLiveSearch ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-8 text-center text-lg sm:text-base text-[#64748b] sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-8 text-center text-lg sm:text-base text-[#8B93A7] sm:text-xs">
           Nessun risultato
         </p>
       ) : emptyServer ? (
-        <p className="rounded-xl border border-dashed border-white/[0.08] py-8 text-center text-lg sm:text-base text-[#64748b] sm:text-xs">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-8 text-center text-lg sm:text-base text-[#8B93A7] sm:text-xs">
           Nessun movimento con i filtri selezionati.
         </p>
       ) : (
@@ -1062,7 +1062,7 @@ function MovimentiListaContent() {
           {grouped.map((month) => (
             <section key={month.monthKey} className="space-y-2">
               <header className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-1">
-                <h2 className="text-[20px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:text-xl">
+                <h2 className="text-[20px] font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xl">
                   {month.monthTitle}
                 </h2>
                 <p
@@ -1074,7 +1074,7 @@ function MovimentiListaContent() {
               {month.days.map((day) => (
                 <div key={day.dayKey} className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2 pl-0.5">
-                    <h3 className="text-[14px] font-bold capitalize tracking-wide text-[#475569] sm:text-lg sm:font-semibold">
+                    <h3 className="text-[14px] font-bold capitalize tracking-wide text-[#6B7385] sm:text-lg sm:font-semibold">
                       {day.dayTitle}
                     </h3>
                     <p
@@ -1137,7 +1137,7 @@ function MovimentiListaContent() {
                                 ) : (
                                   <>
                                     <span className={txTypeWordClass(t)}>{typeLabel}</span>
-                                    <span className="text-[#94a3b8]">{` • ${accLabel} • ${pmLabel}`}</span>
+                                    <span className="text-[#8B93A7]">{` • ${accLabel} • ${pmLabel}`}</span>
                                   </>
                                 )}
                               </p>
@@ -1150,7 +1150,7 @@ function MovimentiListaContent() {
                             <div className="mt-1 flex items-center justify-between gap-2">
                               <span
                                 className={`truncate text-left text-lg sm:text-base sm:text-xs ${
-                                  invalid ? "text-[#9aa0a6] line-through" : "text-[#64748b]"
+                                  invalid ? "text-[#9aa0a6] line-through" : "text-[#8B93A7]"
                                 }`}
                               >
                                 {formatListWhen(t.created_at)}
@@ -1165,7 +1165,7 @@ function MovimentiListaContent() {
                                     setWithdrawalStatusError(null);
                                     setWithdrawalStatusTx(t);
                                   }}
-                                  className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-base font-bold uppercase tracking-[0.15em] transition duration-150 hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a855f7]/22 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
+                                  className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-base font-bold uppercase tracking-[0.15em] transition duration-150 hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A970FF]/22 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
                                 >
                                   {transactionStatusLabel(st)}
                                 </button>
@@ -1226,17 +1226,17 @@ function MovimentiListaContent() {
                   : "text-[#ff5f5f]";
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-3 text-center backdrop-blur-sm">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-3 text-center backdrop-blur-sm">
                     <p className={`text-2xl font-bold tabular-nums ${amtCls}`}>
                       {formatMoney(t.amount)} €
                     </p>
-                    <dl className="mt-3 space-y-1.5 border-t border-white/[0.08] pt-3 text-left text-lg sm:text-base sm:text-xs">
+                    <dl className="mt-3 space-y-1.5 border-t border-white/[0.06] pt-3 text-left text-lg sm:text-base sm:text-xs">
                       <div className="flex justify-between gap-2">
-                        <dt className="text-[#64748b]">Conto</dt>
+                        <dt className="text-[#8B93A7]">Conto</dt>
                         <dd className="max-w-[65%] text-right font-medium text-[#e2e8f0]">{accLine}</dd>
                       </div>
                       <div className="flex justify-between gap-2">
-                        <dt className="text-[#64748b]">Metodo</dt>
+                        <dt className="text-[#8B93A7]">Metodo</dt>
                         <dd className="max-w-[65%] text-right font-medium text-[#e2e8f0]">{pmLine}</dd>
                       </div>
                     </dl>
@@ -1264,7 +1264,7 @@ function MovimentiListaContent() {
                         </button>
                       );
                     })}
-                    <p className="pt-0.5 text-center text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs">
+                    <p className="pt-0.5 text-center text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs">
                       Annullato / rifiutato
                     </p>
                     {WITHDRAWAL_STATUS_SELECT_OPTIONS.slice(2).map((opt) => {
@@ -1322,7 +1322,7 @@ function MovimentiListaContent() {
                     : "text-[#f87171]";
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-4 text-center backdrop-blur-sm">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-4 text-center backdrop-blur-sm">
                     <p
                       className={`text-lg sm:text-sm font-semibold uppercase tracking-[0.14em] sm:text-xs ${typeTitleCls}`}
                     >
@@ -1341,15 +1341,15 @@ function MovimentiListaContent() {
                       </span>
                     </p>
                   </div>
-                  <dl className="space-y-2 rounded-xl border border-white/[0.05] bg-[#0a0e16]/50 px-3 py-3 text-lg sm:text-base sm:py-2.5 sm:text-xs">
+                  <dl className="space-y-2 rounded-xl border border-white/[0.06] bg-[#0C1324]/50 px-3 py-3 text-lg sm:text-base sm:py-2.5 sm:text-xs">
                     <div className="flex justify-between gap-2">
-                      <dt className="text-[#64748b]">Identità</dt>
+                      <dt className="text-[#8B93A7]">Identità</dt>
                       <dd className="max-w-[60%] text-right font-medium text-[#e2e8f0]">
                         {idn?.name ?? "—"}
                       </dd>
                     </div>
                     <div className="flex justify-between gap-2">
-                      <dt className="text-[#64748b]">Conto</dt>
+                      <dt className="text-[#8B93A7]">Conto</dt>
                       <dd className="max-w-[60%] text-right font-medium text-[#e2e8f0]">
                         {acc
                           ? `${acc.account_name}${gamingAccountBookmakerDisplay(acc) ? ` · ${gamingAccountBookmakerDisplay(acc)}` : ""}`
@@ -1357,7 +1357,7 @@ function MovimentiListaContent() {
                       </dd>
                     </div>
                     <div className="flex justify-between gap-2">
-                      <dt className="text-[#64748b]">Metodo</dt>
+                      <dt className="text-[#8B93A7]">Metodo</dt>
                       <dd className="max-w-[60%] text-right font-medium text-[#e2e8f0]">
                         {pm
                           ? paymentMethodTitle({
@@ -1369,17 +1369,17 @@ function MovimentiListaContent() {
                       </dd>
                     </div>
                     <div className="flex justify-between gap-2">
-                      <dt className="text-[#64748b]">Data</dt>
-                      <dd className="text-right font-medium text-[#cbd5e1]">{formatWhen(t.created_at)}</dd>
+                      <dt className="text-[#8B93A7]">Data</dt>
+                      <dd className="text-right font-medium text-[#B4BCCC]">{formatWhen(t.created_at)}</dd>
                     </div>
-                    <div className="border-t border-white/[0.08] pt-2">
-                      <dt className="text-[#64748b]">Note</dt>
-                      <dd className="mt-1 whitespace-pre-wrap text-[#94a3b8]">
+                    <div className="border-t border-white/[0.06] pt-2">
+                      <dt className="text-[#8B93A7]">Note</dt>
+                      <dd className="mt-1 whitespace-pre-wrap text-[#8B93A7]">
                         {t.note?.trim() ? t.note : "—"}
                       </dd>
                     </div>
                   </dl>
-                  <p className="text-center text-lg sm:text-sm leading-relaxed text-[#475569] sm:text-xs">
+                  <p className="text-center text-lg sm:text-sm leading-relaxed text-[#6B7385] sm:text-xs">
                     Registro contabile: solo lettura. Per nuovi movimenti usa Deposita / Preleva dai conti.
                   </p>
                 </>
@@ -1398,7 +1398,7 @@ export default function MovimentiPage() {
       <Suspense
         fallback={
           <AppShell title="Movimenti">
-            <div className="flex min-h-[30vh] items-center justify-center text-lg sm:text-base text-[#94a3b8] sm:text-sm">
+            <div className="flex min-h-[30vh] items-center justify-center text-lg sm:text-base text-[#8B93A7] sm:text-sm">
               Caricamento…
             </div>
           </AppShell>

@@ -49,8 +49,8 @@ export async function SupabaseStatus() {
               {error.message}
             </p>
           ) : null}
-          <p className="text-sm sm:text-xs text-[#94a3b8]">
-            Host: <span className="font-mono text-[#cbd5e1]">{host}</span>
+          <p className="text-sm sm:text-xs text-[#8B93A7]">
+            Host: <span className="font-mono text-[#B4BCCC]">{host}</span>
           </p>
         </div>
       </section>
@@ -69,11 +69,11 @@ export async function SupabaseStatus() {
         <p className="font-medium text-[#ecfdf5]">
           Connesso — {ping.detail} ({ping.latencyMs} ms)
         </p>
-        <p className="mt-1 text-sm sm:text-xs text-[#94a3b8]">
-          Progetto: <span className="font-mono text-[#cbd5e1]">{host}</span>
+        <p className="mt-1 text-sm sm:text-xs text-[#8B93A7]">
+          Progetto: <span className="font-mono text-[#B4BCCC]">{host}</span>
         </p>
-        <p className="mt-1 text-sm sm:text-xs text-[#94a3b8]">
-          <span className="font-medium text-[#cbd5e1]">getUser():</span>{" "}
+        <p className="mt-1 text-sm sm:text-xs text-[#8B93A7]">
+          <span className="font-medium text-[#B4BCCC]">getUser():</span>{" "}
           {data.user ? (
             <span className="font-mono text-[#e2e8f0]">
               {data.user.email ?? data.user.id}

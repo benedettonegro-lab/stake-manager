@@ -6,7 +6,7 @@ const toneText: Record<StatPillTone, string> = {
   default: "text-[#E6EAF2]",
   positive: "text-[#34d399]",
   negative: "text-[#fb7185]",
-  accent: "text-[#c4b5fd]",
+  accent: "text-[#B89EFF]",
   warn: "text-[#fbbf24]",
 };
 
@@ -20,9 +20,9 @@ type StatPillProps = {
 export function StatPill({ label, value, tone = "default", className = "" }: StatPillProps) {
   return (
     <div
-      className={`flex min-h-[76px] min-w-0 flex-col justify-center gap-0.5 rounded-xl border border-white/[0.08] bg-[#121B2F] px-2.5 py-2.5 sm:min-h-0 sm:gap-0 sm:px-2.5 sm:py-2 ${className}`.trim()}
+      className={`flex min-h-[68px] min-w-0 flex-col justify-center gap-0 rounded-xl border border-white/[0.06] bg-[#131C31] px-2 py-2 sm:min-h-0 sm:gap-0 sm:px-2.5 sm:py-2 ${className}`.trim()}
     >
-      <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
+      <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
         {label}
       </span>
       <span

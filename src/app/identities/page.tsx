@@ -29,7 +29,7 @@ const PAYMENT_TYPES = [
 
 /** Card glass — info only, azioni in sheet separato */
 const idnGlassCard =
-  "w-full rounded-2xl border border-white/[0.08] bg-[#0E1525]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-[0_0_10px_rgba(52,211,153,0.05)] hover:scale-[1.01] active:scale-[0.97] sm:rounded-xl";
+  "w-full rounded-xl border border-white/[0.06] bg-[#11182B]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.005] active:scale-[0.98] sm:rounded-xl";
 
 const idnActionBtn =
   "flex min-h-[48px] w-full items-center justify-center rounded-xl border text-[16px] font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
@@ -761,7 +761,7 @@ export default function IdentitiesPage() {
   if (!ready) {
     return (
       <AppShell title="Identità">
-        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#94a3b8] sm:text-sm">
+        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#8B93A7] sm:text-sm">
           Caricamento…
         </div>
       </AppShell>
@@ -802,7 +802,7 @@ export default function IdentitiesPage() {
           </p>
         ) : null}
 
-        <div className="sticky top-14 z-[25] -mx-4 mb-4 border-b border-white/[0.08] bg-[#070B14]/95 px-4 py-3 backdrop-blur-md sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+        <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
@@ -839,11 +839,11 @@ export default function IdentitiesPage() {
         </BottomSheet>
 
         {identities.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] py-10 text-center text-[16px] text-[#94a3b8] sm:py-8 sm:text-xs">
+          <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-[16px] text-[#8B93A7] sm:py-8 sm:text-xs">
             Nessuna identità. Tocca + Identità.
           </p>
         ) : filteredIdentities.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.08] py-12 text-center text-[16px] text-[#64748b] sm:py-10 sm:text-xs">
+          <p className="rounded-xl border border-dashed border-white/[0.06] py-12 text-center text-[16px] text-[#8B93A7] sm:py-10 sm:text-xs">
             Nessun risultato
           </p>
         ) : (
@@ -865,12 +865,12 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     onClick={() => openDetailSheet(idn.id)}
-                    className="w-full rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 text-left shadow-sm transition hover:border-white/[0.08] active:scale-[0.99] sm:p-3"
+                    className="w-full rounded-2xl border border-white/[0.06] bg-[#11182B] p-4 text-left shadow-sm transition hover:border-white/[0.06] active:scale-[0.99] sm:p-3"
                   >
                     <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                       {idn.name}
                     </p>
-                    <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-2 sm:gap-1.5">
+                    <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-2 sm:gap-1.5">
                       <StatPill label="Conti" value={String(accList.length)} />
                       <StatPill label="Metodi" value={String(methods.length)} />
                       <StatPill
@@ -893,27 +893,27 @@ export default function IdentitiesPage() {
           panelClassName="!max-w-[420px]"
           headerExtra={
             <div className="space-y-1 sm:space-y-0.5">
-              <p className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-[0.16em]">
+              <p className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:tracking-[0.16em]">
                 Cassa totale
               </p>
               <p
                 className={`text-[28px] font-extrabold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
                   detailCassa > 0
-                    ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
+                    ? "text-emerald-400"
                     : detailCassa < 0
                       ? "text-[#fb7185]"
-                      : "text-[#94a3b8]"
+                      : "text-[#8B93A7]"
                 }`}
               >
                 {formatMoney(detailCassa)} €
               </p>
-              <p className="pt-2 text-[16px] text-[#94a3b8] sm:pt-1.5 sm:text-xs">
-                <span className="font-semibold tabular-nums text-[#cbd5e1]">
+              <p className="pt-2 text-[16px] text-[#8B93A7] sm:pt-1.5 sm:text-xs">
+                <span className="font-semibold tabular-nums text-[#B4BCCC]">
                   {detailAccList.length}
                 </span>{" "}
                 conti
-                <span className="mx-2 text-[#475569]">·</span>
-                <span className="font-semibold tabular-nums text-[#cbd5e1]">
+                <span className="mx-2 text-[#6B7385]">·</span>
+                <span className="font-semibold tabular-nums text-[#B4BCCC]">
                   {detailMethods.length}
                 </span>{" "}
                 metodi
@@ -926,26 +926,26 @@ export default function IdentitiesPage() {
         >
           {detailSheetId && detailIdn ? (
             <div className="relative mx-auto flex min-h-[48vh] max-w-[420px] flex-col pb-2">
-              <div className="flex flex-1 flex-col gap-6">
+              <div className="flex flex-1 flex-col gap-4 sm:gap-6">
               <section>
-                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#64748b] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
+                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Conti
                 </h3>
                 {accDeleteError ? (
                   <p className="mb-2 text-sm sm:text-xs text-[#fb7185]">{accDeleteError}</p>
                 ) : null}
                 {detailAccList.length === 0 ? (
-                  <p className="py-1 text-sm sm:text-xs text-[#94a3b8]">Nessun conto.</p>
+                  <p className="py-1 text-sm sm:text-xs text-[#8B93A7]">Nessun conto.</p>
                 ) : (
                   <ul className="flex flex-col gap-4 sm:gap-3">
                     {detailAccList.map((a) => {
                       const bal = Number.parseFloat(String(a.current_balance)) || 0;
                       const balCls =
                         bal > 0
-                          ? "text-emerald-400 drop-shadow-[0_0_14px_rgba(52,211,153,0.3)]"
+                          ? "text-emerald-400"
                           : bal < 0
                             ? "text-[#fb7185]"
-                            : "text-[#94a3b8]";
+                            : "text-[#8B93A7]";
                       return (
                         <li key={a.id}>
                           <button
@@ -957,12 +957,12 @@ export default function IdentitiesPage() {
                               setAccountActions(a);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
+                            <div className="flex items-center justify-between gap-3 px-3 py-3 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
                                 <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {a.account_name}
                                 </p>
-                                <p className="mt-1 truncate text-[16px] text-[#64748b] sm:mt-0.5 sm:text-xs">
+                                <p className="mt-1 truncate text-[16px] text-[#8B93A7] sm:mt-0.5 sm:text-xs">
                                   {gamingAccountBookmakerDisplay(a) || "—"}
                                 </p>
                               </div>
@@ -981,11 +981,11 @@ export default function IdentitiesPage() {
               </section>
 
               <section>
-                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#64748b] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
+                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Metodi
                 </h3>
                 {detailMethods.length === 0 ? (
-                  <p className="py-1 text-sm sm:text-xs text-[#94a3b8]">Nessun metodo.</p>
+                  <p className="py-1 text-sm sm:text-xs text-[#8B93A7]">Nessun metodo.</p>
                 ) : (
                   <ul className="flex flex-col gap-4 sm:gap-3">
                     {detailMethods.map((m) => {
@@ -993,10 +993,10 @@ export default function IdentitiesPage() {
                       const tipo = (m.type || "").trim();
                       const balCls =
                         mb > 0
-                          ? "text-emerald-400 drop-shadow-[0_0_14px_rgba(52,211,153,0.3)]"
+                          ? "text-emerald-400"
                           : mb < 0
                             ? "text-[#fb7185]"
-                            : "text-[#94a3b8]";
+                            : "text-[#8B93A7]";
                       return (
                         <li key={m.id}>
                           <button
@@ -1008,13 +1008,13 @@ export default function IdentitiesPage() {
                               setMethodActions(m);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-3 sm:py-2.5">
+                            <div className="flex items-center justify-between gap-3 px-3 py-3 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
                                 <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
                                   {(m.method_name || "").trim() || "—"}
                                 </p>
                                 {tipo ? (
-                                  <p className="mt-1 truncate text-[16px] text-[#64748b] sm:mt-0.5 sm:text-xs">
+                                  <p className="mt-1 truncate text-[16px] text-[#8B93A7] sm:mt-0.5 sm:text-xs">
                                     {tipo}
                                   </p>
                                 ) : null}
@@ -1033,11 +1033,11 @@ export default function IdentitiesPage() {
                 )}
               </section>
 
-              <div className="border-t border-[#1a2230] pt-5">
+              <div className="border-t border-[#141C2A] pt-5">
                 {identityNameEditing ? (
                   <div className="mx-auto flex max-w-xs flex-col gap-3">
                     <label className="block">
-                      <span className="mb-1.5 block text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                      <span className="mb-1.5 block text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7]">
                         Nome identità
                       </span>
                       <input
@@ -1059,7 +1059,7 @@ export default function IdentitiesPage() {
                           setIdentityNameEditing(false);
                           setIdentityEditError(null);
                         }}
-                        className="h-11 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50"
+                        className="h-11 flex-1 rounded-full border border-white/[0.06] text-lg sm:text-sm font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50"
                       >
                         Annulla
                       </button>
@@ -1103,7 +1103,7 @@ export default function IdentitiesPage() {
               </div>
             </div>
 
-            <div className="sticky bottom-0 z-[2] mt-8 flex justify-center bg-gradient-to-t from-[#070B14] via-[#070B14]/92 to-transparent pb-1 pt-8">
+            <div className="sticky bottom-0 z-[2] mt-8 flex justify-center bg-gradient-to-t from-[#0A1020] via-[#0A1020]/92 to-transparent pb-1 pt-8">
               <button
                 type="button"
                 disabled={accSubmitting || pmSubmitting || identityEditSaving}
@@ -1113,7 +1113,7 @@ export default function IdentitiesPage() {
                   setMethodActions(null);
                   setFabMenuOpen(true);
                 }}
-                className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/18 to-emerald-600/8 text-2xl font-light text-emerald-100 shadow-[0_0_10px_rgba(16,185,129,0.1)] transition duration-200 ease-out hover:scale-105 hover:shadow-[0_0_12px_rgba(16,185,129,0.14)] active:scale-[0.94] disabled:opacity-40"
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/18 to-emerald-600/8 text-2xl font-light text-emerald-100 shadow-sm transition duration-200 ease-out hover:scale-[1.02] hover:shadow-md active:scale-[0.94] disabled:opacity-40"
               >
                 +
               </button>
@@ -1135,7 +1135,7 @@ export default function IdentitiesPage() {
           <button
             type="button"
             disabled={accSubmitting || pmSubmitting}
-            className={`${idnActionBtn} border-emerald-500/35 bg-emerald-500/12 text-emerald-100 hover:border-emerald-400/50 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)]`}
+            className={`${idnActionBtn} border-emerald-500/35 bg-emerald-500/12 text-emerald-100 hover:border-emerald-400/50 hover:shadow-sm`}
             onClick={() => {
               setFabMenuOpen(false);
               setAccError(null);
@@ -1149,7 +1149,7 @@ export default function IdentitiesPage() {
           <button
             type="button"
             disabled={accSubmitting || pmSubmitting}
-            className={`${idnActionBtn} border-sky-500/35 bg-sky-500/10 text-sky-100 hover:border-sky-400/45 hover:shadow-[0_0_8px_rgba(14,165,233,0.07)]`}
+            className={`${idnActionBtn} border-sky-500/35 bg-sky-500/10 text-sky-100 hover:border-sky-400/45 hover:shadow-sm`}
             onClick={() => {
               setFabMenuOpen(false);
               setPmError(null);
@@ -1175,16 +1175,16 @@ export default function IdentitiesPage() {
                 Number.parseFloat(String(accountActions.current_balance)) || 0;
               const balCls =
                 bal > 0
-                  ? "text-emerald-400 drop-shadow-[0_0_18px_rgba(52,211,153,0.35)]"
+                  ? "text-emerald-400"
                   : bal < 0
                     ? "text-[#fb7185]"
-                    : "text-[#94a3b8]";
+                    : "text-[#8B93A7]";
               const txDisabled =
                 detailMethods.length === 0 || accDeleteLoadingId !== null;
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-3 text-center backdrop-blur-sm">
-                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-3 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                       Saldo
                     </p>
                     <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
@@ -1199,7 +1199,7 @@ export default function IdentitiesPage() {
                         ? "Aggiungi un metodo di pagamento"
                         : undefined
                     }
-                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-sm disabled:opacity-35`}
                     onClick={() => {
                       const a = accountActions;
                       setAccountActions(null);
@@ -1216,7 +1216,7 @@ export default function IdentitiesPage() {
                         ? "Aggiungi un metodo di pagamento"
                         : undefined
                     }
-                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-sm disabled:opacity-35`}
                     onClick={() => {
                       const a = accountActions;
                       setAccountActions(null);
@@ -1227,7 +1227,7 @@ export default function IdentitiesPage() {
                   </button>
                   <Link
                     href={`/movimenti?player=${encodeURIComponent(detailSheetId)}&account=${encodeURIComponent(accountActions.id)}`}
-                    className={`${idnActionBtn} border-white/[0.08] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.14]`}
+                    className={`${idnActionBtn} border-white/[0.06] bg-[#151c2a] text-[#e2e8f0] hover:border-white/[0.12]`}
                     onClick={() => setAccountActions(null)}
                   >
                     Movimenti
@@ -1235,7 +1235,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={accDeleteLoadingId !== null}
-                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)] disabled:opacity-40`}
+                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-sm disabled:opacity-40`}
                     onClick={() => {
                       void handleDeleteGamingAccount(accountActions);
                       setAccountActions(null);
@@ -1262,16 +1262,16 @@ export default function IdentitiesPage() {
               const mb = Number.parseFloat(methodActions.balance) || 0;
               const balCls =
                 mb > 0
-                  ? "text-emerald-400 drop-shadow-[0_0_18px_rgba(52,211,153,0.35)]"
+                  ? "text-emerald-400"
                   : mb < 0
                     ? "text-[#fb7185]"
-                    : "text-[#94a3b8]";
+                    : "text-[#8B93A7]";
               const txFromPmDisabled = detailAccList.length === 0;
               const m = methodActions;
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.08] bg-[#0E1525]/60 px-3 py-3 text-center backdrop-blur-sm">
-                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-3 text-center backdrop-blur-sm">
+                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                       Saldo
                     </p>
                     <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
@@ -1281,7 +1281,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={txFromPmDisabled}
-                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-[0_0_8px_rgba(16,185,129,0.08)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-emerald-500/40 bg-emerald-500/12 text-emerald-100 hover:shadow-sm disabled:opacity-35`}
                     onClick={() => {
                       setMethodActions(null);
                       openTxDepositFromMethod(detailSheetId, m);
@@ -1292,7 +1292,7 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     disabled={txFromPmDisabled}
-                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-[0_0_8px_rgba(251,191,36,0.07)] disabled:opacity-35`}
+                    className={`${idnActionBtn} border-amber-500/45 bg-amber-500/12 text-amber-100 hover:shadow-sm disabled:opacity-35`}
                     onClick={() => {
                       setMethodActions(null);
                       openTxWithdrawFromMethod(detailSheetId, m);
@@ -1302,7 +1302,7 @@ export default function IdentitiesPage() {
                   </button>
                   <button
                     type="button"
-                    className={`${idnActionBtn} border-white/12 bg-transparent text-[#cbd5e1] hover:border-white/25 hover:bg-white/[0.04]`}
+                    className={`${idnActionBtn} border-white/12 bg-transparent text-[#B4BCCC] hover:border-white/25 hover:bg-white/[0.04]`}
                     onClick={() => {
                       setMethodActions(null);
                       openEdit(m);
@@ -1312,7 +1312,7 @@ export default function IdentitiesPage() {
                   </button>
                   <button
                     type="button"
-                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-[0_0_8px_rgba(248,113,113,0.06)]`}
+                    className={`${idnActionBtn} border-red-500/35 bg-red-500/8 text-red-200 hover:border-red-400/45 hover:shadow-sm`}
                     onClick={() => {
                       setDeleteError(null);
                       setDeleteTarget(m);
@@ -1368,8 +1368,8 @@ export default function IdentitiesPage() {
             className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
           />
           {bookmakers.length === 0 ? (
-            <p className="text-sm sm:text-xs text-[#94a3b8]">
-              <Link href="/bookmakers" className="text-[#a855f7] underline-offset-2 hover:underline">
+            <p className="text-sm sm:text-xs text-[#8B93A7]">
+              <Link href="/bookmakers" className="text-[#A970FF] underline-offset-2 hover:underline">
                 Configura bookmaker
               </Link>
             </p>
@@ -1446,7 +1446,7 @@ export default function IdentitiesPage() {
           <form className="space-y-3" onSubmit={(e) => void handleTxSubmit(e)}>
             {txShowAccPicker ? (
               <div className="space-y-1">
-                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                   Conto gioco
                 </label>
                 <select
@@ -1470,7 +1470,7 @@ export default function IdentitiesPage() {
                 </select>
               </div>
             ) : (
-              <p className="text-sm sm:text-xs text-[#94a3b8]">
+              <p className="text-sm sm:text-xs text-[#8B93A7]">
                 Conto:{" "}
                 <span className="font-medium text-white">
                   {txAccountRow?.account_name ?? "—"}
@@ -1481,7 +1481,7 @@ export default function IdentitiesPage() {
               </p>
             )}
             <div className="space-y-1">
-              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                 Metodo di pagamento
               </label>
               <select
@@ -1499,7 +1499,7 @@ export default function IdentitiesPage() {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                 Importo (€)
               </label>
               <input
@@ -1513,7 +1513,7 @@ export default function IdentitiesPage() {
             </div>
             {txModal.mode === "withdrawal" ? (
               <div className="space-y-1">
-                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                   Stato
                 </label>
                 <select
@@ -1530,7 +1530,7 @@ export default function IdentitiesPage() {
               </div>
             ) : null}
             <div className="space-y-1">
-              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+              <label className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                 Note (opzionale)
               </label>
               <input
@@ -1565,7 +1565,7 @@ export default function IdentitiesPage() {
                 onClick={() => {
                   if (!txSubmitting) closeTxModal();
                 }}
-                className="h-10 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
+                className="h-10 flex-1 rounded-full border border-white/[0.06] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
               >
                 Annulla
               </button>
@@ -1621,7 +1621,7 @@ export default function IdentitiesPage() {
               type="button"
               disabled={editSaving}
               onClick={() => setEditingMethod(null)}
-              className="h-10 flex-1 rounded-full border border-white/[0.08] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
+              className="h-10 flex-1 rounded-full border border-white/[0.06] text-lg sm:text-sm font-semibold text-[#e2e8f0]"
             >
               Annulla
             </button>

@@ -100,7 +100,7 @@ export default function LoginClient() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col items-center justify-center bg-[#070B14] px-3 py-12 sm:px-4 sm:py-16">
+    <div className="flex min-h-dvh flex-1 flex-col items-center justify-center bg-[#0A1020] px-3 py-12 sm:px-4 sm:py-16">
       <div className="sm-app-constrain w-full">
         <div className="mb-8 text-center">
           <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.25em] sm-gradient-text">
@@ -109,10 +109,10 @@ export default function LoginClient() {
           <h1 className="mt-3 text-[26px] font-bold tracking-tight text-[#E6EAF2] sm:text-2xl sm:font-semibold">
             Accedi al tuo account
           </h1>
-          <p className="mt-2 text-[14px] text-[#94a3b8] sm:text-base sm:text-sm">Email e password per continuare.</p>
+          <p className="mt-2 text-[14px] text-[#8B93A7] sm:text-base sm:text-sm">Email e password per continuare.</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 shadow-md shadow-black/25 sm:p-6">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#11182B] p-5 shadow-md shadow-black/25 sm:p-6">
           {reasonMessage ? (
             <p
               className="mb-4 rounded-xl border border-amber-500/35 bg-amber-950/30 px-3 py-2 text-lg sm:text-base sm:text-sm text-[#fdba74]"
@@ -131,7 +131,7 @@ export default function LoginClient() {
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="block text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+                className="block text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]"
               >
                 Email
               </label>
@@ -151,7 +151,7 @@ export default function LoginClient() {
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="block text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]"
+                className="block text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]"
               >
                 Password
               </label>
@@ -199,7 +199,7 @@ export default function LoginClient() {
                 type="button"
                 disabled={loading !== null}
                 onClick={() => void handleSignUp()}
-                className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/[0.08] bg-[#151d2e] px-4 text-lg sm:text-base font-semibold text-white transition-colors hover:border-[#a855f7]/28 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/[0.06] bg-[#131C31] px-4 text-lg sm:text-base font-semibold text-white transition-colors hover:border-[#A970FF]/28 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading === "signup" ? "Registrazione…" : "Registrati"}
               </button>
@@ -207,10 +207,10 @@ export default function LoginClient() {
           </form>
         </div>
 
-        <p className="mt-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+        <p className="mt-8 text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
           <Link
             href="/dashboard"
-            className="font-medium text-[#a855f7] underline-offset-4 hover:underline"
+            className="font-medium text-[#A970FF] underline-offset-4 hover:underline"
           >
             Torna alla home
           </Link>

@@ -98,7 +98,7 @@ function getFilterRange(
 function toneClass(n: number): string {
   if (n > 0) return "text-[#34d399]";
   if (n < 0) return "text-[#fb7185]";
-  return "text-[#94a3b8]";
+  return "text-[#8B93A7]";
 }
 
 function formatShortDate(iso: string): string {
@@ -295,7 +295,7 @@ export default function PlayerDetailPage() {
       <AppShell title="Player">
         <Link
           href="/players"
-          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#A970FF] underline-offset-4 hover:underline"
         >
           ← Torna ai players
         </Link>
@@ -312,9 +312,9 @@ export default function PlayerDetailPage() {
   if (!ready) {
     return (
       <AppShell title="Player">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#8B93A7]">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#a855f7]/45"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
             aria-hidden
           />
           <p>Caricamento…</p>
@@ -328,7 +328,7 @@ export default function PlayerDetailPage() {
       <AppShell title="Player">
         <Link
           href="/players"
-          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+          className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#A970FF] underline-offset-4 hover:underline"
         >
           ← Torna ai players
         </Link>
@@ -344,27 +344,27 @@ export default function PlayerDetailPage() {
 
   const bal = Number.parseFloat(player.balance) || 0;
   const balClass =
-    bal > 0 ? "text-[#34d399]" : bal < 0 ? "text-[#fb7185]" : "text-[#94a3b8]";
+    bal > 0 ? "text-[#34d399]" : bal < 0 ? "text-[#fb7185]" : "text-[#8B93A7]";
 
   return (
     <AppShell title={player.name} subtitle="Performance e scommesse per periodo.">
       <Link
         href="/players"
-        className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#a855f7] underline-offset-4 hover:underline"
+        className="mb-4 inline-flex min-h-12 items-center text-lg sm:text-base sm:text-sm font-medium text-[#A970FF] underline-offset-4 hover:underline"
       >
         ← Torna ai players
       </Link>
 
       {/* 1. Header player */}
-      <header className="mb-6 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/12">
+      <header className="mb-6 rounded-2xl border border-white/[0.06] bg-[#11182B] p-4 shadow-md shadow-black/12">
         <h2 className="text-2xl font-bold text-white sm:text-lg">{player.name}</h2>
         {player.note ? (
-          <p className="mt-2 text-lg sm:text-base sm:text-sm leading-relaxed text-[#94a3b8]">{player.note}</p>
+          <p className="mt-2 text-lg sm:text-base sm:text-sm leading-relaxed text-[#8B93A7]">{player.note}</p>
         ) : (
-          <p className="mt-2 text-sm sm:text-xs text-[#64748b]">Nessuna nota.</p>
+          <p className="mt-2 text-sm sm:text-xs text-[#8B93A7]">Nessuna nota.</p>
         )}
-        <div className="mt-4 border-t border-[#1f2937] pt-4">
-          <p className="text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
+        <div className="mt-4 border-t border-[#1E2838] pt-4">
+          <p className="text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
             Saldo / balance
           </p>
           <p className={`mt-1 text-2xl font-bold tabular-nums ${balClass}`}>
@@ -375,7 +375,7 @@ export default function PlayerDetailPage() {
 
       {/* 2. Filtri data */}
       <section className="mb-5">
-        <p className="mb-2 text-[14px] font-semibold uppercase tracking-wide text-[#64748b]">
+        <p className="mb-2 text-[14px] font-semibold uppercase tracking-wide text-[#8B93A7]">
           Periodo
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-1">
@@ -388,8 +388,8 @@ export default function PlayerDetailPage() {
                 onClick={() => setDatePreset(id)}
                 className={`shrink-0 rounded-full border px-4 py-2.5 text-lg sm:text-base sm:text-sm font-semibold transition active:opacity-90 ${
                   active
-                    ? "border-[#a855f7]/50 bg-[#a855f7]/15 text-[#e9d5ff]"
-                    : "border-white/[0.08] bg-[#1e293b] text-[#cbd5e1] hover:border-white/[0.14]"
+                    ? "border-[#A970FF]/50 bg-[#A970FF]/15 text-[#e9d5ff]"
+                    : "border-white/[0.06] bg-[#1e293b] text-[#B4BCCC] hover:border-white/[0.12]"
                 }`}
               >
                 {label}
@@ -400,7 +400,7 @@ export default function PlayerDetailPage() {
         {datePreset === "custom" ? (
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                 Dal
               </label>
               <input
@@ -411,7 +411,7 @@ export default function PlayerDetailPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#94a3b8]">
+              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                 Al
               </label>
               <input
@@ -422,7 +422,7 @@ export default function PlayerDetailPage() {
               />
             </div>
             {(!customFrom || !customTo) && (
-              <p className="text-sm sm:text-xs text-[#64748b] sm:col-span-2">
+              <p className="text-sm sm:text-xs text-[#8B93A7] sm:col-span-2">
                 Seleziona data inizio e fine per applicare il filtro.
               </p>
             )}
@@ -440,41 +440,41 @@ export default function PlayerDetailPage() {
       ) : null}
 
       {/* 3. Riepilogo bilancio periodo */}
-      <section className="mb-6 rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/10">
-        <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+      <section className="mb-6 rounded-2xl border border-white/[0.06] bg-[#11182B] p-4 shadow-md shadow-black/10">
+        <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
           Riepilogo periodo
         </h3>
         <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Profitto</dt>
+          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
+            <dt className="text-[14px] font-semibold uppercase text-[#8B93A7]">Profitto</dt>
             <dd className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${toneClass(periodSummary.profit)}`}>
               {periodSummary.profit >= 0 ? "+" : ""}
               {formatMoney(periodSummary.profit)} €
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Stake</dt>
+          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
+            <dt className="text-[14px] font-semibold uppercase text-[#8B93A7]">Stake</dt>
             <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {formatMoney(periodSummary.stake)} €
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">Scommesse</dt>
+          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
+            <dt className="text-[14px] font-semibold uppercase text-[#8B93A7]">Scommesse</dt>
             <dd className="mt-1 text-lg sm:text-base font-bold tabular-nums text-white">
               {periodSummary.count}
             </dd>
           </div>
-          <div className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3">
-            <dt className="text-[14px] font-semibold uppercase text-[#64748b]">ROI</dt>
+          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
+            <dt className="text-[14px] font-semibold uppercase text-[#8B93A7]">ROI</dt>
             <dd
               className={`mt-1 text-lg sm:text-base font-bold tabular-nums ${
                 periodSummary.stake <= 0
-                  ? "text-[#94a3b8]"
+                  ? "text-[#8B93A7]"
                   : periodSummary.profit > 0
                     ? "text-[#34d399]"
                     : periodSummary.profit < 0
                       ? "text-[#fb7185]"
-                      : "text-[#94a3b8]"
+                      : "text-[#8B93A7]"
               }`}
             >
               {periodSummary.roi}
@@ -486,20 +486,20 @@ export default function PlayerDetailPage() {
       {/* 4. Bilancio per conto gioco */}
       <section className="mb-6">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+          <h3 className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
             Per conto gioco
           </h3>
           <Link
             href="/accounts"
-            className="text-sm sm:text-xs font-medium text-[#a855f7] underline-offset-4 hover:underline"
+            className="text-sm sm:text-xs font-medium text-[#A970FF] underline-offset-4 hover:underline"
           >
             Conti gioco →
           </Link>
         </div>
         {byAccountRows.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
             Nessuna scommessa in questo periodo. I conti si creano in{" "}
-            <Link href="/accounts" className="font-medium text-[#a855f7] underline">
+            <Link href="/accounts" className="font-medium text-[#A970FF] underline">
               Conti gioco
             </Link>
             .
@@ -510,59 +510,59 @@ export default function PlayerDetailPage() {
               const roi = formatAccountRoi(row.profit, row.stake);
               const roiTone =
                 row.stake <= 0
-                  ? "text-[#94a3b8]"
+                  ? "text-[#8B93A7]"
                   : row.profit > 0
                     ? "text-[#34d399]"
                     : row.profit < 0
                       ? "text-[#fb7185]"
-                      : "text-[#94a3b8]";
+                      : "text-[#8B93A7]";
               return (
                 <li key={row.gaming_account_id}>
                   <Link
                     href={`/accounts/${row.gaming_account_id}`}
-                    className="block rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/20 transition hover:border-[#a855f7]/22 active:opacity-95"
+                    className="block rounded-2xl border border-white/[0.06] bg-[#11182B] p-4 shadow-md shadow-black/20 transition hover:border-[#A970FF]/22 active:opacity-95"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-semibold text-white">{row.account_name}</p>
                         {row.bookmaker ? (
-                          <p className="mt-0.5 text-sm sm:text-xs text-[#64748b]">{row.bookmaker}</p>
+                          <p className="mt-0.5 text-sm sm:text-xs text-[#8B93A7]">{row.bookmaker}</p>
                         ) : null}
                       </div>
-                      <span className="shrink-0 text-[14px] font-medium uppercase tracking-wide text-[#a855f7]">
+                      <span className="shrink-0 text-[14px] font-medium uppercase tracking-wide text-[#A970FF]">
                         Apri
                       </span>
                     </div>
                     <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <div>
-                        <dt className="text-[14px] uppercase text-[#64748b]">Profitto</dt>
+                        <dt className="text-[14px] uppercase text-[#8B93A7]">Profitto</dt>
                         <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${toneClass(row.profit)}`}>
                           {row.profit >= 0 ? "+" : ""}
                           {formatMoney(row.profit)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[14px] uppercase text-[#64748b]">Stake</dt>
+                        <dt className="text-[14px] uppercase text-[#8B93A7]">Stake</dt>
                         <dd className="text-lg sm:text-base sm:text-sm font-bold tabular-nums text-white">
                           {formatMoney(row.stake)} €
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-[14px] uppercase text-[#64748b]">N.</dt>
+                        <dt className="text-[14px] uppercase text-[#8B93A7]">N.</dt>
                         <dd className="text-lg sm:text-base sm:text-sm font-bold text-white">{row.count}</dd>
                       </div>
                       <div>
-                        <dt className="text-[14px] uppercase text-[#64748b]">ROI</dt>
+                        <dt className="text-[14px] uppercase text-[#8B93A7]">ROI</dt>
                         <dd className={`text-lg sm:text-base sm:text-sm font-bold tabular-nums ${roiTone}`}>{roi}</dd>
                       </div>
                     </dl>
-                    <p className="mt-3 border-t border-[#1f2937] pt-3 text-[14px] text-[#64748b]">
+                    <p className="mt-3 border-t border-[#1E2838] pt-3 text-[14px] text-[#8B93A7]">
                       Ultima:{" "}
-                      <span className="font-medium text-[#cbd5e1]">
+                      <span className="font-medium text-[#B4BCCC]">
                         {formatShortDate(row.lastPlacedAt)}
                       </span>
-                      <span className="mx-1.5 text-[#475569]">·</span>
-                      <span className="line-clamp-2 text-[#94a3b8]">{row.lastEvent}</span>
+                      <span className="mx-1.5 text-[#6B7385]">·</span>
+                      <span className="line-clamp-2 text-[#8B93A7]">{row.lastEvent}</span>
                     </p>
                   </Link>
                 </li>
@@ -574,14 +574,14 @@ export default function PlayerDetailPage() {
 
       {/* 5. Ultime scommesse */}
       <section>
-        <h3 className="mb-3 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#94a3b8]">
+        <h3 className="mb-3 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
           Ultime scommesse
-          <span className="ml-2 font-normal normal-case text-[#64748b]">
+          <span className="ml-2 font-normal normal-case text-[#8B93A7]">
             (nel periodo selezionato, max 25)
           </span>
         </h3>
         {latestBets.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-white/[0.08] bg-[#0E1525] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#94a3b8]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B] px-4 py-8 text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
             Nessuna scommessa da mostrare.
           </p>
         ) : (
@@ -593,7 +593,7 @@ export default function PlayerDetailPage() {
               return (
                 <li
                   key={b.id}
-                  className="rounded-xl border border-[#1f2937] bg-[#121B2F] px-3 py-3"
+                  className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <p className="min-w-0 flex-1 line-clamp-2 text-lg sm:text-base sm:text-sm font-medium text-white">
@@ -606,14 +606,14 @@ export default function PlayerDetailPage() {
                       {formatMoney(b.profit)} €
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[14px] text-[#64748b]">
+                  <p className="mt-1.5 text-[14px] text-[#8B93A7]">
                     {formatShortDate(b.placed_at)} · {acc}
                     {b.gaming_accounts && gamingAccountBookmakerDisplay(b.gaming_accounts)
                       ? ` · ${gamingAccountBookmakerDisplay(b.gaming_accounts)}`
                       : ""}{" "}
                     · <span className="uppercase">{b.status}</span>
                   </p>
-                  <p className="mt-1 text-[14px] text-[#94a3b8]">
+                  <p className="mt-1 text-[14px] text-[#8B93A7]">
                     Quota {formatMoney(b.odds)} · Stake{" "}
                     {formatMoney(b.stake)} €
                   </p>

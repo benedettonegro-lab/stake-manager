@@ -79,7 +79,7 @@ export default function AltroPage() {
             <li key={item.href}>
               <AppCard href={item.href} padding="sm" className="!rounded-xl">
                 <p className="text-xl font-semibold text-white sm:text-sm">{item.label}</p>
-                <p className="mt-0.5 text-sm sm:text-xs text-[#64748b]">{item.hint}</p>
+                <p className="mt-0.5 text-sm sm:text-xs text-[#8B93A7]">{item.hint}</p>
               </AppCard>
             </li>
           ))}
@@ -87,17 +87,17 @@ export default function AltroPage() {
           <li>
             <AppCard padding="sm" className="!rounded-xl">
               <p className="text-xl font-semibold text-white sm:text-sm">Account</p>
-              <p className="mt-0.5 text-sm sm:text-xs text-[#64748b]">Profilo</p>
+              <p className="mt-0.5 text-sm sm:text-xs text-[#8B93A7]">Profilo</p>
 
               {loading ? (
-                <p className="mt-3 text-lg sm:text-base text-[#94a3b8] sm:text-sm">Caricamento…</p>
+                <p className="mt-3 text-lg sm:text-base text-[#8B93A7] sm:text-sm">Caricamento…</p>
               ) : (
                 <>
-                  <p className="mt-3 break-all text-lg sm:text-base text-[#94a3b8] sm:text-sm">
+                  <p className="mt-3 break-all text-lg sm:text-base text-[#8B93A7] sm:text-sm">
                     {email ?? "—"}
                   </p>
                   {registeredOn ? (
-                    <p className="mt-1 text-lg sm:text-base text-[#94a3b8] sm:text-sm">
+                    <p className="mt-1 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
                       Registrazione: {registeredOn}
                     </p>
                   ) : null}
@@ -105,7 +105,7 @@ export default function AltroPage() {
                     type="button"
                     disabled={loggingOut}
                     onClick={() => void handleLogout()}
-                    className="mt-3 w-full rounded-lg border border-white/[0.08] bg-[#121B2F] px-4 py-3 text-lg sm:text-base font-semibold text-[#e2e8f0] transition active:scale-[0.99] hover:border-white/[0.14] disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
+                    className="mt-3 w-full rounded-lg border border-white/[0.06] bg-[#131C31] px-4 py-3 text-lg sm:text-base font-semibold text-[#e2e8f0] transition active:scale-[0.99] hover:border-white/[0.12] disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                   >
                     {loggingOut ? "Uscita…" : "Logout"}
                   </button>
