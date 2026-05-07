@@ -30,7 +30,7 @@ export function FilterChips<T extends string>({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(item.value)}
-            className={`shrink-0 rounded-full border px-5 py-3 text-lg font-semibold transition duration-150 active:scale-[0.97] sm:px-3 sm:py-1.5 sm:text-sm ${
+            className={`shrink-0 rounded-full border px-4 py-2 text-[16px] font-semibold transition duration-150 active:scale-[0.97] sm:px-3 sm:py-1.5 sm:text-sm ${
               active
                 ? "border-[#a855f7]/50 bg-[#a855f7]/20 text-white"
                 : "border-white/[0.08] bg-[#121B2F] text-[#94a3b8] hover:border-white/[0.14] hover:text-[#e2e8f0]"

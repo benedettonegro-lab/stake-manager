@@ -732,7 +732,7 @@ export default function AccountsListPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(a.current_balance)} €
                     </p>
                     <p className="mt-2 text-sm sm:text-xs text-[#94a3b8]">

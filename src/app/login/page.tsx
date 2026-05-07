@@ -114,10 +114,10 @@ export default function LoginPage() {
           <p className="mb-4 text-lg sm:text-base sm:text-sm font-bold uppercase tracking-[0.35em] text-[#a855f7]">
             Stake Manager
           </p>
-          <h1 className="text-4xl font-black tracking-tight">
+          <h1 className="text-[28px] font-bold tracking-tight sm:text-4xl sm:font-black">
             Accedi al tuo account
           </h1>
-          <p className="mt-4 text-lg text-[#94a3b8]">
+          <p className="mt-4 text-[15px] text-[#94a3b8] sm:text-lg">
             Email e password per continuare.
           </p>
         </div>

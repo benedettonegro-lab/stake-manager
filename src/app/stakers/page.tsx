@@ -321,7 +321,7 @@ export default function StakersPage() {
                         </p>
                       ) : null}
                     </div>
-                    <p className={`shrink-0 text-[32px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
+                    <p className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
                       {formatMoney(s.balance)} €
                     </p>
                   </div>

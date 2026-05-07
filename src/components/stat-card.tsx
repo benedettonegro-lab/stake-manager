@@ -20,17 +20,17 @@ export function StatCard({
   tone = "default",
 }: StatCardProps) {
   return (
-    <div className="flex min-h-[148px] flex-col justify-center rounded-2xl border border-white/[0.08] bg-[#0E1525] p-7 shadow-md shadow-black/12 sm:min-h-0 sm:p-4">
-      <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
+    <div className="flex min-h-[120px] flex-col justify-center rounded-2xl border border-white/[0.08] bg-[#0E1525] p-4 shadow-md shadow-black/12 sm:min-h-0 sm:p-4">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#94a3b8] sm:text-xs sm:font-medium sm:tracking-wide">
         {label}
       </p>
       <p
-        className={`mt-3 text-4xl font-extrabold tabular-nums leading-none sm:mt-2 sm:text-2xl sm:font-semibold ${toneClass[tone]}`}
+        className={`mt-2 min-w-0 overflow-x-auto whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:mt-2 sm:text-2xl sm:font-semibold ${toneClass[tone]}`}
       >
         {value}
       </p>
       {sublabel ? (
-        <p className="mt-2 text-base text-[#94a3b8] sm:mt-1 sm:text-sm">{sublabel}</p>
+        <p className="mt-2 text-[15px] text-[#94a3b8] sm:mt-1 sm:text-sm">{sublabel}</p>
       ) : null}
     </div>
   );

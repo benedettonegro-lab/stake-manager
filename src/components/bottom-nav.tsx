@@ -16,7 +16,7 @@ function IconHome({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -35,7 +35,7 @@ function IconUsers({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -54,7 +54,7 @@ function IconWallet({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -73,7 +73,7 @@ function IconTicket({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -93,7 +93,7 @@ function IconStaker({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -112,7 +112,7 @@ function IconMore({ active }: { active: boolean }) {
   const c = active ? "#a855f7" : "#94a3b8";
   return (
     <svg
-      className="h-7 w-7 min-h-7 min-w-7 shrink-0 sm:h-[22px] sm:w-[22px] sm:min-h-0 sm:min-w-0"
+      className="h-6 w-6 shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -131,10 +131,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.08] bg-[#070B14]/96 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-md sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
+      className="fixed bottom-0 left-0 right-0 z-50 max-h-[96px] border-t border-white/[0.08] bg-[#070B14]/96 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md sm:max-h-none sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
       aria-label="Navigazione principale"
     >
-      <div className="sm-app-constrain grid min-h-[76px] grid-cols-6 items-stretch px-1 sm:min-h-[50px] sm:px-0.5">
+      <div className="sm-app-constrain grid max-h-[96px] min-h-0 grid-cols-6 items-stretch px-1 sm:max-h-none sm:min-h-[50px] sm:px-0.5">
         {items.map((item, i) => {
           const Icon = icons[i];
           const active = item.match.some(
@@ -144,12 +144,12 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex min-h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:py-1 ${
+              className={`flex min-h-[48px] min-w-0 max-h-full flex-col items-center justify-center gap-0.5 rounded-xl py-1 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:py-1 ${
                 active ? "text-[#c4b5fd]" : "text-[#64748b] hover:text-[#cbd5e1]"
               }`}
             >
               <Icon active={active} />
-              <span className="max-w-full truncate px-0.5 text-[13px] font-semibold uppercase leading-tight tracking-wide sm:text-xs sm:tracking-[0.15em]">
+              <span className="max-w-full truncate px-0.5 text-[11px] font-semibold uppercase leading-tight tracking-[0.14em] sm:text-xs sm:tracking-[0.15em]">
                 {item.label}
               </span>
             </Link>

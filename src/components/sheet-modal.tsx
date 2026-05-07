@@ -33,7 +33,7 @@ export function SheetModal({
       />
       <div className="sm-sheet-panel relative z-10 mx-auto flex max-h-[min(90dvh,720px)] w-[calc(100%-32px)] max-w-[430px] flex-col rounded-2xl border border-white/[0.08] bg-[#121B2F] shadow-2xl shadow-black/60">
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#1f2937] px-5 py-5 sm:px-5 sm:py-4">
-          <h2 className="text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold">
+          <h2 className="text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
             {title}
           </h2>
           <button

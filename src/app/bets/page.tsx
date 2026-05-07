@@ -293,7 +293,7 @@ function BetStatusBadge({
   const t = tradeStatusDisplay(status);
   return (
     <span
-      className={`inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-md border px-4 py-2 text-sm font-bold uppercase tracking-[0.15em] transition-colors duration-500 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${t.className}`}
+      className={`inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-md border px-3 py-2 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors duration-500 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${t.className}`}
     >
       {t.label}
     </span>
@@ -445,34 +445,34 @@ function BetTimelineCard({
         onOpenDetail(b);
       }}
     >
-      <div className="flex min-w-0 flex-col gap-3.5 px-4 py-5 sm:gap-1.5 sm:px-2.5 sm:py-2">
+      <div className="flex min-w-0 flex-col gap-2.5 px-4 py-4 sm:gap-1.5 sm:px-2.5 sm:py-2">
         <div className="flex items-start justify-between gap-3">
           <time
             dateTime={b.placed_at}
-            className="shrink-0 pt-0.5 text-base font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
+            className="shrink-0 pt-0.5 text-[15px] font-semibold tabular-nums text-[#94a3b8] sm:text-sm"
           >
             {timeStr}
           </time>
           <BetStatusBadge status={b.status} settling={settling} />
         </div>
-        <h3 className="line-clamp-2 text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold sm:leading-snug">
+        <h3 className="line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
           {b.event_name?.trim() || "—"}
         </h3>
-        <p className="truncate text-base font-medium uppercase tracking-[0.15em] text-[#64748b] sm:text-sm sm:tracking-wide">
+        <p className="truncate text-[12px] font-medium uppercase tracking-[0.14em] text-[#64748b] sm:text-sm sm:tracking-wide">
           {bookmakerAccountSmall(b)}
         </p>
-        <p className="text-base text-[#94a3b8] sm:text-sm">
-          <span className="font-semibold tabular-nums text-white">
+        <p className="text-[16px] text-[#94a3b8] sm:text-sm">
+          <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">
             {formatMoney(b.stake)} €
           </span>
           <span className="mx-1.5 text-[#475569]">·</span>
           <span>
             quota{" "}
-            <span className="font-semibold tabular-nums text-white">{formatMoney(b.odds)}</span>
+            <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">{formatMoney(b.odds)}</span>
           </span>
         </p>
         {showResult ? (
-          <p className={`text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
+          <p className={`whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
             {pnl > 0 ? "+" : ""}
             {formatMoney(b.profit)} €
           </p>
@@ -1199,10 +1199,10 @@ function BetsPageContent() {
         <h2 id="bets-analytics-heading" className="sr-only">
           Riepilogo giocate
         </h2>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.07] bg-[#0E1525]/72 px-4 py-3 text-base backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.07] bg-[#0E1525]/72 px-3 py-2.5 text-[16px] backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
           <span className="text-[#94a3b8]">
             Giocate{" "}
-            <strong className="tabular-nums text-white">
+            <strong className="whitespace-nowrap tabular-nums text-[#E6EAF2]">
               {new Intl.NumberFormat("it-IT").format(stats.count)}
             </strong>
           </span>
@@ -1212,7 +1212,7 @@ function BetsPageContent() {
           <span className="text-[#94a3b8]">
             Profit{" "}
             <strong
-              className={`tabular-nums ${headerProfitClass(stats.totalProfit)}`}
+              className={`whitespace-nowrap tabular-nums ${headerProfitClass(stats.totalProfit)}`}
             >
               {formatSignedProfitEuro(stats.totalProfit)}
             </strong>
@@ -1222,7 +1222,7 @@ function BetsPageContent() {
           </span>
           <span className="text-[#94a3b8]">
             ROI{" "}
-            <strong className={`tabular-nums ${roiTextClass}`}>{roiStr}</strong>
+            <strong className={`whitespace-nowrap tabular-nums ${roiTextClass}`}>{roiStr}</strong>
           </span>
         </div>
       </section>
@@ -1233,7 +1233,7 @@ function BetsPageContent() {
       >
         <h2
           id="bets-list-heading"
-          className="mb-4 text-3xl font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
+          className="mb-3 text-[28px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
@@ -1265,12 +1265,12 @@ function BetsPageContent() {
                 <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-3 sm:pb-2">
                   <h3
                     id={`bet-month-${month.monthKey}`}
-                    className="text-2xl font-bold capitalize tracking-tight text-white sm:text-xl"
+                    className="text-[22px] font-bold capitalize tracking-tight text-[#E6EAF2] sm:text-xl"
                   >
                     {month.monthTitle}
                   </h3>
                   <p
-                    className={`shrink-0 text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
+                    className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
                   >
                     {formatSignedProfitEuro(month.profitTotal)}
                   </p>
@@ -1279,11 +1279,11 @@ function BetsPageContent() {
                 {month.days.map((day) => (
                   <div key={day.dayKey} className="space-y-4 sm:space-y-3">
                     <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-3 sm:pl-2">
-                      <h4 className="text-xl font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
+                      <h4 className="text-[15px] font-bold uppercase tracking-wide text-[#94a3b8] sm:text-lg">
                         {day.dayTitle}
                       </h4>
                       <p
-                        className={`text-2xl font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
+                        className={`shrink-0 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
                       >
                         {formatSignedProfitEuro(day.profitTotal)}
                       </p>

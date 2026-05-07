@@ -59,7 +59,7 @@ export function ConfirmDialog({
       >
         <h2
           id="confirm-dialog-title"
-          className="text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold"
+          className="text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold"
         >
           {title}
         </h2>
@@ -82,7 +82,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={() => onCancel()}
-            className="min-h-[52px] rounded-xl border border-white/[0.08] bg-[#0E1525] px-6 py-4 text-lg font-semibold text-[#e2e8f0] transition hover:bg-[#1e293b] disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base"
+            className="min-h-[48px] rounded-xl border border-white/[0.08] bg-[#0E1525] px-5 py-3 text-[16px] font-semibold text-[#e2e8f0] transition hover:bg-[#151d2e] disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base"
           >
             {cancelText}
           </button>
@@ -90,7 +90,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={() => void onConfirm()}
-            className={`min-h-[52px] rounded-xl px-6 py-4 text-lg font-semibold transition disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base ${confirmClass}`}
+            className={`min-h-[48px] rounded-xl px-5 py-3 text-[16px] font-semibold transition disabled:opacity-50 sm:min-h-12 sm:px-4 sm:py-3 sm:text-base ${confirmClass}`}
           >
             {loading ? "Attendi…" : confirmText}
           </button>

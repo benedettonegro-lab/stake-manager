@@ -1062,11 +1062,11 @@ function MovimentiListaContent() {
           {grouped.map((month) => (
             <section key={month.monthKey} className="space-y-2">
               <header className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-1">
-                <h2 className="text-2xl font-bold uppercase tracking-[0.12em] text-[#64748b] sm:text-xl">
+                <h2 className="text-[22px] font-bold uppercase tracking-[0.12em] text-[#64748b] sm:text-xl">
                   {month.monthTitle}
                 </h2>
                 <p
-                  className={`text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${totalHeaderClass(month.monthTotal)}`}
+                  className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${totalHeaderClass(month.monthTotal)}`}
                 >
                   {signedTotalLabel(month.monthTotal)}
                 </p>
@@ -1074,11 +1074,11 @@ function MovimentiListaContent() {
               {month.days.map((day) => (
                 <div key={day.dayKey} className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2 pl-0.5">
-                    <h3 className="text-xl font-bold capitalize tracking-wide text-[#475569] sm:text-lg sm:font-semibold">
+                    <h3 className="text-[15px] font-bold capitalize tracking-wide text-[#475569] sm:text-lg sm:font-semibold">
                       {day.dayTitle}
                     </h3>
                     <p
-                      className={`text-2xl font-extrabold tabular-nums sm:text-xl sm:font-semibold ${totalHeaderClass(day.dayTotal)}`}
+                      className={`shrink-0 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:text-xl sm:font-semibold ${totalHeaderClass(day.dayTotal)}`}
                     >
                       {signedTotalLabel(day.dayTotal)}
                     </p>
@@ -1142,7 +1142,7 @@ function MovimentiListaContent() {
                                 )}
                               </p>
                               <p
-                                className={`shrink-0 text-right text-[32px] font-extrabold tabular-nums sm:text-sm sm:font-bold ${txAmountRowClass(t)}`}
+                                className={`shrink-0 whitespace-nowrap text-right text-[22px] font-extrabold tabular-nums sm:text-sm sm:font-bold ${txAmountRowClass(t)}`}
                               >
                                 {formatMoney(t.amount)} €
                               </p>
@@ -1329,7 +1329,7 @@ function MovimentiListaContent() {
                       {typeTitle}
                     </p>
                     <p
-                      className={`mt-1 text-3xl font-bold tabular-nums transition-colors duration-150 ${balCls} ${invalid ? "line-through" : ""}`}
+                      className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums transition-colors duration-150 sm:text-3xl ${balCls} ${invalid ? "line-through" : ""}`}
                     >
                       {formatMoney(t.amount)} €
                     </p>

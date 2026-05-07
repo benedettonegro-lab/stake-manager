@@ -106,10 +106,10 @@ export default function LoginClient() {
           <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.25em] sm-gradient-text">
             Stake Manager
           </p>
-          <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+          <h1 className="mt-3 text-[28px] font-bold tracking-tight text-[#E6EAF2] sm:text-2xl sm:font-semibold">
             Accedi al tuo account
           </h1>
-          <p className="mt-2 text-lg sm:text-base sm:text-sm text-[#94a3b8]">Email e password per continuare.</p>
+          <p className="mt-2 text-[15px] text-[#94a3b8] sm:text-base sm:text-sm">Email e password per continuare.</p>
         </div>
 
         <div className="rounded-2xl border border-white/[0.08] bg-[#0E1525] p-5 shadow-md shadow-black/25 sm:p-6">

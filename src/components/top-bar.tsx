@@ -18,11 +18,11 @@ export function TopBar({ title, showBrand }: TopBarProps) {
         </Link>
         <div className="flex min-w-0 flex-1 justify-center px-2">
           {showBrand ? (
-            <span className="truncate text-3xl font-bold leading-[1.1] sm:text-2xl sm:font-semibold sm-gradient-text">
+            <span className="truncate text-[28px] font-bold leading-[1.1] sm:text-2xl sm:font-semibold sm-gradient-text">
               Stake Manager
             </span>
           ) : (
-            <h1 className="truncate text-center text-3xl font-bold leading-tight text-[#E6EAF2] sm:text-2xl sm:font-semibold">
+            <h1 className="truncate text-center text-[28px] font-bold leading-tight text-[#E6EAF2] sm:text-2xl sm:font-semibold">
               {title ?? "Stake Manager"}
             </h1>
           )}

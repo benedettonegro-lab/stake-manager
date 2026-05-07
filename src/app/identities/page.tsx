@@ -897,7 +897,7 @@ export default function IdentitiesPage() {
                 Cassa totale
               </p>
               <p
-                className={`text-[32px] font-extrabold leading-none tracking-tight tabular-nums sm:text-[1.85rem] sm:font-bold ${
+                className={`text-[30px] font-extrabold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
                   detailCassa > 0
                     ? "text-emerald-400 drop-shadow-[0_0_22px_rgba(52,211,153,0.4)]"
                     : detailCassa < 0
@@ -967,7 +967,7 @@ export default function IdentitiesPage() {
                                 </p>
                               </div>
                               <p
-                                className={`shrink-0 text-[32px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(a.current_balance)} €
                               </p>
@@ -1020,7 +1020,7 @@ export default function IdentitiesPage() {
                                 ) : null}
                               </div>
                               <p
-                                className={`shrink-0 text-[32px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(m.balance)} €
                               </p>
@@ -1187,7 +1187,7 @@ export default function IdentitiesPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(accountActions.current_balance)} €
                     </p>
                   </div>
@@ -1274,7 +1274,7 @@ export default function IdentitiesPage() {
                     <p className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#64748b]">
                       Saldo
                     </p>
-                    <p className={`mt-1 text-3xl font-bold tabular-nums ${balCls}`}>
+                    <p className={`mt-1 whitespace-nowrap text-[30px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(methodActions.balance)} €
                     </p>
                   </div>

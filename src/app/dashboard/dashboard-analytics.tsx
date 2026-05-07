@@ -258,7 +258,7 @@ export function DashboardAnalytics() {
     <div className="flex flex-col gap-5 pb-3 sm:gap-4 sm:pb-2">
       {error ? (
         <p
-          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-base sm:text-sm text-[#fb7185]"
+          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[15px] text-[#fb7185] sm:text-sm"
           role="alert"
         >
           {error}
@@ -267,12 +267,12 @@ export function DashboardAnalytics() {
 
       <section aria-label="Cassa totale">
         <div className="sm-gradient-border">
-          <div className="sm-gradient-inner px-5 py-6 sm:px-4 sm:py-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-widest">
+          <div className="sm-gradient-inner p-4 sm:px-4 sm:py-4">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-widest">
               Cassa totale
             </p>
             <p
-              className={`mt-3 text-4xl font-extrabold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
+              className={`mt-2 whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
             >
               {formatMoney(totals.saldoCassaTotale)} €
             </p>
@@ -304,20 +304,20 @@ export function DashboardAnalytics() {
         <div className="mb-3 flex items-center justify-between gap-2 sm:mb-2">
           <h2
             id="dash-recent-heading"
-            className="text-3xl font-bold uppercase leading-tight tracking-wide text-[#64748b] sm:text-2xl sm:font-semibold sm:tracking-widest"
+            className="text-[28px] font-bold uppercase leading-tight tracking-wide text-[#64748b] sm:text-2xl sm:font-semibold sm:tracking-widest"
           >
             Ultimi eventi
           </h2>
           <Link
             href="/bets"
-            className="text-lg font-semibold text-[#a855f7] transition hover:text-[#c4b5fd] sm:text-sm"
+            className="text-[16px] font-semibold text-[#a855f7] transition hover:text-[#c4b5fd] sm:text-sm"
           >
             Tutte
           </Link>
         </div>
         <ul className="flex flex-col gap-3 sm:gap-2">
           {recentEvents.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-white/[0.08] px-3 py-8 text-center text-base text-[#64748b] sm:py-6 sm:text-sm">
+            <li className="rounded-xl border border-dashed border-white/[0.08] px-3 py-6 text-center text-[15px] text-[#64748b] sm:py-6 sm:text-sm">
               Nessuna giocata
             </li>
           ) : (
@@ -332,13 +332,13 @@ export function DashboardAnalytics() {
                   <AppCard href={`/bets#${b.id}`} padding="sm" className="!rounded-xl">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-2xl font-bold leading-tight text-white sm:text-xl sm:font-semibold">
+                        <p className="line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
                           {b.event_name?.trim() || "Giocata"}
                         </p>
-                        <p className="mt-2 truncate text-base text-[#64748b] sm:mt-1 sm:text-sm">{sub}</p>
+                        <p className="mt-1.5 truncate text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">{sub}</p>
                       </div>
                       <span
-                        className={`shrink-0 text-4xl font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
+                        className={`shrink-0 whitespace-nowrap text-[30px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
                           p > 0 ? "text-[#34d399]" : p < 0 ? "text-[#fb7185]" : "text-[#94a3b8]"
                         }`}
                       >
@@ -346,7 +346,7 @@ export function DashboardAnalytics() {
                         {formatMoney(p)} €
                       </span>
                     </div>
-                    <p className="mt-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#475569] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
+                    <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#475569] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
                       {new Intl.DateTimeFormat("it-IT", {
                         day: "2-digit",
                         month: "short",
@@ -366,14 +366,14 @@ export function DashboardAnalytics() {
       <section className="grid grid-cols-2 gap-3 sm:gap-2" aria-label="Best">
         {breakdown.topPlayer ? (
           <AppCard href={`/players/${breakdown.topPlayer.id}`} padding="sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 truncate text-2xl font-bold leading-tight text-white sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-2 truncate text-[22px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topPlayer.name}
             </p>
             <p
-              className={`mt-2 text-2xl font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-2 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topPlayer.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >
@@ -383,22 +383,22 @@ export function DashboardAnalytics() {
           </AppCard>
         ) : (
           <AppCard padding="sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 text-base text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
         {breakdown.topAccount ? (
           <AppCard href={`/accounts/${breakdown.topAccount.id}`} padding="sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 line-clamp-2 text-2xl font-bold leading-tight text-white sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-2 line-clamp-2 text-[22px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topAccount.name}
             </p>
             <p
-              className={`mt-2 text-2xl font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-2 whitespace-nowrap text-[22px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topAccount.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >
@@ -408,10 +408,10 @@ export function DashboardAnalytics() {
           </AppCard>
         ) : (
           <AppCard padding="sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#64748b] sm:text-xs sm:tracking-wide">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#64748b] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 text-base text-[#64748b] sm:mt-1 sm:text-sm">—</p>
+            <p className="mt-2 text-[15px] text-[#64748b] sm:mt-1 sm:text-sm">—</p>
           </AppCard>
         )}
       </section>

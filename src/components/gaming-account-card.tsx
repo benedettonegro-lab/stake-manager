@@ -93,47 +93,47 @@ export function GamingAccountCard({
     <article className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E1525] shadow-sm shadow-black/15 transition hover:border-white/[0.12]">
       <Link
         href={`/accounts/${accountId}`}
-        className="block px-6 pb-6 pt-6 transition active:bg-[#0E1525]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
+        className="block p-5 transition active:bg-[#0E1525]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-2xl font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
+            <h3 className="truncate text-[22px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
               {accountName}
             </h3>
             {bookmaker ? (
-              <p className="mt-2 truncate text-base text-[#94a3b8] sm:mt-1 sm:text-sm">{bookmaker}</p>
+              <p className="mt-1.5 truncate text-[15px] text-[#94a3b8] sm:mt-1 sm:text-sm">{bookmaker}</p>
             ) : null}
           </div>
           {accountStatus ? (
             <span
-              className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-wide sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${statusBadgeClass(accountStatus)}`}
+              className={`shrink-0 rounded-full border px-2.5 py-1 text-[12px] font-bold uppercase tracking-[0.14em] sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${statusBadgeClass(accountStatus)}`}
             >
               {STATUS_LABEL[accountStatus]}
             </span>
           ) : null}
         </div>
         {identityLine ? (
-          <p className="mt-3 truncate text-base text-[#64748b] sm:mt-2 sm:text-sm">{identityLine}</p>
+          <p className="mt-2 truncate text-[15px] text-[#64748b] sm:mt-2 sm:text-sm">{identityLine}</p>
         ) : null}
         <p
-          className={`mt-5 text-4xl font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
+          className={`mt-4 min-w-0 overflow-x-auto whitespace-nowrap text-[30px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
         >
           {formatMoney(currentBalance)} €
         </p>
-        <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#475569] sm:text-xs sm:font-medium sm:tracking-wide">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#475569] sm:text-xs sm:font-medium sm:tracking-wide">
           Saldo conto
         </p>
 
         {showInitial ? (
-          <p className="mt-4 text-base text-[#64748b] sm:mt-3 sm:text-sm">
+          <p className="mt-3 text-[15px] text-[#64748b] sm:mt-3 sm:text-sm">
             Iniziale{" "}
-            <span className={`text-2xl font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
+            <span className={`whitespace-nowrap text-[22px] font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
               {formatMoney(initialBalance!)} €
             </span>
           </p>
         ) : null}
 
-        <div className="mt-5 grid grid-cols-4 gap-3 sm:mt-3 sm:gap-1.5">
+        <div className="mt-4 grid grid-cols-4 gap-2 sm:mt-3 sm:gap-1.5">
           <StatPill
             className="!px-2 !py-1.5"
             label="Dep."
@@ -158,32 +158,32 @@ export function GamingAccountCard({
         </div>
       </Link>
 
-      <div className="flex flex-wrap gap-3 border-t border-white/[0.08] px-6 py-5 sm:gap-1.5 sm:px-3 sm:py-2.5">
+      <div className="flex flex-wrap gap-2 border-t border-white/[0.08] p-4 sm:gap-1.5 sm:px-3 sm:py-2.5">
         {movementsHrefBase ? (
           <>
             <QuickActionButton
               href={`${movementsHrefBase}?account=${encodeURIComponent(accountId)}&type=deposit`}
               variant="secondary"
-              className="min-h-[52px] border-emerald-500/30 bg-emerald-500/10 text-lg font-semibold text-emerald-200 sm:min-h-9 sm:text-sm"
+              className="min-h-[48px] border-emerald-500/30 bg-emerald-500/10 text-[16px] font-semibold text-emerald-200 sm:min-h-9 sm:text-sm"
             >
               Deposita
             </QuickActionButton>
             <QuickActionButton
               href={`${movementsHrefBase}?account=${encodeURIComponent(accountId)}&type=withdrawal`}
               variant="secondary"
-              className="min-h-[52px] border-amber-500/30 bg-amber-500/10 text-lg font-semibold text-amber-100 sm:min-h-9 sm:text-sm"
+              className="min-h-[48px] border-amber-500/30 bg-amber-500/10 text-[16px] font-semibold text-amber-100 sm:min-h-9 sm:text-sm"
             >
               Preleva
             </QuickActionButton>
           </>
         ) : null}
         {onEdit ? (
-          <QuickActionButton onClick={onEdit} variant="ghost" className="min-h-[52px] text-lg sm:min-h-9 sm:text-sm">
+          <QuickActionButton onClick={onEdit} variant="ghost" className="min-h-[48px] text-[16px] sm:min-h-9 sm:text-sm">
             Modifica
           </QuickActionButton>
         ) : null}
         {onDelete ? (
-          <QuickActionButton onClick={onDelete} variant="danger" className="min-h-[52px] text-lg sm:min-h-9 sm:text-sm">
+          <QuickActionButton onClick={onDelete} variant="danger" className="min-h-[48px] text-[16px] sm:min-h-9 sm:text-sm">
             Elimina
           </QuickActionButton>
         ) : null}
