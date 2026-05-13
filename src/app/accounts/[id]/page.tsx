@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { SheetModal } from "@/components/sheet-modal";
 import { formatAccountRoi } from "@/lib/account-bet-metrics";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { legacyLabelParts, paymentMethodTitle } from "@/lib/payment-methods";
 import {
@@ -182,7 +183,7 @@ export default function AccountDetailPage() {
         )
         .eq("player_id", acc.player_id)
         .order("method_name"),
-      supabase.from("bets").select("profit, stake").eq("gaming_account_id", accountId),
+      supabase.from("bets").select("profit, stake, status, odds").eq("gaming_account_id", accountId),
     ]);
 
     if (pmRes.error) {
@@ -198,8 +199,19 @@ export default function AccountDetailPage() {
       let totalProfit = 0;
       let totalStake = 0;
       for (const r of betRes.data ?? []) {
-        totalProfit += Number.parseFloat((r as { profit: string }).profit) || 0;
-        totalStake += Number.parseFloat((r as { stake: string }).stake) || 0;
+        const row = r as {
+          profit: string;
+          stake: string;
+          status: string;
+          odds: string | number;
+        };
+        totalProfit += betBalanceContribution(
+          row.status,
+          row.stake,
+          row.odds,
+          row.profit,
+        );
+        totalStake += Number.parseFloat(row.stake) || 0;
       }
       setBetAgg({ totalProfit, totalStake });
     }

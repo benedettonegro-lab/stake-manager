@@ -2,6 +2,7 @@
 
 import { AppShell } from "@/components/app-shell";
 import { formatAccountRoi } from "@/lib/account-bet-metrics";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import Link from "next/link";
@@ -234,7 +235,7 @@ export default function PlayerDetailPage() {
     let profit = 0;
     let stake = 0;
     for (const b of filteredBets) {
-      profit += Number.parseFloat(b.profit) || 0;
+      profit += betBalanceContribution(b.status, b.stake, b.odds, b.profit);
       stake += Number.parseFloat(b.stake) || 0;
     }
     const count = filteredBets.length;
@@ -258,7 +259,7 @@ export default function PlayerDetailPage() {
       const name = ga?.account_name?.trim() || "Conto";
       const bookmaker = ga ? gamingAccountBookmakerDisplay(ga) : "";
       const prev = m.get(b.gaming_account_id);
-      const p = Number.parseFloat(b.profit) || 0;
+      const p = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
       const s = Number.parseFloat(b.stake) || 0;
       const placed = b.placed_at;
       const ev = b.event_name?.trim() || "—";
@@ -587,7 +588,7 @@ export default function PlayerDetailPage() {
         ) : (
           <ul className="space-y-2">
             {latestBets.map((b) => {
-              const pnl = Number.parseFloat(b.profit) || 0;
+              const pnl = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
               const pnlClass = toneClass(pnl);
               const acc = b.gaming_accounts?.account_name ?? "Conto";
               return (
@@ -603,7 +604,7 @@ export default function PlayerDetailPage() {
                       className={`shrink-0 text-lg sm:text-base sm:text-sm font-bold tabular-nums ${pnlClass}`}
                     >
                       {pnl >= 0 ? "+" : ""}
-                      {formatMoney(b.profit)} €
+                      {formatMoney(pnl)} €
                     </span>
                   </div>
                   <p className="mt-1.5 text-[14px] text-[#8B93A7]">

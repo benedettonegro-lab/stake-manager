@@ -4,6 +4,7 @@ import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/compone
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -40,7 +41,13 @@ function formatRoi(totalProfit: number, totalStake: number): string {
   }).format(rounded)}%`;
 }
 
-type BetMini = { staker_id: string; stake: string; profit: string };
+type BetMini = {
+  staker_id: string;
+  stake: string;
+  profit: string;
+  status: string;
+  odds: string | number;
+};
 
 export default function StakersPage() {
   const router = useRouter();
@@ -73,7 +80,7 @@ export default function StakersPage() {
     setLoadError(null);
     const [sRes, bRes] = await Promise.all([
       supabase.from("stakers").select("id, name, balance, player_id").order("name"),
-      supabase.from("bets").select("staker_id, stake, profit"),
+      supabase.from("bets").select("staker_id, stake, profit, status, odds"),
     ]);
     if (sRes.error) {
       setLoadError(sRes.error.message);
@@ -95,7 +102,7 @@ export default function StakersPage() {
       const prev = m.get(r.staker_id) ?? { count: 0, stake: 0, profit: 0 };
       prev.count += 1;
       prev.stake += Number.parseFloat(r.stake) || 0;
-      prev.profit += Number.parseFloat(r.profit) || 0;
+      prev.profit += betBalanceContribution(r.status, r.stake, r.odds, r.profit);
       m.set(r.staker_id, prev);
     }
     return m;

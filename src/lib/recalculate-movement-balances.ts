@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 
 const PAGE = 1000;
 
@@ -73,11 +74,8 @@ async function sumCompletedTransactionsForPaymentMethod(
   return { deposits, withdrawals, error: null };
 }
 
-/**
- * Effetto referti su conto (stesso criterio del trigger: `profit` conta solo per `won` / `lost`).
- * I depositi/prelievi non sono qui: servono perché `current_balance` nel DB include anche le scommesse.
- */
-async function sumSettledBetProfitForGamingAccount(
+/** Somma contributi di tutte le giocate sul conto (stake trattenuto + vincite, coerente col trigger DB). */
+async function sumBetContributionsForGamingAccount(
   supabase: SupabaseClient,
   gamingAccountId: string,
 ): Promise<{ sum: number; error: string | null }> {
@@ -86,7 +84,7 @@ async function sumSettledBetProfitForGamingAccount(
   for (;;) {
     const { data, error } = await supabase
       .from("bets")
-      .select("status, profit")
+      .select("status, stake, odds, profit")
       .eq("gaming_account_id", gamingAccountId)
       .range(from, from + PAGE - 1);
 
@@ -95,9 +93,12 @@ async function sumSettledBetProfitForGamingAccount(
     }
     const rows = data ?? [];
     for (const row of rows) {
-      if (row.status === "won" || row.status === "lost") {
-        total += parseAmount(row.profit);
-      }
+      total += betBalanceContribution(
+        String(row.status),
+        row.stake as string | number,
+        row.odds as string | number,
+        row.profit as string | number,
+      );
     }
     if (rows.length < PAGE) break;
     from += PAGE;
@@ -133,7 +134,7 @@ export async function recalculateGamingAccountBalanceFromLedger(
     return { ok: false, message: sums.error };
   }
 
-  const betRes = await sumSettledBetProfitForGamingAccount(supabase, gamingAccountId);
+  const betRes = await sumBetContributionsForGamingAccount(supabase, gamingAccountId);
   if (betRes.error) {
     return { ok: false, message: betRes.error };
   }

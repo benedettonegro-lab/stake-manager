@@ -5,9 +5,9 @@ import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { BET_TYPE_DEFAULT, BET_TYPE_OPTIONS } from "@/lib/bet-constants";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { assertGamingAccountCoversStake } from "@/lib/balance-validation";
-import { applySettlementBalanceDelta } from "@/lib/settlement-balances";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -74,7 +74,12 @@ type BetsMonthGroup = {
 /** Stati selezionabili dalla linguetta (menu) */
 type LinguettaBetStatus = "open" | "won" | "lost" | "void";
 
-type BetAggregateRow = { stake: string; profit: string };
+type BetAggregateRow = {
+  stake: string;
+  profit: string;
+  status: string;
+  odds: string | number;
+};
 
 function calculateProfit(
   status: BetStatus,
@@ -127,7 +132,7 @@ function reduceAggregate(rows: BetAggregateRow[]) {
   let totalProfit = 0;
   for (const r of rows) {
     totalStake += Number.parseFloat(r.stake) || 0;
-    totalProfit += Number.parseFloat(r.profit) || 0;
+    totalProfit += betBalanceContribution(r.status, r.stake, r.odds, r.profit);
   }
   return {
     count: rows.length,
@@ -174,7 +179,7 @@ function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
     const day = d.getDate();
     const monthKey = `${y}-${String(mo + 1).padStart(2, "0")}`;
     const dayKey = `${monthKey}-${String(day).padStart(2, "0")}`;
-    const p = Number.parseFloat(b.profit) || 0;
+    const p = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
 
     if (!months.has(monthKey)) {
       months.set(monthKey, { profitTotal: 0, days: new Map() });
@@ -196,7 +201,9 @@ function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
     const days: BetsDayGroup[] = dayKeys.map((dk) => {
       const { bets: dayBets, sample } = bucket.days.get(dk)!;
       const profitTotal = dayBets.reduce(
-        (s, x) => s + (Number.parseFloat(x.profit) || 0),
+        (s, x) =>
+          s +
+          betBalanceContribution(x.status, x.stake, x.odds, x.profit),
         0,
       );
       return {
@@ -357,7 +364,7 @@ function BetTimelineCard({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const pnl = Number.parseFloat(b.profit);
+  const pnl = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
   const profitClass =
     pnl > 0
       ? "text-[#34d399]"
@@ -474,7 +481,7 @@ function BetTimelineCard({
         {showResult ? (
           <p className={`whitespace-nowrap text-lg font-bold tabular-nums leading-none sm:text-2xl sm:font-bold ${profitClass}`}>
             {pnl > 0 ? "+" : ""}
-            {formatMoney(b.profit)} €
+            {formatMoney(pnl)} €
           </p>
         ) : null}
       </div>
@@ -613,7 +620,9 @@ function BetsPageContent() {
   }, [supabase]);
 
   const loadBetAggregates = useCallback(async () => {
-    const { data, error } = await supabase.from("bets").select("stake, profit");
+    const { data, error } = await supabase
+      .from("bets")
+      .select("stake, profit, status, odds");
     if (error) {
       setAggregateRows(null);
       return;
@@ -663,6 +672,8 @@ function BetsPageContent() {
     const rows: BetAggregateRow[] = bets.map((b) => ({
       stake: b.stake,
       profit: b.profit,
+      status: b.status,
+      odds: b.odds,
     }));
     return reduceAggregate(rows);
   }, [aggregateRows, bets]);
@@ -852,9 +863,7 @@ function BetsPageContent() {
 
     const { data: row, error: fetchErr } = await supabase
       .from("bets")
-      .select(
-        "id, profit, status, settled_at, gaming_account_id, player_id, staker_id, event_name, odds, stake, bet_type, note",
-      )
+      .select("id")
       .eq("id", editingBet.id)
       .maybeSingle();
 
@@ -872,28 +881,9 @@ function BetsPageContent() {
       return;
     }
 
-    const r = row as {
-      id: string;
-      profit: string;
-      status: BetStatus;
-      settled_at: string | null;
-      gaming_account_id: string;
-      player_id: string;
-      staker_id: string;
-      event_name: string;
-      odds: string | number;
-      stake: string | number;
-      bet_type: string | null;
-      note: string | null;
-    };
-
-    const oldProfit = Number(r.profit ?? 0) || 0;
     const newProfit = computeProfit(editStatus, stakeNum, oddsNum);
     const settled_at =
       editStatus === "open" ? null : new Date().toISOString();
-    const pairChanged =
-      r.gaming_account_id !== editGamingAccountId ||
-      r.staker_id !== editStakerId;
     const noteVal = editNote.trim() ? editNote.trim() : null;
 
     const { error } = await supabase
@@ -917,58 +907,6 @@ function BetsPageContent() {
       console.error("[modifica scommessa] update bets", error);
       setEditError(error.message);
       setEditSaving(false);
-      return;
-    }
-
-    try {
-      if (pairChanged) {
-        await applySettlementBalanceDelta(
-          supabase,
-          r.gaming_account_id,
-          r.staker_id,
-          -oldProfit,
-        );
-        await applySettlementBalanceDelta(
-          supabase,
-          editGamingAccountId,
-          editStakerId,
-          newProfit,
-        );
-      } else {
-        const difference = newProfit - oldProfit;
-        await applySettlementBalanceDelta(
-          supabase,
-          r.gaming_account_id,
-          r.staker_id,
-          difference,
-        );
-      }
-    } catch (e) {
-      const msg =
-        e instanceof Error ? e.message : "Errore aggiornamento saldi.";
-      console.error("[modifica scommessa] saldi", e);
-      const { error: revErr } = await supabase
-        .from("bets")
-        .update({
-          event_name: r.event_name,
-          odds: Number(r.odds),
-          stake: Number(r.stake),
-          status: r.status,
-          bet_type: r.bet_type?.trim() || BET_TYPE_DEFAULT,
-          profit: oldProfit,
-          settled_at: r.settled_at,
-          gaming_account_id: r.gaming_account_id,
-          staker_id: r.staker_id,
-          player_id: r.player_id,
-          note: r.note,
-        })
-        .eq("id", editingBet.id);
-      if (revErr) {
-        console.error("[modifica scommessa] rollback bet fallito", revErr);
-      }
-      setEditError(msg);
-      setEditSaving(false);
-      await loadAll();
       return;
     }
 
@@ -1055,11 +993,7 @@ function BetsPageContent() {
           return;
         }
 
-        const oldStatus = r.status;
-        const oldProfit = Number(r.profit ?? 0) || 0;
-        const oldSettledAt = r.settled_at;
         const newProfit = calculateProfit(newStatus, stake, odds);
-        const difference = newProfit - oldProfit;
         const settled_at =
           newStatus === "open" ? null : new Date().toISOString();
 
@@ -1075,33 +1009,6 @@ function BetsPageContent() {
         if (betErr) {
           console.error("[stato scommessa] update bets", betErr);
           setRefertoError(betErr.message);
-          return;
-        }
-
-        try {
-          await applySettlementBalanceDelta(
-            supabase,
-            r.gaming_account_id,
-            r.staker_id,
-            difference,
-          );
-        } catch (e) {
-          const msg =
-            e instanceof Error ? e.message : "Errore aggiornamento saldi.";
-          console.error("[stato scommessa] saldi", e);
-          const { error: revErr } = await supabase
-            .from("bets")
-            .update({
-              status: oldStatus,
-              profit: oldProfit,
-              settled_at: oldSettledAt,
-            })
-            .eq("id", r.id);
-          if (revErr) {
-            console.error("[stato scommessa] rollback bet fallito", revErr);
-          }
-          setRefertoError(msg);
-          await loadAll();
           return;
         }
 

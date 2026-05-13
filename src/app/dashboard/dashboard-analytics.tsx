@@ -1,6 +1,7 @@
 "use client";
 
 import { AppCard, QuickActionButton, StatPill } from "@/components/app";
+import { betBalanceContribution } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import Link from "next/link";
@@ -26,6 +27,7 @@ type BetAggRow = {
   placed_at: string;
   profit: string;
   stake: string;
+  odds: string | number | null;
   player_id: string;
   gaming_account_id: string;
   event_name: string | null;
@@ -73,7 +75,12 @@ function aggregateByKey(
   const m = new Map<string, number>();
   for (const b of bets) {
     const id = b[key];
-    const p = Number.parseFloat(b.profit) || 0;
+    const p = betBalanceContribution(
+      b.status ?? "open",
+      b.stake,
+      b.odds ?? 0,
+      b.profit,
+    );
     m.set(id, (m.get(id) ?? 0) + p);
   }
   return m;
@@ -135,7 +142,7 @@ export function DashboardAnalytics() {
       supabase
         .from("bets")
         .select(
-          "id, placed_at, profit, stake, player_id, gaming_account_id, event_name, status",
+          "id, placed_at, profit, stake, odds, player_id, gaming_account_id, event_name, status",
         )
         .order("placed_at", { ascending: false }),
       supabase.from("players").select("id, name"),
@@ -187,7 +194,12 @@ export function DashboardAnalytics() {
     let totalProfit = 0;
     let totalStake = 0;
     for (const b of bets) {
-      totalProfit += Number.parseFloat(b.profit) || 0;
+      totalProfit += betBalanceContribution(
+        b.status ?? "open",
+        b.stake,
+        b.odds ?? 0,
+        b.profit,
+      );
       totalStake += Number.parseFloat(b.stake) || 0;
     }
 
@@ -322,7 +334,12 @@ export function DashboardAnalytics() {
             </li>
           ) : (
             recentEvents.map((b) => {
-              const p = Number.parseFloat(b.profit) || 0;
+              const p = betBalanceContribution(
+                b.status ?? "open",
+                b.stake,
+                b.odds ?? 0,
+                b.profit,
+              );
               const acc = accounts.find((x) => x.id === b.gaming_account_id);
               const sub = acc
                 ? `${acc.account_name}${gamingAccountBookmakerDisplay(acc) ? ` · ${gamingAccountBookmakerDisplay(acc)}` : ""}`
