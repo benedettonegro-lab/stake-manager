@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { betBalanceContribution } from "@/lib/bet-balance-effect";
+import { betSettledPnL } from "@/lib/bet-balance-effect";
 
 export type BankrollBetInput = {
   id?: string;
@@ -77,7 +77,7 @@ function buildFullSeries(bets: BankrollBetInput[]): ChartPoint[] {
 
   let cum = 0;
   return sorted.map((bet) => {
-    const delta = betBalanceContribution(bet.status, bet.stake, bet.odds, bet.profit);
+    const delta = betSettledPnL(bet.status, bet.stake, bet.odds, bet.profit);
     cum += delta;
     return {
       at: new Date(bet.placed_at).getTime(),

@@ -1,7 +1,7 @@
 "use client";
 
 import { AppCard, QuickActionButton, StatPill } from "@/components/app";
-import { betBalanceContribution } from "@/lib/bet-balance-effect";
+import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import Link from "next/link";
@@ -45,7 +45,9 @@ function formatMoney(n: number): string {
 }
 
 function formatRoi(totalProfit: number, totalStake: number): string {
-  if (totalStake <= 0 || Number.isNaN(totalStake)) return "—";
+  if (totalStake <= 0 || Number.isNaN(totalStake)) {
+    return Math.abs(totalProfit) < 1e-9 ? "0,0%" : "—";
+  }
   const roi = (totalProfit / totalStake) * 100;
   const rounded = Math.round(roi * 100) / 100;
   return `${rounded >= 0 ? "+" : ""}${new Intl.NumberFormat("it-IT", {
@@ -75,7 +77,7 @@ function aggregateByKey(
   const m = new Map<string, number>();
   for (const b of bets) {
     const id = b[key];
-    const p = betBalanceContribution(
+    const p = betSettledPnL(
       b.status ?? "open",
       b.stake,
       b.odds ?? 0,
@@ -194,13 +196,15 @@ export function DashboardAnalytics() {
     let totalProfit = 0;
     let totalStake = 0;
     for (const b of bets) {
-      totalProfit += betBalanceContribution(
+      totalProfit += betSettledPnL(
         b.status ?? "open",
         b.stake,
         b.odds ?? 0,
         b.profit,
       );
-      totalStake += Number.parseFloat(b.stake) || 0;
+      if (betIsSettled(b.status ?? "open")) {
+        totalStake += Number.parseFloat(b.stake) || 0;
+      }
     }
 
     return {
@@ -334,7 +338,7 @@ export function DashboardAnalytics() {
             </li>
           ) : (
             recentEvents.map((b) => {
-              const p = betBalanceContribution(
+              const p = betSettledPnL(
                 b.status ?? "open",
                 b.stake,
                 b.odds ?? 0,

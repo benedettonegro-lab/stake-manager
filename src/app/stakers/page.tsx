@@ -4,7 +4,7 @@ import { BottomSheet, QuickActionButton, SearchInput, StatPill } from "@/compone
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { betBalanceContribution } from "@/lib/bet-balance-effect";
+import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -32,7 +32,9 @@ function toneClass(n: number): string {
 }
 
 function formatRoi(totalProfit: number, totalStake: number): string {
-  if (totalStake <= 0 || Number.isNaN(totalStake)) return "—";
+  if (totalStake <= 0 || Number.isNaN(totalStake)) {
+    return Math.abs(totalProfit) < 1e-9 ? "0,0%" : "—";
+  }
   const roi = (totalProfit / totalStake) * 100;
   const rounded = Math.round(roi * 100) / 100;
   return `${rounded >= 0 ? "+" : ""}${new Intl.NumberFormat("it-IT", {
@@ -101,8 +103,10 @@ export default function StakersPage() {
     for (const r of betRows) {
       const prev = m.get(r.staker_id) ?? { count: 0, stake: 0, profit: 0 };
       prev.count += 1;
-      prev.stake += Number.parseFloat(r.stake) || 0;
-      prev.profit += betBalanceContribution(r.status, r.stake, r.odds, r.profit);
+      prev.profit += betSettledPnL(r.status, r.stake, r.odds, r.profit);
+      if (betIsSettled(r.status)) {
+        prev.stake += Number.parseFloat(r.stake) || 0;
+      }
       m.set(r.staker_id, prev);
     }
     return m;

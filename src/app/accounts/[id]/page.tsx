@@ -4,7 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { SheetModal } from "@/components/sheet-modal";
 import { formatAccountRoi } from "@/lib/account-bet-metrics";
-import { betBalanceContribution } from "@/lib/bet-balance-effect";
+import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { legacyLabelParts, paymentMethodTitle } from "@/lib/payment-methods";
 import {
@@ -205,13 +205,15 @@ export default function AccountDetailPage() {
           status: string;
           odds: string | number;
         };
-        totalProfit += betBalanceContribution(
+        totalProfit += betSettledPnL(
           row.status,
           row.stake,
           row.odds,
           row.profit,
         );
-        totalStake += Number.parseFloat(row.stake) || 0;
+        if (betIsSettled(row.status)) {
+          totalStake += Number.parseFloat(row.stake) || 0;
+        }
       }
       setBetAgg({ totalProfit, totalStake });
     }

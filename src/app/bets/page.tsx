@@ -5,7 +5,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { BET_TYPE_DEFAULT, BET_TYPE_OPTIONS } from "@/lib/bet-constants";
-import { betBalanceContribution } from "@/lib/bet-balance-effect";
+import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { assertGamingAccountCoversStake } from "@/lib/balance-validation";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
@@ -118,7 +118,9 @@ function formatMoney(value: string | number): string {
 }
 
 function formatRoi(totalProfit: number, totalStake: number): string {
-  if (totalStake <= 0 || Number.isNaN(totalStake)) return "—";
+  if (totalStake <= 0 || Number.isNaN(totalStake)) {
+    return Math.abs(totalProfit) < 1e-9 ? "0,0%" : "—";
+  }
   const roi = (totalProfit / totalStake) * 100;
   const rounded = Math.round(roi * 100) / 100;
   return `${rounded >= 0 ? "+" : ""}${new Intl.NumberFormat("it-IT", {
@@ -131,8 +133,10 @@ function reduceAggregate(rows: BetAggregateRow[]) {
   let totalStake = 0;
   let totalProfit = 0;
   for (const r of rows) {
-    totalStake += Number.parseFloat(r.stake) || 0;
-    totalProfit += betBalanceContribution(r.status, r.stake, r.odds, r.profit);
+    totalProfit += betSettledPnL(r.status, r.stake, r.odds, r.profit);
+    if (betIsSettled(r.status)) {
+      totalStake += Number.parseFloat(r.stake) || 0;
+    }
   }
   return {
     count: rows.length,
@@ -179,7 +183,7 @@ function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
     const day = d.getDate();
     const monthKey = `${y}-${String(mo + 1).padStart(2, "0")}`;
     const dayKey = `${monthKey}-${String(day).padStart(2, "0")}`;
-    const p = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
+    const p = betSettledPnL(b.status, b.stake, b.odds, b.profit);
 
     if (!months.has(monthKey)) {
       months.set(monthKey, { profitTotal: 0, days: new Map() });
@@ -202,8 +206,7 @@ function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
       const { bets: dayBets, sample } = bucket.days.get(dk)!;
       const profitTotal = dayBets.reduce(
         (s, x) =>
-          s +
-          betBalanceContribution(x.status, x.stake, x.odds, x.profit),
+          s + betSettledPnL(x.status, x.stake, x.odds, x.profit),
         0,
       );
       return {
@@ -364,7 +367,7 @@ function BetTimelineCard({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const pnl = betBalanceContribution(b.status, b.stake, b.odds, b.profit);
+  const pnl = betSettledPnL(b.status, b.stake, b.odds, b.profit);
   const profitClass =
     pnl > 0
       ? "text-[#34d399]"
