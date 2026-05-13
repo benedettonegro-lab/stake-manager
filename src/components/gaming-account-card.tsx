@@ -90,50 +90,50 @@ export function GamingAccountCard({
           : ("default" as const);
 
   return (
-    <article className="overflow-hidden rounded-xl border border-white/[0.06] bg-[#11182B] shadow-sm shadow-black/12 transition hover:border-white/[0.1] sm:rounded-2xl sm:shadow-black/15">
+    <article className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B] shadow-sm shadow-black/12 transition hover:border-white/[0.1] sm:rounded-2xl sm:shadow-black/15">
       <Link
         href={`/accounts/${accountId}`}
-        className="block px-3.5 py-3.5 transition active:bg-[#11182B]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
+        className="block px-2.5 py-2.5 transition active:bg-[#11182B]/80 sm:px-3.5 sm:pb-3 sm:pt-3.5"
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
+            <h3 className="truncate text-[15px] font-bold leading-snug text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-normal">
               {accountName}
             </h3>
             {bookmaker ? (
-              <p className="mt-1.5 truncate text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">{bookmaker}</p>
+              <p className="mt-1 truncate text-xs leading-snug text-[#8B93A7] sm:mt-1 sm:text-sm sm:leading-normal">{bookmaker}</p>
             ) : null}
           </div>
           {accountStatus ? (
             <span
-              className={`shrink-0 rounded-full border px-2.5 py-1 text-[12px] font-bold uppercase tracking-[0.14em] sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${statusBadgeClass(accountStatus)}`}
+              className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase leading-none tracking-[0.1em] sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${statusBadgeClass(accountStatus)}`}
             >
               {STATUS_LABEL[accountStatus]}
             </span>
           ) : null}
         </div>
         {identityLine ? (
-          <p className="mt-2 truncate text-[14px] text-[#8B93A7] sm:mt-2 sm:text-sm">{identityLine}</p>
+          <p className="mt-1.5 truncate text-xs leading-snug text-[#8B93A7] sm:mt-2 sm:text-sm sm:leading-normal">{identityLine}</p>
         ) : null}
         <p
-          className={`mt-3 min-w-0 overflow-x-auto whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
+          className={`mt-2 min-w-0 overflow-x-auto whitespace-nowrap text-xl font-bold tabular-nums leading-none tracking-tight sm:mt-3 sm:text-2xl sm:font-bold ${toneClass(bal)}`}
         >
           {formatMoney(currentBalance)} €
         </p>
-        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#6B7385] sm:text-xs sm:font-medium sm:tracking-wide">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6B7385] sm:text-xs sm:font-medium sm:tracking-wide">
           Saldo conto
         </p>
 
         {showInitial ? (
-          <p className="mt-3 text-[14px] text-[#8B93A7] sm:mt-3 sm:text-sm">
+          <p className="mt-2 text-xs leading-snug text-[#8B93A7] sm:mt-3 sm:text-sm sm:leading-normal">
             Iniziale{" "}
-            <span className={`whitespace-nowrap text-[20px] font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
+            <span className={`whitespace-nowrap text-base font-bold tabular-nums sm:text-xl sm:font-semibold ${toneClass(initBal)}`}>
               {formatMoney(initialBalance!)} €
             </span>
           </p>
         ) : null}
 
-        <div className="mt-3 grid grid-cols-4 gap-1.5 sm:mt-3 sm:gap-1.5">
+        <div className="mt-2 grid grid-cols-4 gap-1 sm:mt-3 sm:gap-1.5">
           <StatPill
             className="!px-2 !py-1.5"
             label="Dep."
@@ -158,32 +158,32 @@ export function GamingAccountCard({
         </div>
       </Link>
 
-      <div className="flex flex-wrap gap-1.5 border-t border-white/[0.06] px-3 py-3 sm:gap-1.5 sm:px-3 sm:py-2.5">
+      <div className="flex flex-wrap gap-1 border-t border-white/[0.06] px-2.5 py-2 sm:gap-1.5 sm:px-3 sm:py-2.5">
         {movementsHrefBase ? (
           <>
             <QuickActionButton
               href={`${movementsHrefBase}?account=${encodeURIComponent(accountId)}&type=deposit`}
               variant="secondary"
-              className="min-h-[48px] border-emerald-500/30 bg-emerald-500/10 text-[16px] font-semibold text-emerald-200 sm:min-h-9 sm:text-sm"
+              className="min-h-9 border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-emerald-200 sm:min-h-9 sm:text-sm"
             >
               Deposita
             </QuickActionButton>
             <QuickActionButton
               href={`${movementsHrefBase}?account=${encodeURIComponent(accountId)}&type=withdrawal`}
               variant="secondary"
-              className="min-h-[48px] border-amber-500/30 bg-amber-500/10 text-[16px] font-semibold text-amber-100 sm:min-h-9 sm:text-sm"
+              className="min-h-9 border-amber-500/30 bg-amber-500/10 text-xs font-semibold text-amber-100 sm:min-h-9 sm:text-sm"
             >
               Preleva
             </QuickActionButton>
           </>
         ) : null}
         {onEdit ? (
-          <QuickActionButton onClick={onEdit} variant="ghost" className="min-h-[48px] text-[16px] sm:min-h-9 sm:text-sm">
+          <QuickActionButton onClick={onEdit} variant="ghost" className="min-h-9 text-xs sm:min-h-9 sm:text-sm">
             Modifica
           </QuickActionButton>
         ) : null}
         {onDelete ? (
-          <QuickActionButton onClick={onDelete} variant="danger" className="min-h-[48px] text-[16px] sm:min-h-9 sm:text-sm">
+          <QuickActionButton onClick={onDelete} variant="danger" className="min-h-9 text-xs sm:min-h-9 sm:text-sm">
             Elimina
           </QuickActionButton>
         ) : null}

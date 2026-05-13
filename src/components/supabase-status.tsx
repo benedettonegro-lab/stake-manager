@@ -11,7 +11,7 @@ export async function SupabaseStatus() {
         >
           Test di connessione Supabase
         </h2>
-        <p className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-amber-100">
+        <p className="rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-sm sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm text-amber-100">
           Variabili mancanti. In <code className="font-mono text-sm sm:text-xs text-[#fde68a]">.env.local</code>{" "}
           imposta{" "}
           <code className="font-mono text-sm sm:text-xs text-[#fde68a]">NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
@@ -37,7 +37,7 @@ export async function SupabaseStatus() {
         >
           Test di connessione Supabase
         </h2>
-        <div className="space-y-2 rounded-xl border border-[#fb7185]/35 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fecdd3]">
+        <div className="space-y-1.5 rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-3 py-2 text-sm sm:space-y-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm text-[#fecdd3]">
           <p>
             <span className="font-medium text-white">Ping Auth:</span>{" "}
             {ping.ok ? "OK" : `fallito — ${ping.detail}`} ({ping.latencyMs}
@@ -65,7 +65,7 @@ export async function SupabaseStatus() {
       >
         Test di connessione Supabase
       </h2>
-      <div className="rounded-xl border border-[#34d399]/30 bg-[#34d399]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#a7f3d0]">
+      <div className="rounded-lg border border-[#34d399]/30 bg-[#34d399]/10 px-3 py-2 text-sm sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm text-[#a7f3d0]">
         <p className="font-medium text-[#ecfdf5]">
           Connesso — {ping.detail} ({ping.latencyMs} ms)
         </p>

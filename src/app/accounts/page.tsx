@@ -67,10 +67,10 @@ const ACCOUNT_STATUS_LABEL: Record<GamingAccountStatus, string> = {
 
 /** Lista conti — glass compatto (allineato a identità) */
 const accListCardClass =
-  "w-full cursor-pointer rounded-xl border border-white/[0.06] bg-[#11182B]/72 px-3 py-2.5 text-left shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.02] active:scale-[0.99]";
+  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-2.5 py-2 text-left text-sm shadow-sm outline-none backdrop-blur-md transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.02] active:scale-[0.99] sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base";
 
 const accActionBtnClass =
-  "flex min-h-12 w-full items-center justify-center rounded-xl border text-lg sm:text-sm font-semibold transition duration-150 ease-out active:scale-[0.98]";
+  "flex min-h-10 w-full items-center justify-center rounded-xl border text-sm font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
 
 function parseAmount(s: string): number {
   return Number.parseFloat(s.replace(",", "."));
@@ -440,14 +440,14 @@ export default function AccountsListPage() {
       <AppShell title="Conti">
         {loadError ? (
           <p
-            className="mb-5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3.5 text-[16px] text-[#fb7185] sm:mb-4 sm:py-3 sm:text-sm"
+            className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185] sm:mb-4 sm:rounded-xl sm:py-3 sm:text-sm"
             role="alert"
           >
             {loadError}
           </p>
         ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-3 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-1.5 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -455,7 +455,7 @@ export default function AccountsListPage() {
         />
       </div>
 
-      <section className="mb-4 grid grid-cols-3 gap-2.5 sm:mb-2 sm:gap-1.5">
+      <section className="mb-2 grid grid-cols-3 gap-2 sm:mb-2 sm:gap-1.5">
         <StatPill
           className="!px-2 !py-1.5"
           label="Conti"
@@ -476,7 +476,7 @@ export default function AccountsListPage() {
         />
       </section>
 
-      <div className="mb-4 flex flex-wrap gap-3 sm:mb-2 sm:gap-2">
+      <div className="mb-2 flex flex-wrap gap-2 sm:mb-2 sm:gap-2">
         <QuickActionButton variant="primary" onClick={() => setCreateOpen(true)}>
           + Conto
         </QuickActionButton>
@@ -496,9 +496,9 @@ export default function AccountsListPage() {
           if (!createSubmitting) setCreateOpen(false);
         }}
       >
-        <form className="grid gap-3" onSubmit={(e) => void handleCreateAccount(e)}>
-          <div className="space-y-1.5">
-            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+        <form className="grid gap-2" onSubmit={(e) => void handleCreateAccount(e)}>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
               Identità
             </label>
             <select
@@ -515,7 +515,7 @@ export default function AccountsListPage() {
               ))}
             </select>
           </div>
-          <div className="rounded-xl border border-[#1E2838] bg-[#131C31] px-3 py-3">
+          <div className="rounded-lg border border-[#1E2838] bg-[#131C31] px-2 py-2 sm:rounded-xl sm:px-3 sm:py-3">
             {!createPlayerId ? (
               <p className="text-sm sm:text-xs text-[#8B93A7]">Seleziona identità.</p>
             ) : methodsPlayerLoading ? (
@@ -526,7 +526,7 @@ export default function AccountsListPage() {
                   Conti
                 </p>
                 {accountsForCreatePlayer.length === 0 ? (
-                  <p className="mt-2 text-lg sm:text-sm text-[#8B93A7]">Nessun conto ancora per questo player.</p>
+                  <p className="mt-2 text-sm sm:text-sm text-[#8B93A7]">Nessun conto ancora per questo player.</p>
                 ) : (
                   <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#B4BCCC]">
                     {accountsForCreatePlayer.map((ga) => (
@@ -539,11 +539,11 @@ export default function AccountsListPage() {
                     ))}
                   </ul>
                 )}
-                  <p className="mt-4 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
+                  <p className="mt-3 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7]">
                   Metodi
                 </p>
                 {methodsForSelectedPlayer.length === 0 ? (
-                  <p className="mt-2 text-lg sm:text-sm text-[#8B93A7]">Nessun metodo pagamento</p>
+                  <p className="mt-2 text-sm sm:text-sm text-[#8B93A7]">Nessun metodo pagamento</p>
                 ) : (
                   <ul className="mt-2 space-y-1.5 text-sm sm:text-xs text-[#B4BCCC]">
                     {methodsForSelectedPlayer.map((m) => (
@@ -559,9 +559,9 @@ export default function AccountsListPage() {
               </>
             )}
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Nome conto
               </label>
               <input
@@ -572,8 +572,8 @@ export default function AccountsListPage() {
                 placeholder="Es. Conto principale"
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Bookmaker
               </label>
               <select
@@ -597,8 +597,8 @@ export default function AccountsListPage() {
                 </p>
               ) : null}
             </div>
-            <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Saldo iniziale
               </label>
               <input
@@ -610,8 +610,8 @@ export default function AccountsListPage() {
                 placeholder="0,00"
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
                 Stato conto
               </label>
               <select
@@ -627,8 +627,8 @@ export default function AccountsListPage() {
               </select>
             </div>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
+          <div className="space-y-1">
+            <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:font-medium sm:tracking-wide">
               Note
             </label>
             <textarea
@@ -641,7 +641,7 @@ export default function AccountsListPage() {
           </div>
           {createError ? (
             <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-sm text-[#fb7185]"
+              className="rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm text-[#fb7185] sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm"
               role="alert"
             >
               {createError}
@@ -658,15 +658,15 @@ export default function AccountsListPage() {
           I tuoi conti
         </h2>
         {accounts.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B] px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B] px-2 py-6 text-center text-xs sm:rounded-xl sm:px-3 sm:py-10 sm:text-xs text-[#8B93A7]">
             Nessun conto. Tocca + Conto per aggiungerne uno.
           </p>
         ) : filteredAccounts.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B] px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B] px-2 py-6 text-center text-xs sm:rounded-xl sm:px-3 sm:py-10 sm:text-xs text-[#8B93A7]">
             Nessun risultato
           </p>
         ) : (
-          <ul className="flex list-none flex-col gap-4 p-0 pb-2 sm:gap-2">
+          <ul className="flex list-none flex-col gap-2 p-0 pb-2 sm:gap-2">
             {filteredAccounts.map((a) => {
               const bm = gamingAccountBookmakerDisplay(a);
               const idn = identityNameById.get(a.identity_id) ?? "—";
@@ -680,18 +680,18 @@ export default function AccountsListPage() {
               return (
                 <li key={a.id} className="min-w-0">
                   <button type="button" onClick={() => setDetailAccount(a)} className={accListCardClass}>
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1 text-left">
-                        <p className="truncate text-lg sm:text-base sm:text-sm font-semibold text-white">
+                        <p className="truncate text-sm font-semibold leading-snug text-white sm:text-sm">
                           {a.account_name}
                           {bm ? (
                             <span className="font-medium text-[#8B93A7]">{` (${bm})`}</span>
                           ) : null}
                         </p>
-                        <p className="mt-1 truncate text-sm sm:text-xs text-[#8B93A7]">{idn}</p>
+                        <p className="mt-0.5 truncate text-xs text-[#8B93A7] sm:text-xs">{idn}</p>
                       </div>
                       <p
-                        className={`shrink-0 text-right text-lg font-bold tabular-nums leading-none tracking-tight sm:text-xl ${balCls}`}
+                        className={`shrink-0 text-right text-base font-bold tabular-nums leading-none tracking-tight sm:text-xl ${balCls}`}
                       >
                         {formatMoney(a.current_balance)} €
                       </p>
@@ -712,7 +712,7 @@ export default function AccountsListPage() {
         onClose={() => setDetailAccount(null)}
       >
         {detailAccount ? (
-          <div className="mx-auto flex max-w-[360px] flex-col gap-3 pb-1">
+          <div className="mx-auto flex max-w-[360px] flex-col gap-2 pb-1 sm:gap-3">
             {(() => {
               const a = detailAccount;
               const bm = gamingAccountBookmakerDisplay(a);
@@ -728,19 +728,19 @@ export default function AccountsListPage() {
               const accIdEnc = encodeURIComponent(a.id);
               return (
                 <>
-                  <div className="rounded-xl border border-white/[0.06] bg-[#11182B]/60 px-3 py-4 text-center backdrop-blur-sm">
-                    <p className="text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7]">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#11182B]/60 px-2.5 py-2.5 text-center backdrop-blur-sm sm:rounded-xl sm:px-3 sm:py-4">
+                    <p className="text-xs sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:tracking-[0.14em]">
                       Saldo
                     </p>
-                    <p className={`mt-1 whitespace-nowrap text-[28px] font-bold tabular-nums sm:text-3xl ${balCls}`}>
+                    <p className={`mt-0.5 whitespace-nowrap text-xl font-bold tabular-nums sm:text-3xl ${balCls}`}>
                       {formatMoney(a.current_balance)} €
                     </p>
-                    <p className="mt-2 text-sm sm:text-xs text-[#8B93A7]">
+                    <p className="mt-1.5 text-xs sm:text-xs text-[#8B93A7]">
                       {bm ? <span>{bm}</span> : null}
                       {bm ? <span className="text-[#6B7385]"> · </span> : null}
                       <span>{idn}</span>
                     </p>
-                    <p className="mt-1.5 text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
+                    <p className="mt-1 text-xs sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
                       {ACCOUNT_STATUS_LABEL[st]}
                     </p>
                   </div>

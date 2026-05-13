@@ -48,14 +48,14 @@ export function BottomSheet({
         }}
       />
       <div
-        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-[calc(100%-24px)] max-w-[430px] flex-col rounded-xl border border-white/[0.06] bg-[#11182B]/95 shadow-lg shadow-black/22 backdrop-blur-md sm:w-[calc(100%-32px)] sm:rounded-2xl sm:shadow-xl sm:shadow-black/28 ${panelClassName}`}
+        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-[calc(100%-20px)] max-w-[430px] flex-col rounded-2xl border border-white/[0.06] bg-[#11182B]/95 shadow-lg shadow-black/22 backdrop-blur-md sm:w-[calc(100%-32px)] sm:rounded-2xl sm:shadow-xl sm:shadow-black/28 ${panelClassName}`}
       >
-        <header className="flex shrink-0 items-start justify-between gap-2 border-b border-[#1E2838]/90 px-3 py-3 sm:px-4 sm:py-2.5">
+        <header className="flex shrink-0 items-start justify-between gap-1.5 border-b border-[#1E2838]/90 px-2.5 py-2 sm:gap-2 sm:px-4 sm:py-2.5">
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[26px] font-bold leading-tight tracking-tight text-white sm:text-base sm:font-semibold">
+            <h2 className="truncate text-lg font-bold leading-tight tracking-tight text-white sm:text-base sm:font-semibold">
               {title}
             </h2>
-            {headerExtra ? <div className="mt-1.5 sm:mt-2">{headerExtra}</div> : null}
+            {headerExtra ? <div className="mt-1 sm:mt-2">{headerExtra}</div> : null}
           </div>
           <button
             type="button"
@@ -75,11 +75,11 @@ export function BottomSheet({
           </button>
         </header>
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 sm:px-4 sm:py-2.5">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-2 sm:px-4 sm:py-2.5">
             {children}
           </div>
           {footer ? (
-            <div className="shrink-0 border-t border-[#1E2838]/80 bg-[#0D1326]/90 px-4 py-2.5 backdrop-blur-md">
+            <div className="shrink-0 border-t border-[#1E2838]/80 bg-[#0D1326]/90 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-2.5">
               {footer}
             </div>
           ) : null}

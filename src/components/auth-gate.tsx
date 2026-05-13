@@ -56,7 +56,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (!allowed) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0A1020] text-white">
-        <div className="rounded-2xl border border-white/[0.06] bg-[#11182B] px-6 py-4 text-lg sm:text-base sm:text-sm text-[#8B93A7]">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#11182B] px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-sm text-[#8B93A7]">
           Caricamento…
         </div>
       </div>
