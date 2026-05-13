@@ -282,9 +282,9 @@ function BetStatusBadge({
 }) {
   if (settling) {
     return (
-      <span className="inline-flex h-9 min-w-[4rem] items-center justify-center rounded-md border border-white/10 bg-white/5 px-2 sm:h-7 sm:min-w-[3.5rem]">
+      <span className="inline-flex h-7 min-w-[3.25rem] items-center justify-center rounded border border-white/10 bg-white/5 px-1.5 sm:h-7 sm:min-w-[3.5rem]">
         <span
-          className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white/90"
+          className="h-3 w-3 animate-spin rounded-full border-2 border-white/30 border-t-white/90"
           aria-hidden
         />
       </span>
@@ -293,7 +293,7 @@ function BetStatusBadge({
   const t = tradeStatusDisplay(status);
   return (
     <span
-      className={`inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-md border px-3 py-2 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors duration-500 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${t.className}`}
+      className={`inline-flex min-h-0 shrink-0 items-center justify-center rounded border px-2 py-0.5 text-[10px] font-bold uppercase leading-none tracking-[0.1em] transition-colors duration-500 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${t.className}`}
     >
       {t.label}
     </span>
@@ -432,7 +432,7 @@ function BetTimelineCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#11182B]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_6px_rgba(52,211,153,0.03)] hover:scale-[1.005] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
+      className={`relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_6px_rgba(52,211,153,0.03)] hover:scale-[1.005] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
         settling ? "pointer-events-none opacity-70" : "cursor-pointer touch-pan-y"
       }`}
       aria-label={`Scommessa ${b.event_name || "evento"}`}
@@ -445,34 +445,34 @@ function BetTimelineCard({
         onOpenDetail(b);
       }}
     >
-      <div className="flex min-w-0 flex-col gap-2 px-3 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
-        <div className="flex items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-col gap-1 px-2 py-2 sm:gap-1.5 sm:px-2.5 sm:py-2">
+        <div className="flex items-center justify-between gap-2">
           <time
             dateTime={b.placed_at}
-            className="shrink-0 pt-0.5 text-[14px] font-semibold tabular-nums text-[#8B93A7] sm:text-sm"
+            className="shrink-0 text-[11px] font-semibold tabular-nums leading-none text-[#8B93A7] sm:text-sm sm:leading-normal"
           >
             {timeStr}
           </time>
           <BetStatusBadge status={b.status} settling={settling} />
         </div>
-        <h3 className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
+        <h3 className="line-clamp-2 text-[15px] font-bold leading-snug text-[#E6EAF2] sm:text-xl sm:font-semibold sm:leading-snug">
           {b.event_name?.trim() || "—"}
         </h3>
-        <p className="truncate text-[12px] font-medium uppercase tracking-[0.14em] text-[#8B93A7] sm:text-sm sm:tracking-wide">
+        <p className="truncate text-[10px] font-medium uppercase tracking-[0.12em] text-[#8B93A7] sm:text-sm sm:tracking-wide">
           {bookmakerAccountSmall(b)}
         </p>
-        <p className="text-[16px] text-[#8B93A7] sm:text-sm">
+        <p className="text-xs leading-snug text-[#8B93A7] sm:text-sm sm:leading-normal">
           <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">
             {formatMoney(b.stake)} €
           </span>
-          <span className="mx-1.5 text-[#6B7385]">·</span>
+          <span className="mx-1 text-[#6B7385]">·</span>
           <span>
             quota{" "}
             <span className="whitespace-nowrap font-semibold tabular-nums text-[#E6EAF2]">{formatMoney(b.odds)}</span>
           </span>
         </p>
         {showResult ? (
-          <p className={`whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${profitClass}`}>
+          <p className={`whitespace-nowrap text-lg font-bold tabular-nums leading-none sm:text-2xl sm:font-bold ${profitClass}`}>
             {pnl > 0 ? "+" : ""}
             {formatMoney(b.profit)} €
           </p>
@@ -1184,7 +1184,7 @@ function BetsPageContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -1193,13 +1193,13 @@ function BetsPageContent() {
       </div>
 
       <section
-        className="mb-3 w-full max-w-[420px] px-0 sm:mx-auto"
+        className="mb-2 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-3"
         aria-labelledby="bets-analytics-heading"
       >
         <h2 id="bets-analytics-heading" className="sr-only">
           Riepilogo giocate
         </h2>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-white/[0.06] bg-[#11182B]/72 px-3 py-2.5 text-[16px] backdrop-blur-sm sm:gap-y-1 sm:px-3 sm:py-2 sm:text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-2.5 py-2 text-xs leading-snug backdrop-blur-sm sm:gap-x-4 sm:gap-y-1 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm sm:leading-normal">
           <span className="text-[#8B93A7]">
             Giocate{" "}
             <strong className="whitespace-nowrap tabular-nums text-[#E6EAF2]">
@@ -1228,17 +1228,17 @@ function BetsPageContent() {
       </section>
 
       <section
-        className="mb-4 w-full max-w-[420px] px-0 sm:mx-auto"
+        className="mb-3 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-4"
         aria-labelledby="bets-list-heading"
       >
         <h2
           id="bets-list-heading"
-          className="mb-2 text-[26px] font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
+          className="mb-1.5 text-xl font-bold uppercase tracking-[0.1em] text-[#8B93A7] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
         {accounts.length > 0 ? (
-          <div className="mb-2">
+          <div className="mb-1.5">
             <FilterChips
               items={accountFilterChips}
               value={filterAccountId}
@@ -1247,48 +1247,48 @@ function BetsPageContent() {
           </div>
         ) : null}
         {bets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-3 py-8 text-center text-sm sm:text-xs text-[#8B93A7]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-2.5 py-6 text-center text-xs sm:rounded-xl sm:px-3 sm:py-8 sm:text-xs">
             Nessuna giocata. Tocca + per aggiungerne una.
           </p>
         ) : filteredBets.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-3 py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-2.5 py-7 text-center text-xs sm:rounded-xl sm:px-3 sm:py-10 sm:text-xs">
             Nessun risultato
           </p>
         ) : (
-          <div className="space-y-6 sm:space-y-8">
+          <div className="space-y-3 sm:space-y-8">
             {betGroups.map((month) => (
               <section
                 key={month.monthKey}
-                className="space-y-4 sm:space-y-5"
+                className="space-y-2 sm:space-y-5"
                 aria-labelledby={`bet-month-${month.monthKey}`}
               >
-                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2">
+                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-1 sm:pb-2">
                   <h3
                     id={`bet-month-${month.monthKey}`}
-                    className="text-[20px] font-bold capitalize tracking-tight text-[#E6EAF2] sm:text-xl"
+                    className="text-base font-bold capitalize leading-tight tracking-tight text-[#E6EAF2] sm:text-xl"
                   >
                     {month.monthTitle}
                   </h3>
                   <p
-                    className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
+                    className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
                   >
                     {formatSignedProfitEuro(month.profitTotal)}
                   </p>
                 </header>
 
                 {month.days.map((day) => (
-                  <div key={day.dayKey} className="space-y-3 sm:space-y-3">
-                    <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-3 sm:pl-2">
-                      <h4 className="text-[14px] font-bold uppercase tracking-wide text-[#8B93A7] sm:text-lg">
+                  <div key={day.dayKey} className="space-y-1.5 sm:space-y-3">
+                    <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-2 sm:pl-2">
+                      <h4 className="text-[11px] font-bold uppercase tracking-wide text-[#8B93A7] sm:text-lg sm:font-semibold">
                         {day.dayTitle}
                       </h4>
                       <p
-                        className={`shrink-0 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
+                        className={`shrink-0 whitespace-nowrap text-sm font-bold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
                       >
                         {formatSignedProfitEuro(day.profitTotal)}
                       </p>
                     </div>
-                    <ul className="flex flex-col gap-2.5 sm:gap-3">
+                    <ul className="flex flex-col gap-1.5 sm:gap-3">
                       {day.bets.map((b) => (
                         <li key={b.id}>
                           <BetTimelineCard

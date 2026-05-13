@@ -255,7 +255,7 @@ export function DashboardAnalytics() {
   }
 
   return (
-    <div className="flex flex-col gap-3 pb-2 sm:gap-4 sm:pb-2">
+    <div className="flex flex-col gap-2 pb-2 sm:gap-4 sm:pb-2">
       {error ? (
         <p
           className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[14px] text-[#fb7185] sm:text-sm"
@@ -267,12 +267,12 @@ export function DashboardAnalytics() {
 
       <section aria-label="Cassa totale">
         <div className="sm-gradient-border">
-          <div className="sm-gradient-inner px-3 py-3 sm:p-4">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-widest">
+          <div className="sm-gradient-inner px-2.5 py-2 sm:p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:tracking-widest">
               Cassa totale
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
+              className={`mt-1.5 whitespace-nowrap text-xl font-bold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
             >
               {formatMoney(totals.saldoCassaTotale)} €
             </p>
@@ -280,7 +280,7 @@ export function DashboardAnalytics() {
         </div>
       </section>
 
-      <section aria-label="Indicatori" className="grid grid-cols-2 gap-2 sm:gap-2">
+      <section aria-label="Indicatori" className="grid grid-cols-2 gap-1.5 sm:gap-2">
         <StatPill label="Conti gioco" value={`${formatMoney(totals.saldoConti)} €`} />
         <StatPill label="Metodi" value={`${formatMoney(totals.saldoMetodi)} €`} />
         <StatPill
@@ -291,7 +291,7 @@ export function DashboardAnalytics() {
         <StatPill label="ROI" value={totals.roiLabel} tone={roiTone === "positive" ? "positive" : roiTone === "negative" ? "negative" : "default"} />
       </section>
 
-      <div className="flex flex-wrap gap-2 sm:gap-2">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         <QuickActionButton href="/bets?nuova=1" variant="primary">
           + Giocata
         </QuickActionButton>
@@ -301,23 +301,23 @@ export function DashboardAnalytics() {
       </div>
 
       <section aria-labelledby="dash-recent-heading">
-        <div className="mb-2 flex items-center justify-between gap-2 sm:mb-2">
+        <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-2">
           <h2
             id="dash-recent-heading"
-            className="text-[26px] font-bold uppercase leading-tight tracking-wide text-[#8B93A7] sm:text-2xl sm:font-semibold sm:tracking-widest"
+            className="text-xl font-bold uppercase leading-tight tracking-wide text-[#8B93A7] sm:text-2xl sm:font-semibold sm:tracking-widest"
           >
             Ultimi eventi
           </h2>
           <Link
             href="/bets"
-            className="text-[16px] font-semibold text-[#A970FF] transition hover:text-[#B89EFF] sm:text-sm"
+            className="text-sm font-semibold text-[#A970FF] transition hover:text-[#B89EFF] sm:text-sm"
           >
             Tutte
           </Link>
         </div>
-        <ul className="flex flex-col gap-2 sm:gap-2">
+        <ul className="flex flex-col gap-1.5 sm:gap-2">
           {recentEvents.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-white/[0.06] px-3 py-6 text-center text-[14px] text-[#8B93A7] sm:py-6 sm:text-sm">
+            <li className="rounded-2xl border border-dashed border-white/[0.06] px-2.5 py-4 text-center text-xs text-[#8B93A7] sm:rounded-xl sm:px-3 sm:py-6 sm:text-sm">
               Nessuna giocata
             </li>
           ) : (
@@ -332,13 +332,13 @@ export function DashboardAnalytics() {
                   <AppCard href={`/bets#${b.id}`} padding="sm">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:text-xl sm:font-semibold">
+                        <p className="line-clamp-2 text-[15px] font-bold leading-snug text-[#E6EAF2] sm:text-xl sm:font-semibold">
                           {b.event_name?.trim() || "Giocata"}
                         </p>
-                        <p className="mt-1.5 truncate text-[14px] text-[#8B93A7] sm:mt-1 sm:text-sm">{sub}</p>
+                        <p className="mt-1 truncate text-xs leading-snug text-[#8B93A7] sm:mt-1 sm:text-sm sm:leading-normal">{sub}</p>
                       </div>
                       <span
-                        className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${
+                        className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-2xl sm:font-bold ${
                           p > 0 ? "text-[#34d399]" : p < 0 ? "text-[#fb7185]" : "text-[#8B93A7]"
                         }`}
                       >
@@ -346,7 +346,7 @@ export function DashboardAnalytics() {
                         {formatMoney(p)} €
                       </span>
                     </div>
-                    <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#6B7385] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
+                    <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6B7385] sm:mt-2 sm:text-xs sm:font-medium sm:tracking-wide">
                       {new Intl.DateTimeFormat("it-IT", {
                         day: "2-digit",
                         month: "short",
@@ -363,17 +363,17 @@ export function DashboardAnalytics() {
         </ul>
       </section>
 
-      <section className="grid grid-cols-2 gap-2 sm:gap-2" aria-label="Best">
+      <section className="grid grid-cols-2 gap-1.5 sm:gap-2" aria-label="Best">
         {breakdown.topPlayer ? (
           <AppCard href={`/players/${breakdown.topPlayer.id}`} padding="sm">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top ID
             </p>
-            <p className="mt-2 truncate text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-1.5 truncate text-[15px] font-bold leading-snug text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topPlayer.name}
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-1.5 whitespace-nowrap text-base font-bold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topPlayer.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >
@@ -394,11 +394,11 @@ export function DashboardAnalytics() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
               Top conto
             </p>
-            <p className="mt-2 line-clamp-2 text-[20px] font-bold leading-tight text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
+            <p className="mt-1.5 line-clamp-2 text-[15px] font-bold leading-snug text-[#E6EAF2] sm:mt-1 sm:text-xl sm:font-semibold">
               {breakdown.topAccount.name}
             </p>
             <p
-              className={`mt-2 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
+              className={`mt-1.5 whitespace-nowrap text-base font-bold tabular-nums sm:mt-1 sm:text-xl sm:font-bold ${
                 breakdown.topAccount.profit >= 0 ? "text-[#34d399]" : "text-[#fb7185]"
               }`}
             >

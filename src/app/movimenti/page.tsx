@@ -379,13 +379,13 @@ function txMatchesLiveSearch(
 }
 
 const movRowClass =
-  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color,transform] duration-150 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/18 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
+  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-2.5 py-2.5 text-left text-sm leading-snug shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color,transform] duration-150 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/18 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm sm:leading-normal";
 
 const movRowClassInvalid =
-  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/55 px-4 py-4 text-left text-[16px] shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color] duration-150 ease-out hover:border-white/[0.1] hover:bg-[#11182B]/70 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/16 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm";
+  "w-full cursor-pointer rounded-2xl border border-white/[0.06] bg-[#11182B]/55 px-2.5 py-2.5 text-left text-sm leading-snug shadow-sm outline-none backdrop-blur-md transition-[border-color,background-color] duration-150 ease-out hover:border-white/[0.1] hover:bg-[#11182B]/70 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#A970FF]/16 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm sm:leading-normal";
 
 const wdStatusPickBtn =
-  "flex min-h-[3rem] w-full items-center justify-center rounded-xl border px-4 text-lg font-semibold transition duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm";
+  "flex min-h-[2.5rem] w-full items-center justify-center rounded-xl border px-3 text-sm font-semibold transition duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm";
 
 const wdStatusPickBtnIdle =
   "border-white/[0.1] bg-[#121a28]/85 text-[#e2e8f0] hover:border-white/18 hover:bg-[#151e2e]";
@@ -393,12 +393,12 @@ const wdStatusPickBtnIdle =
 const wdStatusPickBtnCurrent =
   "border-[#A970FF]/50 bg-[#151B2E]/95 text-white ring-1 ring-[#A970FF]/25";
 
-/** Filtri avanzati: testo ≥18px su mobile, compatto da sm */
+/** Filtri avanzati: compatto su mobile */
 const compactCtrl =
-  "mt-0.5 flex min-h-[44px] w-full items-center rounded-lg border border-white/[0.06] bg-[#131C31]/90 px-3 text-lg text-[#e2e8f0] outline-none transition duration-150 placeholder:text-[#8B93A7] focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:px-2 sm:text-xs";
+  "mt-0.5 flex min-h-[36px] w-full items-center rounded-lg border border-white/[0.06] bg-[#131C31]/90 px-2 text-sm leading-snug text-[#e2e8f0] outline-none transition duration-150 placeholder:text-[#8B93A7] focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:px-2 sm:text-xs";
 
 const dateInputGlass =
-  "min-h-[44px] w-full min-w-0 flex-1 rounded-lg border border-white/[0.06] bg-[#131C31]/90 py-2 pl-9 pr-3 text-lg text-[#e2e8f0] outline-none transition focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 [color-scheme:dark] sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:py-1 sm:pr-2 sm:text-xs";
+  "min-h-[36px] w-full min-w-0 flex-1 rounded-lg border border-white/[0.06] bg-[#131C31]/90 py-1 pl-8 pr-2 text-sm leading-snug text-[#e2e8f0] outline-none transition focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 [color-scheme:dark] sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:py-1 sm:pr-2 sm:text-xs";
 
 function MovimentiListaContent() {
   const router = useRouter();
@@ -762,7 +762,7 @@ function MovimentiListaContent() {
 
   const calendarIcon = (
     <svg
-      className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8B93A7]"
+      className="pointer-events-none absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[#8B93A7] sm:left-2.5 sm:h-3.5 sm:w-3.5"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -792,7 +792,7 @@ function MovimentiListaContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-3 mb-2 space-y-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:px-4 sm:py-2">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-1.5 space-y-1.5 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:space-y-2 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -800,10 +800,10 @@ function MovimentiListaContent() {
         />
 
         <div>
-          <p className="mb-1 text-sm sm:text-xs font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs">
+          <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs">
             Periodo
           </p>
-          <div className="flex gap-1 overflow-x-auto scroll-smooth pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-0.5 overflow-x-auto scroll-smooth pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1 sm:pb-0.5">
             {periodChips.map(({ value, label }) => {
               const active = periodPreset === value;
               return (
@@ -811,7 +811,7 @@ function MovimentiListaContent() {
                   key={value}
                   type="button"
                   onClick={() => setPeriodPreset(value)}
-                  className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-sm font-semibold transition duration-150 ease-out active:scale-[0.97] sm:px-2.5 sm:py-1 sm:text-xs ${
+                  className={`shrink-0 rounded-full border px-2 py-1 text-xs font-semibold transition duration-150 ease-out active:scale-[0.97] sm:px-2.5 sm:py-1 sm:text-xs ${
                     active
                       ? "border-[#A970FF]/40 bg-[#A970FF]/16 text-white shadow-sm ring-1 ring-[#A970FF]/12"
                       : "border-white/[0.06] bg-[#131C31]/80 text-[#8B93A7] hover:border-white/[0.12] hover:text-[#e2e8f0]"
@@ -824,11 +824,11 @@ function MovimentiListaContent() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-white/[0.06] bg-[#11182B]/60 px-2 py-2 backdrop-blur-sm">
-          <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
+        <div className="rounded-lg border border-white/[0.06] bg-[#11182B]/60 px-1.5 py-1.5 backdrop-blur-sm sm:px-2 sm:py-2">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
             Intervallo date
           </p>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:gap-2">
             <div className="min-w-0 flex-1 space-y-0.5">
               <span className="text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
                 Da
@@ -867,18 +867,18 @@ function MovimentiListaContent() {
         </div>
       </div>
 
-      <div className="mb-2">
+      <div className="mb-1.5">
         <button
           type="button"
           onClick={() => setFiltersOpen((o) => !o)}
-          className="rounded-full border border-white/[0.06] bg-[#131C31]/80 px-4 py-2 text-lg sm:text-sm font-semibold text-[#B4BCCC] transition duration-150 ease-out hover:border-white/[0.12] hover:text-white active:scale-[0.98] sm:px-3 sm:py-1.5 sm:text-xs"
+          className="rounded-full border border-white/[0.06] bg-[#131C31]/80 px-3 py-1.5 text-xs font-semibold text-[#B4BCCC] transition duration-150 ease-out hover:border-white/[0.12] hover:text-white active:scale-[0.98] sm:px-3 sm:py-1.5 sm:text-xs"
         >
           {filtersOpen ? "Nascondi filtri" : "Filtri avanzati"}
         </button>
       </div>
 
       {filtersOpen ? (
-        <div className="mb-2 space-y-2 rounded-lg border border-white/[0.06] bg-[#11182B]/72 p-2.5 shadow-sm backdrop-blur-md">
+        <div className="mb-1.5 space-y-1.5 rounded-lg border border-white/[0.06] bg-[#11182B]/72 p-2 shadow-sm backdrop-blur-md sm:mb-2 sm:space-y-2 sm:p-2.5">
           <div className="grid gap-1.5 sm:grid-cols-2">
             <label className="block text-sm sm:text-xs font-semibold uppercase tracking-wide text-[#8B93A7] sm:text-xs">
               Identità
@@ -991,15 +991,15 @@ function MovimentiListaContent() {
       ) : null}
 
       <section
-        className={`mb-2 rounded-lg border border-white/[0.06] bg-[#0C1324]/55 px-2.5 py-2 backdrop-blur-sm transition-opacity duration-200 ease-out ${
+        className={`mb-1.5 rounded-lg border border-white/[0.06] bg-[#0C1324]/55 px-2 py-1.5 backdrop-blur-sm transition-opacity duration-200 ease-out sm:mb-2 sm:px-2.5 sm:py-2 ${
           loadingList && fetchedRows.length > 0 ? "opacity-[0.88]" : "opacity-100"
         }`}
         aria-label="Risultati filtrati"
       >
-        <p className="mb-1.5 text-sm sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[#8B93A7] sm:mb-1.5 sm:text-xs">
           Risultati filtrati
         </p>
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-lg sm:text-base leading-snug text-[#8B93A7] sm:text-xs sm:leading-tight">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-xs leading-tight text-[#8B93A7] sm:gap-x-4 sm:gap-y-1 sm:text-xs sm:leading-tight">
           <span>
             Depositi{" "}
             <strong className="ml-0.5 tabular-nums text-emerald-300">
@@ -1055,35 +1055,35 @@ function MovimentiListaContent() {
         </p>
       ) : (
         <div
-          className={`space-y-4 pb-10 transition-opacity duration-200 ease-out ${
+          className={`space-y-3 pb-8 transition-opacity duration-200 ease-out sm:space-y-4 sm:pb-10 ${
             loadingList && fetchedRows.length > 0 ? "opacity-[0.92]" : "opacity-100"
           }`}
         >
           {grouped.map((month) => (
-            <section key={month.monthKey} className="space-y-2">
-              <header className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-1">
-                <h2 className="text-[20px] font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xl">
+            <section key={month.monthKey} className="space-y-1.5 sm:space-y-2">
+              <header className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-0.5 sm:pb-1">
+                <h2 className="text-base font-bold uppercase tracking-[0.1em] text-[#8B93A7] sm:text-xl">
                   {month.monthTitle}
                 </h2>
                 <p
-                  className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-2xl sm:font-bold ${totalHeaderClass(month.monthTotal)}`}
+                  className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-2xl sm:font-bold ${totalHeaderClass(month.monthTotal)}`}
                 >
                   {signedTotalLabel(month.monthTotal)}
                 </p>
               </header>
               {month.days.map((day) => (
-                <div key={day.dayKey} className="space-y-1.5">
+                <div key={day.dayKey} className="space-y-1 sm:space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2 pl-0.5">
-                    <h3 className="text-[14px] font-bold capitalize tracking-wide text-[#6B7385] sm:text-lg sm:font-semibold">
+                    <h3 className="text-[11px] font-bold capitalize tracking-wide text-[#6B7385] sm:text-lg sm:font-semibold">
                       {day.dayTitle}
                     </h3>
                     <p
-                      className={`shrink-0 whitespace-nowrap text-[20px] font-extrabold tabular-nums sm:text-xl sm:font-semibold ${totalHeaderClass(day.dayTotal)}`}
+                      className={`shrink-0 whitespace-nowrap text-sm font-bold tabular-nums sm:text-xl sm:font-semibold ${totalHeaderClass(day.dayTotal)}`}
                     >
                       {signedTotalLabel(day.dayTotal)}
                     </p>
                   </div>
-                  <ul className="flex list-none flex-col gap-3 p-0 sm:gap-1.5">
+                  <ul className="flex list-none flex-col gap-1.5 p-0 sm:gap-1.5">
                     {day.items.map((t) => {
                       const st: TransactionStatus = isTransactionStatus(t.status)
                         ? t.status
@@ -1126,7 +1126,7 @@ function MovimentiListaContent() {
                           >
                             <div className="flex items-start justify-between gap-2">
                               <p
-                                className={`min-w-0 flex-1 truncate text-left text-lg sm:text-base font-medium sm:text-sm ${
+                                className={`min-w-0 flex-1 truncate text-left text-sm font-medium leading-snug sm:text-sm ${
                                   invalid
                                     ? "text-[#9aa0a6] line-through"
                                     : "text-[#e2e8f0]"
@@ -1142,14 +1142,14 @@ function MovimentiListaContent() {
                                 )}
                               </p>
                               <p
-                                className={`shrink-0 whitespace-nowrap text-right text-[20px] font-extrabold tabular-nums sm:text-sm sm:font-bold ${txAmountRowClass(t)}`}
+                                className={`shrink-0 whitespace-nowrap text-right text-base font-bold tabular-nums sm:text-sm sm:font-bold ${txAmountRowClass(t)}`}
                               >
                                 {formatMoney(t.amount)} €
                               </p>
                             </div>
-                            <div className="mt-1 flex items-center justify-between gap-2">
+                            <div className="mt-0.5 flex items-center justify-between gap-2">
                               <span
-                                className={`truncate text-left text-lg sm:text-base sm:text-xs ${
+                                className={`truncate text-left text-xs leading-tight sm:text-xs ${
                                   invalid ? "text-[#9aa0a6] line-through" : "text-[#8B93A7]"
                                 }`}
                               >
@@ -1165,13 +1165,13 @@ function MovimentiListaContent() {
                                     setWithdrawalStatusError(null);
                                     setWithdrawalStatusTx(t);
                                   }}
-                                  className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-base font-bold uppercase tracking-[0.15em] transition duration-150 hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A970FF]/22 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
+                                  className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] transition duration-150 hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A970FF]/22 sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
                                 >
                                   {transactionStatusLabel(st)}
                                 </button>
                               ) : (
                                 <span
-                                  className={`shrink-0 rounded-full border px-3 py-1.5 text-lg sm:text-base font-bold uppercase tracking-[0.15em] sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
+                                  className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] sm:px-2 sm:py-0.5 sm:text-xs sm:tracking-wide ${movimentiStatusBadgeClass(t)}`}
                                 >
                                   {transactionStatusLabel(st)}
                                 </span>

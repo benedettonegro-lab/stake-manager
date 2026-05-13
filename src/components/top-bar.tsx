@@ -9,7 +9,7 @@ type TopBarProps = {
 export function TopBar({ title, showBrand }: TopBarProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-gradient-to-b from-[#0A1020]/98 to-[#0A1020]/92 backdrop-blur-xl">
-      <div className="sm-app-constrain flex min-h-[3rem] items-center justify-between px-3 py-1 sm:h-14 sm:min-h-0 sm:px-4 sm:py-0">
+      <div className="sm-app-constrain flex min-h-[2.75rem] items-center justify-between px-2.5 py-0.5 sm:h-14 sm:min-h-0 sm:px-4 sm:py-0">
         <Link
           href="/dashboard"
           className="text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:tracking-[0.2em]"
@@ -18,11 +18,11 @@ export function TopBar({ title, showBrand }: TopBarProps) {
         </Link>
         <div className="flex min-w-0 flex-1 justify-center px-2">
           {showBrand ? (
-            <span className="truncate text-[26px] font-bold leading-[1.05] sm:text-2xl sm:font-semibold sm-gradient-text">
+            <span className="truncate text-2xl font-bold leading-tight sm:text-2xl sm:font-semibold sm-gradient-text">
               Stake Manager
             </span>
           ) : (
-            <h1 className="truncate text-center text-[26px] font-bold leading-[1.1] text-[#E6EAF2] sm:text-2xl sm:font-semibold">
+            <h1 className="truncate text-center text-2xl font-bold leading-tight text-[#E6EAF2] sm:text-2xl sm:font-semibold">
               {title ?? "Stake Manager"}
             </h1>
           )}

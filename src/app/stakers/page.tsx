@@ -234,7 +234,7 @@ export default function StakersPage() {
           </p>
         ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -242,7 +242,7 @@ export default function StakersPage() {
         />
       </div>
 
-      <div className="mb-5 sm:mb-3">
+      <div className="mb-3 sm:mb-3">
         <QuickActionButton variant="primary" onClick={() => setAddOpen(true)}>
           + Staker
         </QuickActionButton>
@@ -286,7 +286,7 @@ export default function StakersPage() {
           Nessun risultato
         </p>
       ) : (
-        <ul className="flex flex-col gap-4 sm:gap-2">
+        <ul className="flex flex-col gap-2 sm:gap-2">
           {filteredRows.map((s) => {
             const b = Number.parseFloat(s.balance) || 0;
             const locked = s.player_id !== null;
@@ -308,24 +308,60 @@ export default function StakersPage() {
                 <button
                   type="button"
                   onClick={() => openEdit(s)}
-                  className="w-full px-3 pb-3 pt-3 text-left transition active:bg-[#11182B]/80 sm:px-3 sm:pb-2 sm:pt-3"
+                  className="w-full px-2.5 pb-2 pt-2 text-left transition active:bg-[#11182B]/80 sm:px-3 sm:pb-2 sm:pt-3"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                      <p className="truncate text-base font-bold leading-snug text-white sm:text-sm sm:font-semibold">
                         {s.name}
                       </p>
                       {locked ? (
-                        <p className="mt-1 text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:mt-0.5 sm:text-xs sm:font-normal sm:tracking-normal sm:normal-case">
+                        <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:mt-0.5 sm:text-xs sm:font-normal sm:tracking-normal sm:normal-case">
                           Legato identità
                         </p>
                       ) : null}
                     </div>
-                    <p className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
+                    <p className={`shrink-0 whitespace-nowrap text-xl font-bold tabular-nums sm:text-base sm:font-bold ${toneClass(b)}`}>
                       {formatMoney(s.balance)} €
                     </p>
                   </div>
-                  <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-2 sm:gap-1.5">
+                  <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug text-[#8B93A7] sm:hidden">
+                    <span className="font-semibold tabular-nums text-[#E6EAF2]">{g.count}</span> giocate
+                    <span className="mx-1 text-[#4B5563]">·</span>
+                    <span>
+                      P/L{" "}
+                      <span
+                        className={
+                          g.profit > 0
+                            ? "font-semibold tabular-nums text-[#34d399]"
+                            : g.profit < 0
+                              ? "font-semibold tabular-nums text-[#fb7185]"
+                              : "font-semibold tabular-nums text-[#E6EAF2]"
+                        }
+                      >
+                        {g.profit >= 0 ? "+" : ""}
+                        {formatMoney(g.profit)} €
+                      </span>
+                    </span>
+                    <span className="mx-1 text-[#4B5563]">·</span>
+                    <span>
+                      ROI{" "}
+                      <span
+                        className={
+                          g.stake <= 0
+                            ? "font-semibold tabular-nums text-[#8B93A7]"
+                            : g.profit > 0
+                              ? "font-semibold tabular-nums text-[#34d399]"
+                              : g.profit < 0
+                                ? "font-semibold tabular-nums text-[#fb7185]"
+                                : "font-semibold tabular-nums text-[#E6EAF2]"
+                        }
+                      >
+                        {roi}
+                      </span>
+                    </span>
+                  </p>
+                  <div className="mt-2 hidden grid-cols-3 gap-1 sm:mt-2 sm:grid sm:gap-1.5">
                     <StatPill label="Giocate" value={String(g.count)} />
                     <StatPill
                       label="P/L"
@@ -337,17 +373,17 @@ export default function StakersPage() {
                     <StatPill label="ROI" value={roi} tone={roiTone} />
                   </div>
                 </button>
-                <div className="flex flex-wrap gap-2 border-t border-[#141C2A] px-4 py-3 sm:gap-1.5 sm:px-2.5 sm:py-2">
+                <div className="flex flex-wrap gap-1.5 border-t border-[#141C2A] px-2.5 py-2 sm:gap-1.5 sm:px-2.5 sm:py-2">
                   <QuickActionButton
                     onClick={() => openEdit(s)}
                     variant="ghost"
-                    className="min-h-[48px] px-4 text-[16px] sm:min-h-8 sm:px-3 sm:text-xs"
+                    className="min-h-9 px-3 text-xs sm:min-h-8 sm:px-3 sm:text-xs"
                   >
                     Modifica
                   </QuickActionButton>
                   <QuickActionButton
                     variant="danger"
-                    className="min-h-[48px] px-4 text-[16px] sm:min-h-8 sm:px-3 sm:text-xs"
+                    className="min-h-9 px-3 text-xs sm:min-h-8 sm:px-3 sm:text-xs"
                     disabled={locked}
                     onClick={() => {
                       setDeleteError(null);
@@ -391,7 +427,7 @@ export default function StakersPage() {
               type="button"
               disabled={editSaving}
               onClick={() => setEditing(null)}
-              className="flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-white/[0.06] text-[16px] font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
+              className="flex min-h-9 flex-1 items-center justify-center rounded-full border border-white/[0.06] text-sm font-semibold text-[#e2e8f0] sm:h-10 sm:min-h-0 sm:text-sm"
             >
               Annulla
             </button>

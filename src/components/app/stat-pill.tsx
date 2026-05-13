@@ -20,13 +20,13 @@ type StatPillProps = {
 export function StatPill({ label, value, tone = "default", className = "" }: StatPillProps) {
   return (
     <div
-      className={`flex min-h-[68px] min-w-0 flex-col justify-center gap-0 rounded-xl border border-white/[0.06] bg-[#131C31] px-2 py-2 sm:min-h-0 sm:gap-0 sm:px-2.5 sm:py-2 ${className}`.trim()}
+      className={`flex min-h-[46px] min-w-0 flex-col justify-center gap-0 rounded-lg border border-white/[0.06] bg-[#131C31] px-1.5 py-1 sm:min-h-0 sm:gap-0 sm:rounded-xl sm:px-2.5 sm:py-2 ${className}`.trim()}
     >
-      <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:tracking-wide">
         {label}
       </span>
       <span
-        className={`mt-0.5 min-w-0 whitespace-nowrap text-[22px] font-bold tabular-nums leading-tight sm:mt-0 sm:text-xl ${toneText[tone]}`}
+        className={`mt-0 min-w-0 whitespace-nowrap text-[15px] font-bold tabular-nums leading-tight sm:mt-0 sm:text-xl ${toneText[tone]}`}
       >
         {value}
       </span>

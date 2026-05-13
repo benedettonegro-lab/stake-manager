@@ -29,10 +29,10 @@ const PAYMENT_TYPES = [
 
 /** Card glass — info only, azioni in sheet separato */
 const idnGlassCard =
-  "w-full rounded-xl border border-white/[0.06] bg-[#11182B]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.005] active:scale-[0.98] sm:rounded-xl";
+  "w-full rounded-2xl border border-white/[0.06] bg-[#11182B]/72 backdrop-blur-md text-left shadow-sm outline-none transition-all duration-200 ease-out hover:border-emerald-500/22 hover:shadow-sm hover:scale-[1.005] active:scale-[0.98] sm:rounded-xl";
 
 const idnActionBtn =
-  "flex min-h-[48px] w-full items-center justify-center rounded-xl border text-[16px] font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
+  "flex min-h-10 w-full items-center justify-center rounded-xl border text-sm font-semibold transition duration-150 ease-out active:scale-[0.98] sm:min-h-12 sm:text-sm";
 
 type PaymentType = (typeof PAYMENT_TYPES)[number];
 
@@ -802,7 +802,7 @@ export default function IdentitiesPage() {
           </p>
         ) : null}
 
-        <div className="sticky top-12 z-[25] -mx-3 mb-3 border-b border-white/[0.06] bg-[#0A1020]/95 px-3 py-2 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+        <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
@@ -810,7 +810,7 @@ export default function IdentitiesPage() {
           />
         </div>
 
-        <div className="mb-5 sm:mb-3">
+        <div className="mb-3 sm:mb-3">
           <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
             + Identità
           </QuickActionButton>
@@ -847,7 +847,7 @@ export default function IdentitiesPage() {
             Nessun risultato
           </p>
         ) : (
-          <ul className="flex list-none flex-col gap-4 p-0 sm:gap-2">
+          <ul className="flex list-none flex-col gap-2 p-0 sm:gap-2">
             {filteredIdentities.map((idn) => {
               const accList = accountsByPlayer.get(idn.id) ?? [];
               const methods = paymentMethodsForIdentity(idn.id, paymentMethods);
@@ -865,12 +865,12 @@ export default function IdentitiesPage() {
                   <button
                     type="button"
                     onClick={() => openDetailSheet(idn.id)}
-                    className="w-full rounded-2xl border border-white/[0.06] bg-[#11182B] p-4 text-left shadow-sm transition hover:border-white/[0.06] active:scale-[0.99] sm:p-3"
+                    className="w-full rounded-2xl border border-white/[0.06] bg-[#11182B] px-2.5 py-2.5 text-left shadow-sm transition hover:border-white/[0.06] active:scale-[0.99] sm:p-3"
                   >
-                    <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                    <p className="truncate text-base font-bold leading-snug text-white sm:text-sm sm:font-semibold">
                       {idn.name}
                     </p>
-                    <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-2 sm:gap-1.5">
+                    <div className="mt-2 grid grid-cols-3 gap-1 sm:mt-2 sm:gap-1.5">
                       <StatPill label="Conti" value={String(accList.length)} />
                       <StatPill label="Metodi" value={String(methods.length)} />
                       <StatPill
@@ -893,11 +893,11 @@ export default function IdentitiesPage() {
           panelClassName="!max-w-[420px]"
           headerExtra={
             <div className="space-y-1 sm:space-y-0.5">
-              <p className="text-lg sm:text-base font-semibold uppercase tracking-[0.15em] text-[#8B93A7] sm:text-xs sm:tracking-[0.16em]">
+              <p className="text-sm sm:text-base font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:tracking-[0.16em]">
                 Cassa totale
               </p>
               <p
-                className={`text-[28px] font-extrabold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
+                className={`text-2xl font-bold leading-none tracking-tight tabular-nums whitespace-nowrap sm:text-[1.85rem] sm:font-bold ${
                   detailCassa > 0
                     ? "text-emerald-400"
                     : detailCassa < 0
@@ -907,7 +907,7 @@ export default function IdentitiesPage() {
               >
                 {formatMoney(detailCassa)} €
               </p>
-              <p className="pt-2 text-[16px] text-[#8B93A7] sm:pt-1.5 sm:text-xs">
+              <p className="pt-1.5 text-xs leading-snug text-[#8B93A7] sm:pt-1.5 sm:text-xs sm:leading-normal">
                 <span className="font-semibold tabular-nums text-[#B4BCCC]">
                   {detailAccList.length}
                 </span>{" "}
@@ -925,10 +925,10 @@ export default function IdentitiesPage() {
           }}
         >
           {detailSheetId && detailIdn ? (
-            <div className="relative mx-auto flex min-h-[48vh] max-w-[420px] flex-col pb-2">
-              <div className="flex flex-1 flex-col gap-4 sm:gap-6">
+            <div className="relative mx-auto flex min-h-[40vh] max-w-[420px] flex-col pb-2">
+              <div className="flex flex-1 flex-col gap-3 sm:gap-6">
               <section>
-                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
+                <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Conti
                 </h3>
                 {accDeleteError ? (
@@ -937,7 +937,7 @@ export default function IdentitiesPage() {
                 {detailAccList.length === 0 ? (
                   <p className="py-1 text-sm sm:text-xs text-[#8B93A7]">Nessun conto.</p>
                 ) : (
-                  <ul className="flex flex-col gap-4 sm:gap-3">
+                  <ul className="flex flex-col gap-2 sm:gap-3">
                     {detailAccList.map((a) => {
                       const bal = Number.parseFloat(String(a.current_balance)) || 0;
                       const balCls =
@@ -957,17 +957,17 @@ export default function IdentitiesPage() {
                               setAccountActions(a);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-3 py-3 sm:px-3 sm:py-2.5">
+                            <div className="flex items-center justify-between gap-2 px-2 py-2 sm:gap-3 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                                <p className="truncate text-base font-bold leading-snug text-white sm:text-sm sm:font-semibold">
                                   {a.account_name}
                                 </p>
-                                <p className="mt-1 truncate text-[16px] text-[#8B93A7] sm:mt-0.5 sm:text-xs">
+                                <p className="mt-0.5 truncate text-xs leading-snug text-[#8B93A7] sm:mt-0.5 sm:text-xs sm:leading-normal">
                                   {gamingAccountBookmakerDisplay(a) || "—"}
                                 </p>
                               </div>
                               <p
-                                className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-xl font-bold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(a.current_balance)} €
                               </p>
@@ -981,13 +981,13 @@ export default function IdentitiesPage() {
               </section>
 
               <section>
-                <h3 className="mb-3 text-lg sm:text-base font-bold uppercase tracking-[0.15em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
+                <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.12em] text-[#8B93A7] sm:mb-2 sm:text-xs sm:tracking-[0.16em]">
                   Metodi
                 </h3>
                 {detailMethods.length === 0 ? (
                   <p className="py-1 text-sm sm:text-xs text-[#8B93A7]">Nessun metodo.</p>
                 ) : (
-                  <ul className="flex flex-col gap-4 sm:gap-3">
+                  <ul className="flex flex-col gap-2 sm:gap-3">
                     {detailMethods.map((m) => {
                       const mb = Number.parseFloat(m.balance) || 0;
                       const tipo = (m.type || "").trim();
@@ -1008,19 +1008,19 @@ export default function IdentitiesPage() {
                               setMethodActions(m);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 px-3 py-3 sm:px-3 sm:py-2.5">
+                            <div className="flex items-center justify-between gap-2 px-2 py-2 sm:gap-3 sm:px-3 sm:py-2.5">
                               <div className="min-w-0 text-left">
-                                <p className="truncate text-[26px] font-bold leading-tight text-white sm:text-sm sm:font-semibold">
+                                <p className="truncate text-base font-bold leading-snug text-white sm:text-sm sm:font-semibold">
                                   {(m.method_name || "").trim() || "—"}
                                 </p>
                                 {tipo ? (
-                                  <p className="mt-1 truncate text-[16px] text-[#8B93A7] sm:mt-0.5 sm:text-xs">
+                                  <p className="mt-0.5 truncate text-xs leading-snug text-[#8B93A7] sm:mt-0.5 sm:text-xs sm:leading-normal">
                                     {tipo}
                                   </p>
                                 ) : null}
                               </div>
                               <p
-                                className={`shrink-0 whitespace-nowrap text-[28px] font-extrabold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
+                                className={`shrink-0 whitespace-nowrap text-xl font-bold tabular-nums leading-none sm:text-2xl sm:font-bold ${balCls}`}
                               >
                                 {formatMoney(m.balance)} €
                               </p>
@@ -1033,7 +1033,7 @@ export default function IdentitiesPage() {
                 )}
               </section>
 
-              <div className="border-t border-[#141C2A] pt-5">
+              <div className="border-t border-[#141C2A] pt-3 sm:pt-5">
                 {identityNameEditing ? (
                   <div className="mx-auto flex max-w-xs flex-col gap-3">
                     <label className="block">
@@ -1103,7 +1103,7 @@ export default function IdentitiesPage() {
               </div>
             </div>
 
-            <div className="sticky bottom-0 z-[2] mt-8 flex justify-center bg-gradient-to-t from-[#0A1020] via-[#0A1020]/92 to-transparent pb-1 pt-8">
+            <div className="sticky bottom-0 z-[2] mt-6 flex justify-center bg-gradient-to-t from-[#0A1020] via-[#0A1020]/92 to-transparent pb-1 pt-6 sm:mt-8 sm:pt-8">
               <button
                 type="button"
                 disabled={accSubmitting || pmSubmitting || identityEditSaving}
@@ -1113,7 +1113,7 @@ export default function IdentitiesPage() {
                   setMethodActions(null);
                   setFabMenuOpen(true);
                 }}
-                className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/18 to-emerald-600/8 text-2xl font-light text-emerald-100 shadow-sm transition duration-200 ease-out hover:scale-[1.02] hover:shadow-md active:scale-[0.94] disabled:opacity-40"
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-500/35 bg-gradient-to-br from-emerald-500/18 to-emerald-600/8 text-xl font-light text-emerald-100 shadow-sm transition duration-200 ease-out hover:scale-[1.02] hover:shadow-md active:scale-[0.94] disabled:opacity-40 sm:h-14 sm:w-14 sm:text-2xl"
               >
                 +
               </button>

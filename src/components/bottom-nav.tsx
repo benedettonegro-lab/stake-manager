@@ -16,7 +16,7 @@ function IconHome({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -35,7 +35,7 @@ function IconUsers({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -54,7 +54,7 @@ function IconWallet({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -73,7 +73,7 @@ function IconTicket({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -93,7 +93,7 @@ function IconStaker({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -112,7 +112,7 @@ function IconMore({ active }: { active: boolean }) {
   const c = active ? "#A970FF" : "#8B93A7";
   return (
     <svg
-      className="h-5 w-5 shrink-0 sm:h-[22px] sm:w-[22px]"
+      className="h-[18px] w-[18px] shrink-0 sm:h-[22px] sm:w-[22px]"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
@@ -131,10 +131,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 max-h-[84px] border-t border-white/[0.06] bg-[#0A1020]/96 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md sm:max-h-none sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
+      className="fixed bottom-0 left-0 right-0 z-50 max-h-[72px] border-t border-white/[0.06] bg-[#0A1020]/96 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-0.5 backdrop-blur-md sm:max-h-none sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
       aria-label="Navigazione principale"
     >
-      <div className="sm-app-constrain grid max-h-[84px] min-h-0 grid-cols-6 items-stretch px-0.5 sm:max-h-none sm:min-h-[50px] sm:px-0.5">
+      <div className="sm-app-constrain grid max-h-[72px] min-h-0 grid-cols-6 items-stretch px-0.5 sm:max-h-none sm:min-h-[50px] sm:px-0.5">
         {items.map((item, i) => {
           const Icon = icons[i];
           const active = item.match.some(
@@ -144,12 +144,12 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex min-h-[44px] min-w-0 max-h-full flex-col items-center justify-center gap-0 rounded-md py-0.5 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:rounded-xl sm:py-1 ${
+              className={`flex min-h-[40px] min-w-0 max-h-full flex-col items-center justify-center gap-0 rounded-md py-0 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:rounded-xl sm:py-1 ${
                 active ? "text-[#B89EFF]" : "text-[#8B93A7] hover:text-[#B4BCCC]"
               }`}
             >
               <Icon active={active} />
-              <span className="max-w-full truncate px-0.5 text-[11px] font-semibold uppercase leading-tight tracking-[0.12em] sm:text-xs sm:tracking-[0.15em]">
+              <span className="max-w-full truncate px-0.5 text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] sm:text-xs sm:tracking-[0.15em]">
                 {item.label}
               </span>
             </Link>

@@ -50,6 +50,12 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+@media (max-width: 639.98px) {
+  body {
+    line-height: 1.36;
+  }
+}
+
 /* Gradiente primario (testo o bordo) */
 .sm-gradient-text {
   background: linear-gradient(
@@ -81,11 +87,11 @@ body {
 
 @media (max-width: 639.98px) {
   .sm-gradient-border {
-    border-radius: 0.875rem;
+    border-radius: 1rem;
   }
 
   .sm-gradient-border > .sm-gradient-inner {
-    border-radius: calc(0.875rem - 1px);
+    border-radius: calc(1rem - 1px);
   }
 }
 
@@ -105,14 +111,15 @@ body {
 
 @media (max-width: 639.98px) {
   .sm-input {
-    min-height: 3.25rem;
+    min-height: 2.75rem;
     border-radius: 0.625rem;
-    font-size: 1rem;
-    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    padding: 0.5rem 0.75rem;
+    line-height: 1.3;
   }
 
   .sm-input::placeholder {
-    font-size: 1rem;
+    font-size: 0.9375rem;
   }
 }
 
@@ -165,11 +172,11 @@ textarea.sm-input {
 
 @media (max-width: 639.98px) {
   .sm-btn-primary {
-    min-height: 3rem;
+    min-height: 2.75rem;
     border-radius: 0.625rem;
-    padding: 0.625rem 1rem;
-    font-size: 1rem;
-    line-height: 1.35;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.3;
     font-weight: 600;
     box-shadow: 0 2px 10px -4px rgba(8, 12, 24, 0.4);
   }

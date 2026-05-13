@@ -17,7 +17,7 @@ export function FilterChips<T extends string>({
 }: FilterChipsProps<T>) {
   return (
     <div
-      className={`flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1.5 sm:pb-1 ${className}`.trim()}
+      className={`flex gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1.5 sm:pb-1 ${className}`.trim()}
       role="tablist"
       aria-label="Filtri"
     >
@@ -30,7 +30,7 @@ export function FilterChips<T extends string>({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(item.value)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-[15px] font-semibold transition duration-150 active:scale-[0.97] sm:px-3 sm:py-1.5 sm:text-sm ${
+            className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold transition duration-150 active:scale-[0.97] sm:px-3 sm:py-1.5 sm:text-sm ${
               active
                 ? "border-[#A970FF]/50 bg-[#A970FF]/20 text-white"
                 : "border-white/[0.06] bg-[#131C31] text-[#8B93A7] hover:border-white/[0.12] hover:text-[#e2e8f0]"
