@@ -12,7 +12,7 @@ import {
   assertPaymentMethodCoversDeposit,
 } from "@/lib/balance-validation";
 import { recalculatePaymentMethodBalanceFromLedger } from "@/lib/recalculate-movement-balances";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -70,7 +70,7 @@ export default function AccountDetailPage() {
   const accountId =
     typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
 
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [account, setAccount] = useState<GamingAccount | null>(null);

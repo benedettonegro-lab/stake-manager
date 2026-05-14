@@ -20,7 +20,7 @@ import {
   updateBetById,
   updateBetStatusOnly,
 } from "@/lib/repositories/bets-repository";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { formatClientError } from "@/lib/user-message";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -440,7 +440,7 @@ BetTimelineCard.displayName = "BetTimelineCard";
 function BetsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [stakers, setStakers] = useState<StakerRow[]>([]);

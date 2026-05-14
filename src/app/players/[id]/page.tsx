@@ -4,7 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { formatAccountRoi } from "@/lib/account-bet-metrics";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -128,7 +128,7 @@ export default function PlayerDetailPage() {
   const router = useRouter();
   const playerId = typeof params.id === "string" ? params.id : params.id?.[0];
 
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [player, setPlayer] = useState<Player | null>(null);

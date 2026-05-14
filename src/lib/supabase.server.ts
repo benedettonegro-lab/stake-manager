@@ -20,7 +20,7 @@ export async function createServerSupabaseClient() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet, _headers) {
+      setAll(cookiesToSet, headers) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
@@ -29,6 +29,7 @@ export async function createServerSupabaseClient() {
           // Server Component / Route Handler: scrittura cookie non sempre disponibile;
           // il refresh della sessione è gestito da `middleware.ts`.
         }
+        void JSON.stringify(headers);
       },
     },
   });

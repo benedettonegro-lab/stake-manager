@@ -56,10 +56,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     },
   });
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const { error } = await supabase.auth.getUser();
 
   if (error && isRecoverableAuthFailure(error.message, (error as { code?: string }).code)) {
     await supabase.auth.signOut();

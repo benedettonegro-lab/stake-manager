@@ -2,13 +2,14 @@
 
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 
 type LoadingState = "signin" | "signup" | null;
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [email, setEmail] = useState("");
@@ -16,25 +17,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState<LoadingState>(null);
-  const [reasonMessage, setReasonMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const reason = new URLSearchParams(window.location.search).get("reason");
-
-    if (reason === "pending") {
-      setReasonMessage("Account in attesa di approvazione admin");
-    } else if (reason === "blocked") {
-      setReasonMessage("Account bloccato");
-    } else if (reason === "missing-profile") {
-      setReasonMessage("Profilo non trovato. Contatta admin.");
-    } else if (reason === "session") {
-      setReasonMessage("Sessione scaduta o non valida. Accedi di nuovo.");
-    } else if (reason === "callback") {
-      setReasonMessage("Collegamento account non completato. Riprova.");
-    } else {
-      setReasonMessage(null);
-    }
-  }, []);
+  const reasonMessage = useMemo(() => {
+    const reason = searchParams.get("reason");
+    if (reason === "pending") return "Account in attesa di approvazione admin";
+    if (reason === "blocked") return "Account bloccato";
+    if (reason === "missing-profile") return "Profilo non trovato. Contatta admin.";
+    if (reason === "session") return "Sessione scaduta o non valida. Accedi di nuovo.";
+    if (reason === "callback") return "Collegamento account non completato. Riprova.";
+    return null;
+  }, [searchParams]);
 
   const handleSignIn = async () => {
     setLoading("signin");
@@ -228,5 +220,19 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#0A1020] text-[#8B93A7]">
+          Caricamento…
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }
