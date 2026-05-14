@@ -11,17 +11,23 @@ export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
 
   return createServerClient(url, anonKey, {
+    cookieOptions: {
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, _headers) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
           });
         } catch {
-          // Server Component: il refresh sessione avviene nel middleware.
+          // Server Component / Route Handler: scrittura cookie non sempre disponibile;
+          // il refresh della sessione è gestito da `middleware.ts`.
         }
       },
     },

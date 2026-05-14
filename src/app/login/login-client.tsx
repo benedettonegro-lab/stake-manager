@@ -1,6 +1,6 @@
 "use client";
 
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 export default function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +24,11 @@ export default function LoginClient() {
         ? "Account bloccato."
         : reason === "missing-profile"
           ? "Profilo non trovato. Contatta admin."
-          : null;
+          : reason === "session"
+            ? "Sessione scaduta o non valida. Accedi di nuovo."
+            : reason === "callback"
+              ? "Collegamento account non completato. Riprova o accedi con email e password."
+              : null;
 
   async function checkProfileStatusAfterAuth(): Promise<
     | { ok: true }
@@ -60,7 +64,13 @@ export default function LoginClient() {
     });
     setLoading(null);
     if (signInError) {
-      setError(signInError.message);
+      const msg = signInError.message ?? "";
+      if (/refresh|jwt|session/i.test(msg)) {
+        await supabase.auth.signOut();
+        setError("Sessione non valida. Riprova l’accesso.");
+      } else {
+        setError(msg);
+      }
       return;
     }
 

@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Variabili da `.env.local` (o env deploy):
@@ -53,11 +54,31 @@ export async function pingSupabaseAuth(): Promise<{
   }
 }
 
+const browserClientOptions = {
+  isSingleton: true as const,
+  cookieOptions: {
+    path: "/",
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+  },
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: "pkce" as const,
+  },
+};
+
 /**
- * Client Supabase per componenti client (`"use client"`).
- * Usa questo file dalla pagina login e da altri client component.
+ * Client browser unico (`isSingleton: true`). Su SSR/prerender Next può essere invocato
+ * senza `window`; `@supabase/ssr` gestisce il caso fino al primo uso reale in browser.
  */
-export function createBrowserSupabaseClient() {
+export function getSupabaseBrowserClient(): SupabaseClient {
   const { url, anonKey } = getSupabaseEnv();
-  return createBrowserClient(url, anonKey);
+  return createBrowserClient(url, anonKey, browserClientOptions);
+}
+
+/** @deprecated Usa `getSupabaseBrowserClient()`; mantenuto per compatibilità import. */
+export function createBrowserSupabaseClient(): SupabaseClient {
+  return getSupabaseBrowserClient();
 }

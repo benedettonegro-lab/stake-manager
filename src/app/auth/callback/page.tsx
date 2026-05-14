@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase.server";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -10,17 +11,12 @@ export default async function AuthCallbackPage(props: { searchParams: SearchPara
   const code = typeof searchParams.code === "string" ? searchParams.code : null;
 
   if (code) {
-    // PKCE: scambia il code per una sessione (imposta cookie via middleware).
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      redirect("/login?reason=callback");
+    }
+    redirect("/dashboard");
   }
 
-  // Chiudiamo sempre la sessione e mostriamo una pagina neutra.
-  await supabase.auth.signOut();
-
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center px-4 text-lg sm:text-base sm:text-sm text-[#8B93A7]">
-      Callback completato. Torna a <a className="underline" href="/login">/login</a>.
-    </div>
-  );
+  redirect("/login");
 }
-

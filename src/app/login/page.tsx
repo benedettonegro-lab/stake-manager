@@ -1,6 +1,6 @@
 "use client";
 
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -9,7 +9,7 @@ type LoadingState = "signin" | "signup" | null;
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +27,10 @@ export default function LoginPage() {
       setReasonMessage("Account bloccato");
     } else if (reason === "missing-profile") {
       setReasonMessage("Profilo non trovato. Contatta admin.");
+    } else if (reason === "session") {
+      setReasonMessage("Sessione scaduta o non valida. Accedi di nuovo.");
+    } else if (reason === "callback") {
+      setReasonMessage("Collegamento account non completato. Riprova.");
     } else {
       setReasonMessage(null);
     }
@@ -49,17 +53,11 @@ export default function LoginPage() {
       return;
     }
 
-    console.log("[LOGIN] user id:", data.user?.id);
-    console.log("[LOGIN] user email:", data.user?.email);
-
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id, email, role, status")
       .eq("id", data.user.id)
       .maybeSingle();
-
-    console.log("[LOGIN] profile:", profile);
-    console.log("[LOGIN] profile error:", profileError);
 
     if (profileError) {
       await supabase.auth.signOut();
@@ -82,6 +80,7 @@ export default function LoginPage() {
       return;
     }
 
+    setLoading(null);
     router.push("/dashboard");
   };
 

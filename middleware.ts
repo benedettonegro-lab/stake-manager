@@ -1,19 +1,16 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase-middleware";
 
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  // ⚠️ NON proteggere queste route
-  if (
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api")
-  ) {
-    return NextResponse.next();
-  }
-
-  // per ora lascia passare tutto (debug)
-  return NextResponse.next();
+export async function middleware(request: NextRequest) {
+  return updateSession(request);
 }
+
+export const config = {
+  matcher: [
+    /*
+     * Esegue refresh sessione su tutte le richieste tranne asset statici.
+     * Esclude: _next/static, _next/image, file immagine, favicon, manifest.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|manifest\\.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
+};

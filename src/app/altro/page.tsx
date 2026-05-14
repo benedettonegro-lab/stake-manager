@@ -3,7 +3,7 @@
 import { AppCard } from "@/components/app";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -24,7 +24,7 @@ function formatItDateDdMmYyyy(iso: string | null | undefined): string | null {
 
 export default function AltroPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [registeredOn, setRegisteredOn] = useState<string | null>(null);
@@ -68,7 +68,7 @@ export default function AltroPage() {
   const handleLogout = useCallback(async () => {
     setLoggingOut(true);
     await supabase.auth.signOut();
-    router.replace("/login");
+    router.replace("/login?reason=session");
   }, [router, supabase]);
 
   return (
