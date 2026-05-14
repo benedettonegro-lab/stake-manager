@@ -83,3 +83,24 @@ export function betBalanceContribution(
       return 0;
   }
 }
+
+/** Delta sul saldo conto/staker quando si passa da uno stato riga a un altro (coerente con trigger DB). */
+export function betBalanceContributionDelta(
+  before: {
+    status: string;
+    stake: number | string;
+    odds: number | string;
+    profit: number | string;
+  },
+  after: {
+    status: string;
+    stake: number | string;
+    odds: number | string;
+    profit: number | string;
+  },
+): number {
+  return round4(
+    betBalanceContribution(after.status, after.stake, after.odds, after.profit) -
+      betBalanceContribution(before.status, before.stake, before.odds, before.profit),
+  );
+}

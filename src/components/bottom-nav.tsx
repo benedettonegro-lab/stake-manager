@@ -131,7 +131,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 max-h-[72px] border-t border-white/[0.06] bg-[#0A1020]/96 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-0.5 backdrop-blur-md sm:max-h-none sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1"
+      className="fixed bottom-0 left-0 right-0 z-50 max-h-[72px] border-t border-white/[0.06] bg-[#0B1224]/98 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-0.5 max-sm:backdrop-blur-none sm:max-h-none sm:bg-[#0A1020]/96 sm:pb-[max(0.35rem,env(safe-area-inset-bottom))] sm:pt-1 sm:backdrop-blur-md"
       aria-label="Navigazione principale"
     >
       <div className="sm-app-constrain grid max-h-[72px] min-h-0 grid-cols-6 items-stretch px-0.5 sm:max-h-none sm:min-h-[50px] sm:px-0.5">

@@ -4,13 +4,26 @@ import { BottomSheet, FilterChips, SearchInput } from "@/components/app";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { BET_TYPE_DEFAULT, BET_TYPE_OPTIONS } from "@/lib/bet-constants";
-import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
+import { BET_TYPE_DEFAULT } from "@/lib/bet-constants";
+import { betBalanceContributionDelta, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { assertGamingAccountCoversStake } from "@/lib/balance-validation";
+import {
+  betExists,
+  deleteBetById,
+  fetchBetsPage,
+  fetchGamingAccountBalances,
+  fetchUserBetsSettledStatsWithFallback,
+  insertBet,
+  type BetListRow,
+  type BetsSettledStats,
+  updateBetById,
+  updateBetStatusOnly,
+} from "@/lib/repositories/bets-repository";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { formatClientError } from "@/lib/user-message";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 
 export type BetStatus = "open" | "won" | "lost" | "void" | "cashout";
 
@@ -34,28 +47,7 @@ type AccountRow = {
   current_balance: string;
 };
 
-type BetRow = {
-  id: string;
-  player_id: string;
-  staker_id: string;
-  gaming_account_id: string;
-  event_name: string;
-  odds: string;
-  stake: string;
-  status: BetStatus;
-  profit: string;
-  placed_at: string;
-  settled_at: string | null;
-  bet_type?: string | null;
-  note?: string | null;
-  gaming_accounts: {
-    account_name: string;
-    bookmaker: string;
-    bookmaker_id?: string | null;
-    bookmakers?: { name: string } | null;
-  } | null;
-  stakers: { name: string } | null;
-};
+type BetRow = BetListRow;
 
 type BetsDayGroup = {
   dayKey: string;
@@ -74,39 +66,7 @@ type BetsMonthGroup = {
 /** Stati selezionabili dalla linguetta (menu) */
 type LinguettaBetStatus = "open" | "won" | "lost" | "void";
 
-type BetAggregateRow = {
-  stake: string;
-  profit: string;
-  status: string;
-  odds: string | number;
-};
-
-function calculateProfit(
-  status: BetStatus,
-  stake: number,
-  odds: number,
-): number {
-  if (status === "open" || status === "void") return 0;
-  if (status === "won") {
-    if (!Number.isFinite(stake) || stake <= 0 || !Number.isFinite(odds) || odds <= 0) {
-      return 0;
-    }
-    return Math.round((stake * odds - stake) * 1e4) / 1e4;
-  }
-  if (status === "lost") {
-    if (!Number.isFinite(stake) || stake <= 0) return 0;
-    return Math.round(-stake * 1e4) / 1e4;
-  }
-  return 0;
-}
-
-function computeProfit(
-  status: BetStatus,
-  stake: number,
-  odds: number,
-): number {
-  return calculateProfit(status, stake, odds);
-}
+const BETS_PAGE_SIZE = 50;
 
 function formatMoney(value: string | number): string {
   const n = typeof value === "string" ? Number.parseFloat(value) : value;
@@ -127,22 +87,6 @@ function formatRoi(totalProfit: number, totalStake: number): string {
     minimumFractionDigits: 1,
     maximumFractionDigits: 2,
   }).format(rounded)}%`;
-}
-
-function reduceAggregate(rows: BetAggregateRow[]) {
-  let totalStake = 0;
-  let totalProfit = 0;
-  for (const r of rows) {
-    totalProfit += betSettledPnL(r.status, r.stake, r.odds, r.profit);
-    if (betIsSettled(r.status)) {
-      totalStake += Number.parseFloat(r.stake) || 0;
-    }
-  }
-  return {
-    count: rows.length,
-    totalStake,
-    totalProfit,
-  };
 }
 
 function capitalizeIt(s: string): string {
@@ -255,13 +199,13 @@ function tradeStatusDisplay(status: BetStatus): { label: string; className: stri
       return {
         label: "VINTA",
         className:
-          "border-emerald-500/45 bg-emerald-500/15 text-emerald-300 shadow-sm",
+          "border-emerald-500/45 bg-emerald-500/15 text-emerald-300 max-sm:shadow-none sm:shadow-sm",
       };
     case "lost":
       return {
         label: "PERSA",
         className:
-          "border-red-500/45 bg-red-500/12 text-red-200 shadow-sm",
+          "border-red-500/45 bg-red-500/12 text-red-200 max-sm:shadow-none sm:shadow-sm",
       };
     case "open":
       return {
@@ -272,13 +216,13 @@ function tradeStatusDisplay(status: BetStatus): { label: string; className: stri
       return {
         label: "PUSH",
         className:
-          "border-sky-500/45 bg-sky-600/20 text-sky-200 shadow-sm",
+          "border-sky-500/45 bg-sky-600/20 text-sky-200 max-sm:shadow-none sm:shadow-sm",
       };
     default:
       return {
         label: "CASH",
         className:
-          "border-amber-500/40 bg-amber-500/10 text-amber-200 shadow-sm",
+          "border-amber-500/40 bg-amber-500/10 text-amber-200 max-sm:shadow-none sm:shadow-sm",
       };
   }
 }
@@ -341,7 +285,7 @@ const STATUS_SHEET_OPTIONS: {
   },
 ];
 
-function BetTimelineCard({
+const BetTimelineCard = memo(function BetTimelineCard({
   bet: b,
   settling,
   flash,
@@ -442,7 +386,7 @@ function BetTimelineCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B]/78 backdrop-blur-sm shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out select-none hover:border-emerald-500/20 hover:shadow-[0_0_6px_rgba(52,211,153,0.03)] hover:scale-[1.005] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
+      className={`relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#12192A]/92 max-sm:backdrop-blur-none sm:bg-[#11182B]/78 sm:backdrop-blur-sm max-sm:shadow-none sm:shadow-sm transition-[transform,opacity,border-color] duration-200 ease-out select-none max-sm:hover:scale-100 sm:hover:border-emerald-500/20 sm:hover:shadow-[0_0_6px_rgba(52,211,153,0.03)] sm:hover:scale-[1.005] active:scale-[0.97] sm:rounded-xl ${flashClass} ${
         settling ? "pointer-events-none opacity-70" : "cursor-pointer touch-pan-y"
       }`}
       aria-label={`Scommessa ${b.event_name || "evento"}`}
@@ -490,7 +434,8 @@ function BetTimelineCard({
       </div>
     </article>
   );
-}
+});
+BetTimelineCard.displayName = "BetTimelineCard";
 
 function BetsPageContent() {
   const router = useRouter();
@@ -501,9 +446,9 @@ function BetsPageContent() {
   const [stakers, setStakers] = useState<StakerRow[]>([]);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);
   const [bets, setBets] = useState<BetRow[]>([]);
-  const [aggregateRows, setAggregateRows] = useState<BetAggregateRow[] | null>(
-    null,
-  );
+  const [rollup, setRollup] = useState<BetsSettledStats | null>(null);
+  const [betsHasMore, setBetsHasMore] = useState(true);
+  const [betsLoadingMore, setBetsLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [accountId, setAccountId] = useState("");
@@ -582,61 +527,66 @@ function BetsPageContent() {
         .order("account_name"),
     ]);
     if (sRes.error || aRes.error) {
-      setLoadError(sRes.error?.message ?? aRes.error?.message ?? "Errore caricamento");
+      setLoadError(
+        formatClientError(sRes.error ?? aRes.error ?? "Errore caricamento", "Errore caricamento."),
+      );
       return;
     }
     setStakers((sRes.data as StakerRow[]) ?? []);
     setAccounts((aRes.data as AccountRow[]) ?? []);
   }, [supabase]);
 
-  const loadBets = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("bets")
-      .select(
-        `
-        id,
-        player_id,
-        staker_id,
-        gaming_account_id,
-        event_name,
-        odds,
-        stake,
-        status,
-        profit,
-        placed_at,
-        settled_at,
-        bet_type,
-        note,
-        gaming_accounts ( account_name, bookmaker, bookmaker_id, bookmakers ( name ) ),
-        stakers ( name )
-      `,
-      )
-      .order("placed_at", { ascending: false })
-      .limit(100);
+  const loadRollup = useCallback(async () => {
+    const res = await fetchUserBetsSettledStatsWithFallback(supabase);
+    if (!res.ok) {
+      setRollup(null);
+      return;
+    }
+    setRollup(res.stats);
+  }, [supabase]);
 
-    if (error) {
-      setLoadError(error.message);
+  const mergeAccountBalances = useCallback(async () => {
+    const res = await fetchGamingAccountBalances(supabase);
+    if (!res.ok) return;
+    setAccounts((prev) =>
+      prev.map((a) => {
+        const hit = res.rows.find((r) => r.id === a.id);
+        return hit ? { ...a, current_balance: hit.current_balance } : a;
+      }),
+    );
+  }, [supabase]);
+
+  const loadBetsReset = useCallback(async () => {
+    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, offset: 0 });
+    if (!res.ok) {
+      setLoadError(res.message);
       setBets([]);
+      setBetsHasMore(false);
       return;
     }
-    setBets((data as unknown as BetRow[]) ?? []);
+    setBets(res.rows);
+    setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
   }, [supabase]);
 
-  const loadBetAggregates = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("bets")
-      .select("stake, profit, status, odds");
-    if (error) {
-      setAggregateRows(null);
+  const loadBetsAppend = useCallback(async () => {
+    if (betsLoadingMore || !betsHasMore) return;
+    setBetsLoadingMore(true);
+    const offset = bets.length;
+    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, offset });
+    if (!res.ok) {
+      setLoadError(res.message);
+      setBetsLoadingMore(false);
       return;
     }
-    setAggregateRows((data as BetAggregateRow[]) ?? []);
-  }, [supabase]);
+    setBets((prev) => [...prev, ...res.rows]);
+    setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
+    setBetsLoadingMore(false);
+  }, [bets.length, betsHasMore, betsLoadingMore, supabase]);
 
   const loadAll = useCallback(async () => {
     await loadRefs();
-    await Promise.all([loadBets(), loadBetAggregates()]);
-  }, [loadBetAggregates, loadBets, loadRefs]);
+    await Promise.all([loadBetsReset(), loadRollup()]);
+  }, [loadBetsReset, loadRefs, loadRollup]);
 
   useEffect(() => {
     let cancelled = false;
@@ -668,18 +618,25 @@ function BetsPageContent() {
     else if (stakers[0]) setStakerId(stakers[0].id);
   }, [accountId, accounts, stakers]);
 
+  const betsRef = useRef(bets);
+  const accountsRef = useRef(accounts);
+  useEffect(() => {
+    betsRef.current = bets;
+  }, [bets]);
+  useEffect(() => {
+    accountsRef.current = accounts;
+  }, [accounts]);
+
   const stats = useMemo(() => {
-    if (aggregateRows !== null) {
-      return reduceAggregate(aggregateRows);
+    if (rollup) {
+      return {
+        count: rollup.total_bets,
+        totalStake: rollup.settled_stake,
+        totalProfit: rollup.settled_pnl,
+      };
     }
-    const rows: BetAggregateRow[] = bets.map((b) => ({
-      stake: b.stake,
-      profit: b.profit,
-      status: b.status,
-      odds: b.odds,
-    }));
-    return reduceAggregate(rows);
-  }, [aggregateRows, bets]);
+    return { count: 0, totalStake: 0, totalProfit: 0 };
+  }, [rollup]);
 
   const filteredBets = useMemo(() => {
     let list = bets;
@@ -772,7 +729,7 @@ function BetsPageContent() {
       return;
     }
 
-    const profit = computeProfit(status, stakeNum, oddsNum);
+    const profit = betSettledPnL(status, stakeNum, oddsNum, 0);
 
     setSubmitting(true);
     const {
@@ -780,13 +737,13 @@ function BetsPageContent() {
     } = await supabase.auth.getUser();
     if (!user) {
       setSubmitting(false);
+      setFormError("Sessione non valida. Accedi di nuovo.");
       return;
     }
 
-    const betType =
-      formBetType.trim() || BET_TYPE_DEFAULT;
+    const betType = formBetType.trim() || BET_TYPE_DEFAULT;
 
-    const { error } = await supabase.from("bets").insert({
+    const ins = await insertBet(supabase, {
       user_id: user.id,
       gaming_account_id: accountId,
       player_id: accPick.player_id,
@@ -800,10 +757,14 @@ function BetsPageContent() {
     });
 
     setSubmitting(false);
-    if (error) {
-      setFormError(error.message);
+    if (!ins.ok) {
+      setFormError(ins.message);
       return;
     }
+
+    setBets((prev) => [ins.bet, ...prev]);
+    void loadRollup();
+    void mergeAccountBalances();
 
     setEventName("");
     setOddsStr("");
@@ -812,7 +773,6 @@ function BetsPageContent() {
     setFormBetType(BET_TYPE_DEFAULT);
     setNuovaOpen(false);
     router.replace("/bets", { scroll: false });
-    await loadAll();
   }
 
   function openBetDetail(b: BetRow) {
@@ -864,72 +824,90 @@ function BetsPageContent() {
     setEditSaving(true);
     const betType = editBetType.trim() || BET_TYPE_DEFAULT;
 
-    const { data: row, error: fetchErr } = await supabase
-      .from("bets")
-      .select("id")
-      .eq("id", editingBet.id)
-      .maybeSingle();
-
-    if (fetchErr) {
-      console.error("[modifica scommessa] lettura bet", fetchErr);
-      setEditError(fetchErr.message);
+    const exists = await betExists(supabase, editingBet.id);
+    if (!exists.ok) {
+      setEditError(exists.message);
       setEditSaving(false);
       return;
     }
-    if (!row) {
-      const msg = "Scommessa non trovata.";
-      console.error("[modifica scommessa]", msg, { betId: editingBet.id });
-      setEditError(msg);
+    if (!exists.exists) {
+      setEditError("Scommessa non trovata.");
       setEditSaving(false);
       return;
     }
 
-    const newProfit = computeProfit(editStatus, stakeNum, oddsNum);
-    const settled_at =
-      editStatus === "open" ? null : new Date().toISOString();
+    const cashProfit =
+      editStatus === "cashout"
+        ? Number.parseFloat(String(editingBet.profit).replace(",", ".")) || 0
+        : 0;
+    const newProfit = betSettledPnL(editStatus, stakeNum, oddsNum, cashProfit);
+    const settled_at = editStatus === "open" ? null : new Date().toISOString();
     const noteVal = editNote.trim() ? editNote.trim() : null;
 
-    const { error } = await supabase
-      .from("bets")
-      .update({
-        gaming_account_id: editGamingAccountId,
-        staker_id: editStakerId,
-        player_id: accPick.player_id,
-        event_name: ev,
-        odds: oddsNum,
-        stake: stakeNum,
-        status: editStatus,
-        bet_type: betType,
-        profit: newProfit,
-        settled_at,
-        note: noteVal,
-      })
-      .eq("id", editingBet.id);
+    const prevBets = bets;
+    const predictedProfitStr = String(newProfit);
+    const predicted: BetRow = {
+      ...editingBet,
+      gaming_account_id: editGamingAccountId,
+      staker_id: editStakerId,
+      player_id: accPick.player_id,
+      event_name: ev,
+      odds: String(oddsNum),
+      stake: String(stakeNum),
+      status: editStatus,
+      profit: predictedProfitStr,
+      settled_at,
+      bet_type: betType,
+      note: noteVal,
+    };
 
-    if (error) {
-      console.error("[modifica scommessa] update bets", error);
-      setEditError(error.message);
+    setBets((list) => list.map((b) => (b.id === editingBet.id ? predicted : b)));
+
+    const res = await updateBetById(supabase, editingBet.id, {
+      gaming_account_id: editGamingAccountId,
+      staker_id: editStakerId,
+      player_id: accPick.player_id,
+      event_name: ev,
+      odds: oddsNum,
+      stake: stakeNum,
+      status: editStatus,
+      bet_type: betType,
+      profit: newProfit,
+      settled_at,
+      note: noteVal,
+    });
+
+    if (!res.ok) {
+      setBets(prevBets);
+      setEditError(res.message);
       setEditSaving(false);
       return;
     }
 
+    setBets((list) => list.map((b) => (b.id === editingBet.id ? res.bet : b)));
     setEditSaving(false);
     setEditingBet(null);
-    await loadAll();
+    void loadRollup();
+    void mergeAccountBalances();
   }
 
   async function handleConfirmDeleteBet() {
     if (!deleteBetTarget) return;
     setDeleteBetError(null);
     setDeleteBetLoading(true);
-    const { error } = await supabase.from("bets").delete().eq("id", deleteBetTarget.id);
+    const id = deleteBetTarget.id;
+    const prevBets = bets;
+    setBets((list) => list.filter((b) => b.id !== id));
+    const res = await deleteBetById(supabase, id);
     setDeleteBetLoading(false);
-    if (error) {
-      setDeleteBetError(error.message);
+    if (!res.ok) {
+      setBets(prevBets);
+      setDeleteBetError(res.message);
       return;
     }
     setDeleteBetTarget(null);
-    await loadAll();
+    void loadRollup();
+    void mergeAccountBalances();
   }
 
   const handleBetStatusChange = useCallback(
@@ -939,102 +917,133 @@ function BetsPageContent() {
       setRefertoError(null);
       setSettlingBetId(bet.id);
 
-      try {
-        const { data: row, error: fetchErr } = await supabase
-          .from("bets")
-          .select(
-            "id, status, profit, stake, odds, settled_at, gaming_account_id, player_id, staker_id",
-          )
-          .eq("id", bet.id)
-          .maybeSingle();
+      const { data: row, error: fetchErr } = await supabase
+        .from("bets")
+        .select(
+          "id, status, profit, stake, odds, settled_at, gaming_account_id, player_id, staker_id",
+        )
+        .eq("id", bet.id)
+        .maybeSingle();
 
-        if (fetchErr) {
-          console.error("[stato scommessa] lettura bet", fetchErr);
-          setRefertoError(fetchErr.message);
-          return;
-        }
-        if (!row) {
-          const msg = "Scommessa non trovata.";
-          console.error("[stato scommessa]", msg, { betId: bet.id });
-          setRefertoError(msg);
-          return;
-        }
-
-        const r = row as {
-          id: string;
-          status: BetStatus;
-          profit: string;
-          stake: string;
-          odds: string;
-          settled_at: string | null;
-          gaming_account_id: string;
-          player_id: string;
-          staker_id: string;
-        };
-
-        if (r.status === newStatus) return;
-
-        const stake = Number.parseFloat(String(r.stake).replace(",", "."));
-        const odds = Number.parseFloat(String(r.odds).replace(",", "."));
-
-        if (Number.isNaN(stake) || stake <= 0) {
-          const msg = "Stake non valido per aggiornare lo stato.";
-          console.error("[stato scommessa]", msg, {
-            betId: bet.id,
-            stakeRaw: r.stake,
-          });
-          setRefertoError(msg);
-          return;
-        }
-        if (newStatus === "won" && (Number.isNaN(odds) || odds <= 0)) {
-          const msg = "Quota non valida per lo stato Vinto.";
-          console.error("[stato scommessa]", msg, {
-            betId: bet.id,
-            oddsRaw: r.odds,
-          });
-          setRefertoError(msg);
-          return;
-        }
-
-        const newProfit = calculateProfit(newStatus, stake, odds);
-        const settled_at =
-          newStatus === "open" ? null : new Date().toISOString();
-
-        const { error: betErr } = await supabase
-          .from("bets")
-          .update({
-            status: newStatus,
-            profit: newProfit,
-            settled_at,
-          })
-          .eq("id", r.id);
-
-        if (betErr) {
-          console.error("[stato scommessa] update bets", betErr);
-          setRefertoError(betErr.message);
-          return;
-        }
-
-        await loadAll();
-        router.refresh();
-        if (newProfit > 0) {
-          setBetFlash({ id: bet.id, kind: "profit" });
-          window.setTimeout(() => {
-            setBetFlash((f) => (f?.id === bet.id ? null : f));
-          }, 900);
-        } else if (newProfit < 0) {
-          setBetFlash({ id: bet.id, kind: "loss" });
-          window.setTimeout(() => {
-            setBetFlash((f) => (f?.id === bet.id ? null : f));
-          }, 900);
-        } else {
-          setBetFlash((f) => (f?.id === bet.id ? null : f));
-        }
-      } finally {
+      if (fetchErr) {
+        setRefertoError(formatClientError(fetchErr));
         setSettlingBetId(null);
+        return;
       }
+      if (!row) {
+        setRefertoError("Scommessa non trovata.");
+        setSettlingBetId(null);
+        return;
+      }
+
+      const r = row as {
+        id: string;
+        status: BetStatus;
+        profit: string;
+        stake: string;
+        odds: string;
+        settled_at: string | null;
+        gaming_account_id: string;
+        player_id: string;
+        staker_id: string;
+      };
+
+      if (r.status === newStatus) {
+        setSettlingBetId(null);
+        return;
+      }
+
+      const stake = Number.parseFloat(String(r.stake).replace(",", "."));
+      const odds = Number.parseFloat(String(r.odds).replace(",", "."));
+
+      if (Number.isNaN(stake) || stake <= 0) {
+        setRefertoError("Stake non valido per aggiornare lo stato.");
+        setSettlingBetId(null);
+        return;
+      }
+      if (newStatus === "won" && (Number.isNaN(odds) || odds <= 0)) {
+        setRefertoError("Quota non valida per lo stato Vinto.");
+        setSettlingBetId(null);
+        return;
+      }
+
+      const profitForUpdate = betSettledPnL(newStatus, stake, odds, 0);
+      const settled_at = newStatus === "open" ? null : new Date().toISOString();
+
+      const before = {
+        status: r.status,
+        stake: r.stake,
+        odds: r.odds,
+        profit: r.profit,
+      };
+      const after = {
+        status: newStatus,
+        stake: r.stake,
+        odds: r.odds,
+        profit: String(profitForUpdate),
+      };
+      const delta = betBalanceContributionDelta(before, after);
+
+      const prevBets = betsRef.current.slice();
+      const prevAccounts = accountsRef.current.map((a) => ({ ...a }));
+
+      setBets((list) =>
+        list.map((b) =>
+          b.id === bet.id
+            ? {
+                ...b,
+                status: newStatus,
+                profit: String(profitForUpdate),
+                settled_at,
+              }
+            : b,
+        ),
+      );
+      if (delta !== 0) {
+        setAccounts((prev) =>
+          prev.map((a) => {
+            if (a.id !== r.gaming_account_id) return a;
+            const cur = Number.parseFloat(a.current_balance) || 0;
+            const next = Math.round((cur + delta) * 1e4) / 1e4;
+            return { ...a, current_balance: String(next) };
+          }),
+        );
+      }
+
+      const upd = await updateBetStatusOnly(supabase, r.id, {
+        status: newStatus,
+        profit: profitForUpdate,
+        settled_at,
+      });
+
+      if (!upd.ok) {
+        setBets(prevBets);
+        setAccounts(prevAccounts);
+        setRefertoError(upd.message);
+        setSettlingBetId(null);
+        return;
+      }
+
+      void loadRollup();
+      void mergeAccountBalances();
+
+      if (profitForUpdate > 0) {
+        setBetFlash({ id: bet.id, kind: "profit" });
+        window.setTimeout(() => {
+          setBetFlash((f) => (f?.id === bet.id ? null : f));
+        }, 900);
+      } else if (profitForUpdate < 0) {
+        setBetFlash({ id: bet.id, kind: "loss" });
+        window.setTimeout(() => {
+          setBetFlash((f) => (f?.id === bet.id ? null : f));
+        }, 900);
+      } else {
+        setBetFlash((f) => (f?.id === bet.id ? null : f));
+      }
+
+      setSettlingBetId(null);
     },
-    [loadAll, router, supabase],
+    [loadRollup, mergeAccountBalances, supabase],
   );
 
   const swipeMarkWon = useCallback(
@@ -1065,7 +1074,7 @@ function BetsPageContent() {
     );
   }
 
-  const previewProfit = computeProfit(status, stakeNum, oddsNum);
+  const previewProfit = betSettledPnL(status, stakeNum, oddsNum, 0);
   const profitPreviewClass =
     previewProfit > 0
       ? "text-[#34d399]"
@@ -1094,7 +1103,7 @@ function BetsPageContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0B1224]/96 px-2.5 py-1.5 max-sm:backdrop-blur-none sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5 sm:backdrop-blur-md">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -1109,7 +1118,7 @@ function BetsPageContent() {
         <h2 id="bets-analytics-heading" className="sr-only">
           Riepilogo giocate
         </h2>
-        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-2xl border border-white/[0.06] bg-[#11182B]/72 px-2.5 py-2 text-xs leading-snug backdrop-blur-sm sm:gap-x-4 sm:gap-y-1 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm sm:leading-normal">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-2xl border border-white/[0.06] bg-[#12192A]/92 px-2.5 py-2 text-xs leading-snug max-sm:backdrop-blur-none sm:gap-x-4 sm:gap-y-1 sm:rounded-xl sm:bg-[#11182B]/72 sm:px-3 sm:py-2 sm:text-sm sm:leading-normal sm:backdrop-blur-sm">
           <span className="text-[#8B93A7]">
             Giocate{" "}
             <strong className="whitespace-nowrap tabular-nums text-[#E6EAF2]">
@@ -1222,6 +1231,18 @@ function BetsPageContent() {
                 ))}
               </section>
             ))}
+            {betsHasMore && !filterAccountId && !searchQuery.trim() ? (
+              <div className="flex justify-center pt-1 sm:pt-2">
+                <button
+                  type="button"
+                  onClick={() => void loadBetsAppend()}
+                  disabled={betsLoadingMore}
+                  className="sm-touch min-h-11 w-full max-w-xs rounded-full border border-white/[0.08] bg-[#131C31] px-4 text-sm font-semibold text-[#E6EAF2] transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-10 sm:text-xs"
+                >
+                  {betsLoadingMore ? "Caricamento…" : "Carica altre giocate"}
+                </button>
+              </div>
+            ) : null}
           </div>
         )}
       </section>
@@ -1577,7 +1598,14 @@ function BetsPageContent() {
               const sb = statusSheetBet;
               const stakeN = Number.parseFloat(String(sb.stake).replace(",", "."));
               const oddsN = Number.parseFloat(String(sb.odds).replace(",", "."));
-              const headerProfit = computeProfit(sb.status, stakeN, oddsN);
+              const headerProfit = betSettledPnL(
+                sb.status,
+                stakeN,
+                oddsN,
+                sb.status === "cashout"
+                  ? Number.parseFloat(String(sb.profit).replace(",", ".")) || 0
+                  : 0,
+              );
               const headerProfitClass =
                 headerProfit > 0
                   ? "text-[#34d399]"
@@ -1615,7 +1643,7 @@ function BetsPageContent() {
 
                   <div className="flex flex-col gap-2.5">
                     {STATUS_SHEET_OPTIONS.map(({ status: st, label, sheetButtonClass }) => {
-                      const rowProfit = computeProfit(st, stakeN, oddsN);
+                      const rowProfit = betSettledPnL(st, stakeN, oddsN, 0);
                       const rowCls =
                         rowProfit > 0
                           ? "text-emerald-200/90"

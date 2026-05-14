@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --sm-bg: #0A1020;
-  --sm-card: #11182B;
+  --sm-bg: #0B1224;
+  --sm-card: #12192A;
   /** Superfici sollevate (input, hover) */
   --sm-card-secondary: #131C31;
   --sm-border: rgba(255, 255, 255, 0.06);
@@ -48,12 +48,25 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 @media (max-width: 639.98px) {
   body {
     line-height: 1.32;
   }
+}
+
+button,
+[role="button"],
+[role="tab"],
+nav[aria-label] a {
+  touch-action: manipulation;
+}
+
+.sm-touch {
+  touch-action: manipulation;
 }
 
 /* Gradiente primario (testo o bordo) */

@@ -15,13 +15,22 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Stake Manager",
   description: "Gestione conti gioco e scommesse",
+  applicationName: "Stake Manager",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Stake Manager",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0A1020",
+  themeColor: "#0B1224",
 };
 
 export default function RootLayout({

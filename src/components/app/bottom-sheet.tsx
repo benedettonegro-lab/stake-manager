@@ -42,13 +42,13 @@ export function BottomSheet({
         type="button"
         aria-label="Chiudi"
         disabled={dismissDisabled}
-        className="sm-sheet-backdrop absolute inset-0 bg-[#050812]/65 backdrop-blur-sm transition enabled:hover:bg-[#050812]/78 disabled:cursor-not-allowed"
+        className="sm-sheet-backdrop absolute inset-0 bg-[#050812]/65 max-sm:backdrop-blur-none sm:backdrop-blur-sm transition enabled:hover:bg-[#050812]/78 disabled:cursor-not-allowed"
         onClick={() => {
           if (!dismissDisabled) onClose();
         }}
       />
       <div
-        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-[calc(100%-20px)] max-w-[430px] flex-col rounded-2xl border border-white/[0.06] bg-[#11182B]/95 shadow-lg shadow-black/22 backdrop-blur-md sm:w-[calc(100%-32px)] sm:rounded-2xl sm:shadow-xl sm:shadow-black/28 ${panelClassName}`}
+        className={`sm-sheet-panel relative z-10 mx-auto flex max-h-[min(88dvh,640px)] w-[calc(100%-20px)] max-w-[430px] flex-col rounded-2xl border border-white/[0.06] bg-[#12192A]/98 shadow-lg shadow-black/22 max-sm:backdrop-blur-none sm:bg-[#11182B]/95 sm:backdrop-blur-md sm:w-[calc(100%-32px)] sm:rounded-2xl sm:shadow-xl sm:shadow-black/28 ${panelClassName}`}
       >
         <header className="flex shrink-0 items-start justify-between gap-1.5 border-b border-[#1E2838]/90 px-2.5 py-2 sm:gap-2 sm:px-4 sm:py-2.5">
           <div className="min-w-0 flex-1">
@@ -79,7 +79,7 @@ export function BottomSheet({
             {children}
           </div>
           {footer ? (
-            <div className="shrink-0 border-t border-[#1E2838]/80 bg-[#0D1326]/90 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-2.5">
+            <div className="shrink-0 border-t border-[#1E2838]/80 bg-[#0D1326]/95 px-3 py-2 max-sm:backdrop-blur-none sm:px-4 sm:py-2.5 sm:backdrop-blur-md">
               {footer}
             </div>
           ) : null}
