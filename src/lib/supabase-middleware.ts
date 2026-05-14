@@ -16,6 +16,21 @@ function isRecoverableAuthFailure(message: string | undefined, code: string | un
   );
 }
 
+/** Non invalidare la sessione su errori di rete / timeout (tab in background, offline). */
+function isLikelyTransientAuthError(message: string | undefined): boolean {
+  const m = (message ?? "").toLowerCase();
+  return (
+    m.includes("failed to fetch") ||
+    m.includes("networkerror") ||
+    m.includes("network request failed") ||
+    m.includes("load failed") ||
+    (m.includes("fetch") && m.includes("abort")) ||
+    m.includes("timeout") ||
+    m.includes("econnreset") ||
+    m.includes("socket")
+  );
+}
+
 /**
  * Aggiorna la sessione Supabase su ogni richiesta (refresh token → cookie).
  * Deve essere usato da `middleware.ts` con un matcher che esclude solo asset statici.
@@ -58,7 +73,11 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
 
   const { error } = await supabase.auth.getUser();
 
-  if (error && isRecoverableAuthFailure(error.message, (error as { code?: string }).code)) {
+  if (
+    error &&
+    !isLikelyTransientAuthError(error.message) &&
+    isRecoverableAuthFailure(error.message, (error as { code?: string }).code)
+  ) {
     await supabase.auth.signOut();
   }
 

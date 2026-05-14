@@ -21,6 +21,7 @@ import {
   updateBetStatusOnly,
 } from "@/lib/repositories/bets-repository";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { readSessionJsonCache, writeSessionJsonCache } from "@/lib/session-json-cache";
 import { formatClientError } from "@/lib/user-message";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -593,8 +594,17 @@ function BetsPageContent() {
     );
   }, [nuovaOpen, stakeStr, accountId, accounts]);
 
-  const loadRefs = useCallback(async () => {
+  const loadRefs = useCallback(async (userId: string) => {
     setLoadError(null);
+    const cached = readSessionJsonCache<{ stakers: StakerRow[]; accounts: AccountRow[] }>(
+      "bet_refs",
+      userId,
+      120_000,
+    );
+    if (cached) {
+      setStakers(cached.stakers);
+      setAccounts(cached.accounts);
+    }
     const [sRes, aRes] = await Promise.all([
       supabase.from("stakers").select("id, name, player_id").order("name"),
       supabase
@@ -619,8 +629,11 @@ function BetsPageContent() {
       );
       return;
     }
-    setStakers((sRes.data as StakerRow[]) ?? []);
-    setAccounts((aRes.data as AccountRow[]) ?? []);
+    const st = (sRes.data as StakerRow[]) ?? [];
+    const ac = (aRes.data as AccountRow[]) ?? [];
+    setStakers(st);
+    setAccounts(ac);
+    writeSessionJsonCache("bet_refs", userId, { stakers: st, accounts: ac });
   }, [supabase]);
 
   const loadRollup = useCallback(async () => {
@@ -643,8 +656,17 @@ function BetsPageContent() {
     );
   }, [supabase]);
 
+  const betsRef = useRef(bets);
+  const accountsRef = useRef(accounts);
+  useEffect(() => {
+    betsRef.current = bets;
+  }, [bets]);
+  useEffect(() => {
+    accountsRef.current = accounts;
+  }, [accounts]);
+
   const loadBetsReset = useCallback(async () => {
-    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, offset: 0 });
+    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, cursor: null });
     if (!res.ok) {
       setLoadError(res.message);
       setBets([]);
@@ -657,27 +679,53 @@ function BetsPageContent() {
 
   const loadBetsAppend = useCallback(async () => {
     if (betsLoadingMore || !betsHasMore) return;
+    const list = betsRef.current;
+    const last = list[list.length - 1];
+    if (!last) {
+      setBetsHasMore(false);
+      return;
+    }
     setBetsLoadingMore(true);
-    const offset = bets.length;
-    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, offset });
+    const res = await fetchBetsPage(supabase, {
+      limit: BETS_PAGE_SIZE,
+      cursor: { placed_at: last.placed_at, id: last.id },
+    });
     if (!res.ok) {
       setLoadError(res.message);
       setBetsLoadingMore(false);
       return;
     }
-    setBets((prev) => [...prev, ...res.rows]);
+    setBets((prev) => {
+      const seen = new Set(prev.map((b) => b.id));
+      const next = [...prev];
+      for (const row of res.rows) {
+        if (!seen.has(row.id)) {
+          seen.add(row.id);
+          next.push(row);
+        }
+      }
+      return next;
+    });
     setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
     setBetsLoadingMore(false);
-  }, [bets.length, betsHasMore, betsLoadingMore, supabase]);
+  }, [betsHasMore, betsLoadingMore, supabase]);
 
-  const loadAll = useCallback(async () => {
-    await loadRefs();
-    await Promise.all([loadBetsReset(), loadRollup()]);
-  }, [loadBetsReset, loadRefs, loadRollup]);
+  const loadAll = useCallback(
+    async (userId: string) => {
+      await loadRefs(userId);
+      await Promise.all([loadBetsReset(), loadRollup()]);
+    },
+    [loadBetsReset, loadRefs, loadRollup],
+  );
 
   useEffect(() => {
     let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
+    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      if (cancelled) return;
+      if (event === "TOKEN_REFRESHED") {
+        void mergeAccountBalances();
+      }
+    });
 
     void (async () => {
       const {
@@ -687,7 +735,7 @@ function BetsPageContent() {
       if (!user) {
         return;
       }
-      await loadAll();
+      await loadAll(user.id);
       if (!cancelled) setReady(true);
     })();
 
@@ -695,7 +743,7 @@ function BetsPageContent() {
       cancelled = true;
       authSub.subscription.unsubscribe();
     };
-  }, [loadAll, router, supabase]);
+  }, [loadAll, mergeAccountBalances, supabase]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -706,15 +754,6 @@ function BetsPageContent() {
       else if (stakers[0]) setStakerId(stakers[0].id);
     });
   }, [accountId, accounts, stakers]);
-
-  const betsRef = useRef(bets);
-  const accountsRef = useRef(accounts);
-  useEffect(() => {
-    betsRef.current = bets;
-  }, [bets]);
-  useEffect(() => {
-    accountsRef.current = accounts;
-  }, [accounts]);
 
   const stats = useMemo(() => {
     if (rollup) {

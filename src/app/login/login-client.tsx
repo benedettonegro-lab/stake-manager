@@ -1,5 +1,6 @@
 "use client";
 
+import { writeProfileApprovedCache } from "@/lib/profile-gate-cache";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -80,6 +81,11 @@ export default function LoginClient() {
       setError("Account in attesa di approvazione admin");
       return;
     }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) writeProfileApprovedCache(user.id);
 
     router.push("/dashboard");
     router.refresh();

@@ -120,15 +120,28 @@ export async function fetchUserBetsSettledStatsFallback(
   };
 }
 
+/** Cursore stabile per keyset pagination (evita OFFSET costoso su liste lunghe). */
+export type BetsPageCursor = { placed_at: string; id: string };
+
+function buildBetsKeysetOrFilter(cursor: BetsPageCursor): string {
+  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const p = esc(cursor.placed_at);
+  const i = esc(cursor.id);
+  return `placed_at.lt."${p}",and(placed_at.eq."${p}",id.lt."${i}")`;
+}
+
 export async function fetchBetsPage(
   supabase: SupabaseClient,
-  opts: { limit: number; offset: number },
+  opts: { limit: number; cursor: BetsPageCursor | null },
 ): Promise<{ ok: true; rows: BetListRow[] } | { ok: false; message: string }> {
-  const { data, error } = await supabase
-    .from("bets")
-    .select(BET_LIST_SELECT)
+  let q = supabase.from("bets").select(BET_LIST_SELECT);
+  if (opts.cursor) {
+    q = q.or(buildBetsKeysetOrFilter(opts.cursor));
+  }
+  const { data, error } = await q
     .order("placed_at", { ascending: false })
-    .range(opts.offset, opts.offset + opts.limit - 1);
+    .order("id", { ascending: false })
+    .limit(opts.limit);
 
   if (error) {
     return { ok: false, message: formatClientError(error) };

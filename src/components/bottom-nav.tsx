@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { memo } from "react";
 
 const items = [
   { href: "/dashboard", label: "Home", match: ["/", "/dashboard"] },
@@ -126,7 +127,7 @@ function IconMore({ active }: { active: boolean }) {
 
 const icons = [IconHome, IconUsers, IconWallet, IconStaker, IconTicket, IconMore] as const;
 
-export function BottomNav() {
+function BottomNavInner() {
   const pathname = usePathname();
 
   return (
@@ -159,3 +160,5 @@ export function BottomNav() {
     </nav>
   );
 }
+
+export const BottomNav = memo(BottomNavInner);
