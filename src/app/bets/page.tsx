@@ -285,6 +285,91 @@ const STATUS_SHEET_OPTIONS: {
   },
 ];
 
+function BetStatusQuickSheetBody({
+  bet: sb,
+  settlingThis,
+  onDismiss,
+  onStatusPick,
+}: {
+  bet: BetRow;
+  settlingThis: boolean;
+  onDismiss: () => void;
+  onStatusPick: (bet: BetRow, st: LinguettaBetStatus) => void | Promise<void>;
+}) {
+  const stakeN = Number.parseFloat(String(sb.stake).replace(",", "."));
+  const oddsN = Number.parseFloat(String(sb.odds).replace(",", "."));
+  const headerProfit = betSettledPnL(
+    sb.status,
+    stakeN,
+    oddsN,
+    sb.status === "cashout"
+      ? Number.parseFloat(String(sb.profit).replace(",", ".")) || 0
+      : 0,
+  );
+  const headerProfitClass =
+    headerProfit > 0
+      ? "text-[#34d399]"
+      : headerProfit < 0
+        ? "text-[#fb7185]"
+        : "text-[#8B93A7]";
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2 rounded-xl border border-white/[0.06] bg-[#11182B]/80 px-3 py-3">
+        <p className="line-clamp-2 text-lg sm:text-sm font-semibold leading-snug text-white">
+          {sb.event_name?.trim() || "—"}
+        </p>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-xs text-[#8B93A7]">
+          <span>
+            Stake{" "}
+            <span className="font-semibold tabular-nums text-white">{formatMoney(sb.stake)} €</span>
+          </span>
+          <span>
+            Quota{" "}
+            <span className="font-semibold tabular-nums text-white">{formatMoney(sb.odds)}</span>
+          </span>
+        </div>
+        <p className="text-sm sm:text-xs text-[#8B93A7]">
+          Profit previsto{" "}
+          <span className={`font-bold tabular-nums ${headerProfitClass}`}>
+            {formatSignedProfitEuro(headerProfit)}
+          </span>
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        {STATUS_SHEET_OPTIONS.map(({ status: st, label, sheetButtonClass }) => {
+          const rowProfit = betSettledPnL(st, stakeN, oddsN, 0);
+          const rowCls =
+            rowProfit > 0
+              ? "text-emerald-200/90"
+              : rowProfit < 0
+                ? "text-red-200/90"
+                : "text-slate-300/90";
+          return (
+            <button
+              key={st}
+              type="button"
+              disabled={settlingThis}
+              className={`flex min-h-14 w-full flex-col items-stretch justify-center rounded-2xl px-4 py-3 text-left text-lg sm:text-base font-bold transition disabled:opacity-50 ${sheetButtonClass}`}
+              onClick={() => {
+                onDismiss();
+                if (sb.status === st) return;
+                void onStatusPick(sb, st);
+              }}
+            >
+              <span>{label}</span>
+              <span className={`mt-0.5 text-sm sm:text-xs font-semibold tabular-nums ${rowCls}`}>
+                {formatSignedProfitEuro(rowProfit)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const BetTimelineCard = memo(function BetTimelineCard({
   bet: b,
   settling,
@@ -489,7 +574,9 @@ function BetsPageContent() {
   const [nuovaOpen, setNuovaOpen] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("nuova") === "1") setNuovaOpen(true);
+    queueMicrotask(() => {
+      if (searchParams.get("nuova") === "1") setNuovaOpen(true);
+    });
   }, [searchParams]);
 
   const newBetStakeExceedsBalance = useMemo(() => {
@@ -611,11 +698,13 @@ function BetsPageContent() {
   }, [loadAll, router, supabase]);
 
   useEffect(() => {
-    const acc = accounts.find((a) => a.id === accountId);
-    if (!acc || stakers.length === 0) return;
-    const def = stakers.find((s) => s.player_id === acc.player_id);
-    if (def) setStakerId(def.id);
-    else if (stakers[0]) setStakerId(stakers[0].id);
+    queueMicrotask(() => {
+      const acc = accounts.find((a) => a.id === accountId);
+      if (!acc || stakers.length === 0) return;
+      const def = stakers.find((s) => s.player_id === acc.player_id);
+      if (def) setStakerId(def.id);
+      else if (stakers[0]) setStakerId(stakers[0].id);
+    });
   }, [accountId, accounts, stakers]);
 
   const betsRef = useRef(bets);
@@ -1593,89 +1682,14 @@ function BetsPageContent() {
         }
         onClose={() => setStatusSheetBet(null)}
       >
-        {statusSheetBet
-          ? (() => {
-              const sb = statusSheetBet;
-              const stakeN = Number.parseFloat(String(sb.stake).replace(",", "."));
-              const oddsN = Number.parseFloat(String(sb.odds).replace(",", "."));
-              const headerProfit = betSettledPnL(
-                sb.status,
-                stakeN,
-                oddsN,
-                sb.status === "cashout"
-                  ? Number.parseFloat(String(sb.profit).replace(",", ".")) || 0
-                  : 0,
-              );
-              const headerProfitClass =
-                headerProfit > 0
-                  ? "text-[#34d399]"
-                  : headerProfit < 0
-                    ? "text-[#fb7185]"
-                    : "text-[#8B93A7]";
-              const settlingThis = settlingBetId === sb.id;
-              return (
-                <div className="space-y-4">
-                  <div className="space-y-2 rounded-xl border border-white/[0.06] bg-[#11182B]/80 px-3 py-3">
-                    <p className="line-clamp-2 text-lg sm:text-sm font-semibold leading-snug text-white">
-                      {sb.event_name?.trim() || "—"}
-                    </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-xs text-[#8B93A7]">
-                      <span>
-                        Stake{" "}
-                        <span className="font-semibold tabular-nums text-white">
-                          {formatMoney(sb.stake)} €
-                        </span>
-                      </span>
-                      <span>
-                        Quota{" "}
-                        <span className="font-semibold tabular-nums text-white">
-                          {formatMoney(sb.odds)}
-                        </span>
-                      </span>
-                    </div>
-                    <p className="text-sm sm:text-xs text-[#8B93A7]">
-                      Profit previsto{" "}
-                      <span className={`font-bold tabular-nums ${headerProfitClass}`}>
-                        {formatSignedProfitEuro(headerProfit)}
-                      </span>
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-2.5">
-                    {STATUS_SHEET_OPTIONS.map(({ status: st, label, sheetButtonClass }) => {
-                      const rowProfit = betSettledPnL(st, stakeN, oddsN, 0);
-                      const rowCls =
-                        rowProfit > 0
-                          ? "text-emerald-200/90"
-                          : rowProfit < 0
-                            ? "text-red-200/90"
-                            : "text-slate-300/90";
-                      return (
-                        <button
-                          key={st}
-                          type="button"
-                          disabled={settlingThis}
-                          className={`flex min-h-14 w-full flex-col items-stretch justify-center rounded-2xl px-4 py-3 text-left text-lg sm:text-base font-bold transition disabled:opacity-50 ${sheetButtonClass}`}
-                          onClick={() => {
-                            setStatusSheetBet(null);
-                            if (sb.status === st) return;
-                            void handleBetStatusChange(sb, st);
-                          }}
-                        >
-                          <span>{label}</span>
-                          <span
-                            className={`mt-0.5 text-sm sm:text-xs font-semibold tabular-nums ${rowCls}`}
-                          >
-                            {formatSignedProfitEuro(rowProfit)}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })()
-          : null}
+        {statusSheetBet ? (
+          <BetStatusQuickSheetBody
+            bet={statusSheetBet}
+            settlingThis={settlingBetId === statusSheetBet.id}
+            onDismiss={() => setStatusSheetBet(null)}
+            onStatusPick={handleBetStatusChange}
+          />
+        ) : null}
       </BottomSheet>
 
       <ConfirmDialog

@@ -201,26 +201,30 @@ function TransactionsPage() {
   }, [loadData, router, supabase]);
 
   useEffect(() => {
-    if (!ready || accounts.length === 0) return;
-    const accParam = searchParams.get("account");
-    const typeParam = searchParams.get("type");
-    if (accParam && accounts.some((a) => a.id === accParam)) {
-      setAccountId(accParam);
-    }
-    if (typeParam === "deposit" || typeParam === "withdrawal") {
-      setTxnType(typeParam);
-    }
+    queueMicrotask(() => {
+      if (!ready || accounts.length === 0) return;
+      const accParam = searchParams.get("account");
+      const typeParam = searchParams.get("type");
+      if (accParam && accounts.some((a) => a.id === accParam)) {
+        setAccountId(accParam);
+      }
+      if (typeParam === "deposit" || typeParam === "withdrawal") {
+        setTxnType(typeParam);
+      }
+    });
   }, [ready, accounts, searchParams]);
 
   useEffect(() => {
-    if (!accountId) {
-      setPaymentMethodId("");
-      return;
-    }
-    setPaymentMethodId((prev) => {
-      const ok = methodsForAccount.some((pm) => pm.id === prev);
-      if (ok) return prev;
-      return methodsForAccount[0]?.id ?? "";
+    queueMicrotask(() => {
+      if (!accountId) {
+        setPaymentMethodId("");
+        return;
+      }
+      setPaymentMethodId((prev) => {
+        const ok = methodsForAccount.some((pm) => pm.id === prev);
+        if (ok) return prev;
+        return methodsForAccount[0]?.id ?? "";
+      });
     });
   }, [accountId, methodsForAccount]);
 

@@ -14,7 +14,15 @@ import {
   type TransactionStatus,
 } from "@/lib/transaction-status";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 type TxType = "deposit" | "withdrawal";
 
@@ -512,7 +520,20 @@ function MovimentiListaContent() {
     amountMinStr,
     amountMaxStr,
   });
-  filterRef.current = {
+  useLayoutEffect(() => {
+    filterRef.current = {
+      filterPlayer,
+      filterAccount,
+      filterMethod,
+      filterType,
+      filterStatus,
+      periodPreset,
+      customFrom,
+      customTo,
+      amountMinStr,
+      amountMaxStr,
+    };
+  }, [
     filterPlayer,
     filterAccount,
     filterMethod,
@@ -523,7 +544,7 @@ function MovimentiListaContent() {
     customTo,
     amountMinStr,
     amountMaxStr,
-  };
+  ]);
 
   /** Solo con intervallo manuale le date influenzano la query; con preset rapido evita refetch al sync UI. */
   const filterSignature = useMemo(
@@ -658,10 +679,12 @@ function MovimentiListaContent() {
   const grouped = useMemo(() => groupTxByMonthDay(rows), [rows]);
 
   useEffect(() => {
-    const player = searchParams.get("player") ?? searchParams.get("identity") ?? "";
-    const account = searchParams.get("account") ?? "";
-    if (player) setFilterPlayer(player);
-    if (account) setFilterAccount(account);
+    queueMicrotask(() => {
+      const player = searchParams.get("player") ?? searchParams.get("identity") ?? "";
+      const account = searchParams.get("account") ?? "";
+      if (player) setFilterPlayer(player);
+      if (account) setFilterAccount(account);
+    });
   }, [searchParams]);
 
   useEffect(() => {
@@ -685,32 +708,38 @@ function MovimentiListaContent() {
   }, [loadReference, router, supabase]);
 
   useEffect(() => {
-    if (filterPlayer && filterAccount) {
-      const ok = accountsForPlayer.some((a) => a.id === filterAccount);
-      if (!ok) setFilterAccount("");
-    }
+    queueMicrotask(() => {
+      if (filterPlayer && filterAccount) {
+        const ok = accountsForPlayer.some((a) => a.id === filterAccount);
+        if (!ok) setFilterAccount("");
+      }
+    });
   }, [filterPlayer, filterAccount, accountsForPlayer]);
 
   useEffect(() => {
-    if (filterPlayer && filterMethod) {
-      const ok = methodsForPlayer.some((m) => m.id === filterMethod);
-      if (!ok) setFilterMethod("");
-    }
+    queueMicrotask(() => {
+      if (filterPlayer && filterMethod) {
+        const ok = methodsForPlayer.some((m) => m.id === filterMethod);
+        if (!ok) setFilterMethod("");
+      }
+    });
   }, [filterPlayer, filterMethod, methodsForPlayer]);
 
   /** Sincronizza date visibili con preset rapido (non in modalità intervallo manuale). */
   useEffect(() => {
-    if (periodPreset === "all") {
-      setCustomFrom("");
-      setCustomTo("");
-      return;
-    }
-    if (periodPreset === "custom") return;
-    const b = periodBounds(periodPreset, "", "");
-    if (b.from && b.to) {
-      setCustomFrom(toYmdFromIso(b.from));
-      setCustomTo(toYmdFromIso(b.to));
-    }
+    queueMicrotask(() => {
+      if (periodPreset === "all") {
+        setCustomFrom("");
+        setCustomTo("");
+        return;
+      }
+      if (periodPreset === "custom") return;
+      const b = periodBounds(periodPreset, "", "");
+      if (b.from && b.to) {
+        setCustomFrom(toYmdFromIso(b.from));
+        setCustomTo(toYmdFromIso(b.to));
+      }
+    });
   }, [periodPreset]);
 
   /** Riepiloghi sui movimenti filtrati (dopo ricerca live). */

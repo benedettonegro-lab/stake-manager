@@ -123,11 +123,13 @@ export default function NuovaScommessaPage() {
   }, [loadData, router, supabase]);
 
   useEffect(() => {
-    const acc = accounts.find((a) => a.id === accountId);
-    if (!acc || stakers.length === 0) return;
-    const def = stakers.find((s) => s.player_id === acc.player_id);
-    if (def) setStakerId(def.id);
-    else if (stakers[0]) setStakerId(stakers[0].id);
+    queueMicrotask(() => {
+      const acc = accounts.find((a) => a.id === accountId);
+      if (!acc || stakers.length === 0) return;
+      const def = stakers.find((s) => s.player_id === acc.player_id);
+      if (def) setStakerId(def.id);
+      else if (stakers[0]) setStakerId(stakers[0].id);
+    });
   }, [accountId, accounts, stakers]);
 
   const oddsNum = Number.parseFloat(oddsStr.replace(",", "."));

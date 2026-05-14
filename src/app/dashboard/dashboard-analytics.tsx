@@ -108,12 +108,6 @@ function topEntry(
   };
 }
 
-function toneClass(n: number, neutralZero = true): string {
-  if (n > 0) return "text-[#34d399]";
-  if (n < 0) return "text-red-400";
-  return neutralZero ? "text-[#8B93A7]" : "text-white";
-}
-
 export function DashboardAnalytics() {
   const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
@@ -251,13 +245,6 @@ export function DashboardAnalytics() {
           ? "negative"
           : "default";
 
-  const roiClass =
-    roiTone === "positive"
-      ? "text-[#34d399]"
-      : roiTone === "negative"
-        ? "text-red-400"
-        : "text-[#8B93A7]";
-
   if (!ready) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 py-12 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
@@ -304,7 +291,7 @@ export function DashboardAnalytics() {
           value={`${totals.totalProfit >= 0 ? "+" : ""}${formatMoney(totals.totalProfit)} €`}
           tone={totals.totalProfit > 0 ? "positive" : totals.totalProfit < 0 ? "negative" : "default"}
         />
-        <StatPill label="ROI" value={totals.roiLabel} tone={roiTone === "positive" ? "positive" : roiTone === "negative" ? "negative" : "default"} />
+        <StatPill label="ROI" value={totals.roiLabel} tone={roiTone} />
       </section>
 
       <div className="flex flex-wrap gap-1.5 sm:gap-2">

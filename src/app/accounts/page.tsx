@@ -223,12 +223,16 @@ export default function AccountsListPage() {
 
   useEffect(() => {
     if (!createPlayerId) {
-      setMethodsForSelectedPlayer([]);
-      setAccountsForCreatePlayer([]);
+      queueMicrotask(() => {
+        setMethodsForSelectedPlayer([]);
+        setAccountsForCreatePlayer([]);
+      });
       return;
     }
     let cancelled = false;
-    setMethodsPlayerLoading(true);
+    queueMicrotask(() => {
+      if (!cancelled) setMethodsPlayerLoading(true);
+    });
     void (async () => {
       const [gaRes, pmRes] = await Promise.all([
         supabase
