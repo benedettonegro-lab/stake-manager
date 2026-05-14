@@ -16,7 +16,7 @@ import {
 } from "@/lib/balance-validation";
 import { recalculatePaymentMethodBalanceFromLedger } from "@/lib/recalculate-movement-balances";
 import { applyWithdrawalStatusChange } from "@/lib/withdrawal-status-client";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -79,7 +79,7 @@ function txnTypeLabel(t: TxnType): string {
 function TransactionsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);

@@ -3,7 +3,7 @@
 import { BottomSheet, QuickActionButton, SearchInput } from "@/components/app";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookmakerCard, type BookmakerCardRow } from "./bookmaker-card";
@@ -14,7 +14,7 @@ function sortBookmakers(list: BookmakerCardRow[]): BookmakerCardRow[] {
 
 export default function BookmakersPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<BookmakerCardRow[]>([]);

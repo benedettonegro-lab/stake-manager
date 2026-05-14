@@ -5,7 +5,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -53,7 +53,7 @@ type BetMini = {
 
 export default function StakersPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<StakerRow[]>([]);

@@ -4,7 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { BET_TYPE_DEFAULT } from "@/lib/bet-constants";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { assertGamingAccountCoversStake } from "@/lib/balance-validation";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -55,7 +55,7 @@ function formatMoney(value: string | number): string {
 
 export default function NuovaScommessaPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [stakers, setStakers] = useState<StakerRow[]>([]);

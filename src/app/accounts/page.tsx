@@ -8,7 +8,7 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import Link from "next/link";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { paymentMethodTitle } from "@/lib/payment-methods";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -78,7 +78,7 @@ function parseAmount(s: string): number {
 
 export default function AccountsListPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [accounts, setAccounts] = useState<AccountListRow[]>([]);

@@ -7,7 +7,7 @@ import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { paymentMethodTitle } from "@/lib/payment-methods";
 import { applyWithdrawalStatusChange } from "@/lib/withdrawal-status-client";
 import { WITHDRAWAL_STATUS_SELECT_OPTIONS } from "@/lib/withdrawal-status-delta";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import {
   isTransactionStatus,
   transactionStatusLabel,
@@ -403,7 +403,7 @@ const dateInputGlass =
 function MovimentiListaContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);

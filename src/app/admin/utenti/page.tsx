@@ -3,7 +3,7 @@
 import { FilterChips, SearchInput } from "@/components/app";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -62,7 +62,7 @@ const btnPurple =
 
 export default function AdminUtentiPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [gateReady, setGateReady] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);

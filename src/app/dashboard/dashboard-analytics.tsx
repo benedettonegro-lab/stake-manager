@@ -3,7 +3,7 @@
 import { AppCard, QuickActionButton, StatPill } from "@/components/app";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -116,7 +116,7 @@ function toneClass(n: number, neutralZero = true): string {
 
 export function DashboardAnalytics() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);

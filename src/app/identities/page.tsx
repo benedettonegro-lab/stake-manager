@@ -11,7 +11,7 @@ import {
   assertPaymentMethodCoversDeposit,
 } from "@/lib/balance-validation";
 import { recalculatePaymentMethodBalanceFromLedger } from "@/lib/recalculate-movement-balances";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { type TransactionStatus } from "@/lib/transaction-status";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -98,7 +98,7 @@ function paymentMethodsForIdentity(
 
 export default function IdentitiesPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
   const [identities, setIdentities] = useState<IdentityRow[]>([]);
