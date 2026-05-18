@@ -1254,7 +1254,7 @@ function BetsPageContent() {
       </div>
 
       <section
-        className="w-full max-w-[420px] px-0 sm:mx-auto sm:mb-3"
+        className="sm-page-block-after-search w-full max-w-[420px] px-0 sm:mx-auto sm:mb-3"
         aria-labelledby="bets-analytics-heading"
       >
         <h2 id="bets-analytics-heading" className="sr-only">

@@ -197,13 +197,13 @@ export default function BookmakersPage() {
       </div>
 
       {loadError ? (
-        <p className="mb-1.5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm sm:mb-3 sm:text-xs text-[#fb7185]">
+        <p className="sm-page-block-after-search mb-1.5 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm sm:mb-3 sm:text-xs text-[#fb7185]">
           {loadError}
         </p>
       ) : null}
 
       {emptyDb ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/82 px-6 py-14 pb-28 text-center">
+        <div className="sm-page-block-after-search flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/82 px-6 py-14 pb-28 text-center">
           <div
             className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.06] bg-[#11182B] text-[#8B93A7]"
             aria-hidden
@@ -219,11 +219,11 @@ export default function BookmakersPage() {
           </QuickActionButton>
         </div>
       ) : emptyFilter ? (
-        <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm sm:py-8 sm:text-xs text-[#8B93A7]">
+        <p className="sm-page-block-after-search rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm sm:py-8 sm:text-xs text-[#8B93A7]">
           Nessun risultato per «{searchQuery.trim()}»
         </p>
       ) : (
-        <ul className="flex list-none flex-col gap-2 p-0 pb-24">
+        <ul className="sm-page-block-after-search flex list-none flex-col gap-2 p-0 pb-24">
           {filtered.map((b) => (
             <li key={b.id}>
               <BookmakerCard

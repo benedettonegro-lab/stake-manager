@@ -473,7 +473,7 @@ export default function AccountsListPage() {
         />
       </div>
 
-      <section className="grid grid-cols-3 gap-1.5 sm:mb-2 sm:gap-1.5">
+      <section className="sm-page-block-after-search grid grid-cols-3 gap-1.5 sm:mb-2 sm:gap-1.5">
         <StatPill
           className="!px-2 !py-1.5"
           label="Conti"

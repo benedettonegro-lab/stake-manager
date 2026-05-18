@@ -1020,7 +1020,7 @@ function MovimentiListaContent() {
       ) : null}
 
       <section
-        className={`mb-1.5 rounded-lg border border-white/[0.06] bg-[#0C1324]/55 px-2 py-1.5 backdrop-blur-sm transition-opacity duration-200 ease-out sm:mb-2 sm:px-2.5 sm:py-2 ${
+        className={`sm-page-block-after-search mb-1.5 rounded-lg border border-white/[0.06] bg-[#0C1324]/55 px-2 py-1.5 backdrop-blur-sm transition-opacity duration-200 ease-out sm:mb-2 sm:px-2.5 sm:py-2 ${
           loadingList && fetchedRows.length > 0 ? "opacity-[0.88]" : "opacity-100"
         }`}
         aria-label="Risultati filtrati"

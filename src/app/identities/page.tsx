@@ -810,7 +810,7 @@ export default function IdentitiesPage() {
           />
         </div>
 
-        <div className="sm:mb-3">
+        <div className="sm-page-block-after-search sm:mb-3">
           <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
             + Identità
           </QuickActionButton>
