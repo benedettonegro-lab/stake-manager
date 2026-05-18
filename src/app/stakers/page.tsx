@@ -101,13 +101,9 @@ function StakersPageContent() {
 
   useEffect(() => {
     queueMicrotask(() => {
-      if (searchParams.get("nuovo") === "1") {
-        setFormError(null);
-        setName("");
-        setAddOpen(true);
-      }
+      if (searchParams.get("nuovo") === "1") openAddModal();
     });
-  }, [searchParams]);
+  }, [searchParams, openAddModal]);
 
   const load = useCallback(async () => {
     setLoadError(null);
@@ -284,27 +280,27 @@ function StakersPageContent() {
 
   return (
     <AppShell title="Staker">
+      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Cerca staker..."
+        />
+      </div>
+
+      <div className="mb-3 sm:mb-3">
+        <QuickActionButton variant="primary" onClick={openAddModal}>
+          + Staker
+        </QuickActionButton>
+      </div>
+
       <PageLoadGate
         ready={ready}
         loadError={displayLoadError}
         onRetry={retryPageLoad}
-        hasContent
+        hasContent={rows.length > 0}
         skeletonCount={4}
       >
-        <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
-          <SearchInput
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Cerca staker..."
-          />
-        </div>
-
-        <div className="mb-3">
-          <QuickActionButton variant="primary" onClick={openAddModal}>
-            + Staker
-          </QuickActionButton>
-        </div>
-
         {rows.length === 0 && !displayLoadError ? (
           <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-sm text-[#8B93A7]">
             Nessuno staker. Tocca + Staker per aggiungerne uno.
