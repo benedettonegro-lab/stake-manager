@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 export function FabSlot() {
   const pathname = usePathname() ?? "";
   if (pathname.startsWith("/login")) return null;
-  /** Pagina Bookmakers ha FAB dedicato. */
+  /** Pagine con FAB dedicato. */
   if (pathname.startsWith("/bookmakers")) return null;
+  if (pathname.startsWith("/stakers")) return null;
   return <AppFab href="/bets?nuova=1" label="Nuova giocata" />;
 }
