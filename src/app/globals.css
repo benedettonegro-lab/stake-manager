@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --sm-bg: #0B1224;
+  --sm-bg: #0a0f1c;
   --sm-card: #12192A;
   /** Superfici sollevate (input, hover) */
   --sm-card-secondary: #131C31;
@@ -13,10 +13,11 @@
   --sm-positive: #34d399;
   --sm-negative: #fb7185;
   --sm-muted: #8B93A7;
-  --sm-text: #e6eaf2;
+  --sm-text: #eef1f7;
   /** Larghezza massima app (desktop centrato); sotto 430px occupa tutta la larghezza */
   --sm-app-max-width: 430px;
-  --sm-touch-min: 48px;
+  --sm-touch-min: 44px;
+  --sm-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --background: var(--sm-bg);
   --foreground: var(--sm-text);
 }
@@ -362,6 +363,70 @@ textarea.sm-input {
 @media (prefers-reduced-motion: reduce) {
   .sm-app-content-enter,
   .sm-auth-gate-panel {
+    animation: none;
+  }
+}
+
+/* GPU-friendly layers (transform/opacity only) */
+.sm-gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.sm-momentum-scroll {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  contain: strict;
+}
+
+.sm-app-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* iOS: evita zoom/jump su focus input */
+@supports (-webkit-touch-callout: none) {
+  .sm-input,
+  select.sm-input,
+  textarea.sm-input {
+    font-size: max(16px, 0.9375rem);
+  }
+}
+
+.sm-press {
+  transition: transform 0.15s var(--sm-ease-out), opacity 0.15s ease;
+}
+
+.sm-press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-press:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Page route fade (view transitions friendly) */
+@keyframes sm-route-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sm-route-enter {
+  animation: sm-route-in 0.24s var(--sm-ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-route-enter {
     animation: none;
   }
 }

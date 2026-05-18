@@ -145,7 +145,7 @@ function BottomNavInner() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex min-h-[40px] min-w-0 max-h-full flex-col items-center justify-center gap-0 rounded-md py-0 transition duration-150 active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:rounded-xl sm:py-1 ${
+              className={`flex min-h-[44px] min-w-0 max-h-full flex-col items-center justify-center gap-0 rounded-md py-0 transition-transform duration-150 ease-out active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:rounded-xl sm:py-1 ${
                 active ? "text-[#B89EFF]" : "text-[#8B93A7] hover:text-[#B4BCCC]"
               }`}
             >

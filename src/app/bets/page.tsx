@@ -1,9 +1,12 @@
 "use client";
 
 import { BottomSheet, FilterChips, SearchInput } from "@/components/app";
+import { BetsTimeline } from "@/components/bets/bets-timeline";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SkeletonList } from "@/components/ui/skeleton";
 import { BET_TYPE_DEFAULT } from "@/lib/bet-constants";
 import { betBalanceContributionDelta, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
@@ -20,8 +23,10 @@ import {
   updateBetById,
   updateBetStatusOnly,
 } from "@/lib/repositories/bets-repository";
+import { withRetry } from "@/lib/fetch-with-retry";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { readSessionJsonCache, writeSessionJsonCache } from "@/lib/session-json-cache";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
+import { useSupabaseRealtime } from "@/hooks/use-supabase-realtime";
 import { formatClientError } from "@/lib/user-message";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -50,24 +55,11 @@ type AccountRow = {
 
 type BetRow = BetListRow;
 
-type BetsDayGroup = {
-  dayKey: string;
-  dayTitle: string;
-  profitTotal: number;
-  bets: BetRow[];
-};
-
-type BetsMonthGroup = {
-  monthKey: string;
-  monthTitle: string;
-  profitTotal: number;
-  days: BetsDayGroup[];
-};
-
 /** Stati selezionabili dalla linguetta (menu) */
 type LinguettaBetStatus = "open" | "won" | "lost" | "void";
 
 const BETS_PAGE_SIZE = 50;
+const BETS_LIST_CACHE_NS = "bets_list_v1";
 
 function formatMoney(value: string | number): string {
   const n = typeof value === "string" ? Number.parseFloat(value) : value;
@@ -88,87 +80,6 @@ function formatRoi(totalProfit: number, totalStake: number): string {
     minimumFractionDigits: 1,
     maximumFractionDigits: 2,
   }).format(rounded)}%`;
-}
-
-function capitalizeIt(s: string): string {
-  if (!s) return s;
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function monthTitleFromKey(monthKey: string): string {
-  const [y, m] = monthKey.split("-").map(Number);
-  const d = new Date(y, m - 1, 1);
-  const raw = new Intl.DateTimeFormat("it-IT", {
-    month: "long",
-    year: "numeric",
-  }).format(d);
-  return capitalizeIt(raw);
-}
-
-/** Header giorno compatto (timeline) */
-function dayTitleCompact(d: Date): string {
-  return new Intl.DateTimeFormat("it-IT", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  }).format(d);
-}
-
-function buildBetGroups(bets: BetRow[]): BetsMonthGroup[] {
-  type Bucket = {
-    profitTotal: number;
-    days: Map<string, { bets: BetRow[]; sample: Date }>;
-  };
-  const months = new Map<string, Bucket>();
-
-  for (const b of bets) {
-    const d = new Date(b.placed_at);
-    const y = d.getFullYear();
-    const mo = d.getMonth();
-    const day = d.getDate();
-    const monthKey = `${y}-${String(mo + 1).padStart(2, "0")}`;
-    const dayKey = `${monthKey}-${String(day).padStart(2, "0")}`;
-    const p = betSettledPnL(b.status, b.stake, b.odds, b.profit);
-
-    if (!months.has(monthKey)) {
-      months.set(monthKey, { profitTotal: 0, days: new Map() });
-    }
-    const bucket = months.get(monthKey)!;
-    bucket.profitTotal += p;
-    if (!bucket.days.has(dayKey)) {
-      bucket.days.set(dayKey, { bets: [], sample: d });
-    }
-    bucket.days.get(dayKey)!.bets.push(b);
-  }
-
-  const monthKeys = [...months.keys()].sort((a, b) => b.localeCompare(a));
-  const out: BetsMonthGroup[] = [];
-
-  for (const mk of monthKeys) {
-    const bucket = months.get(mk)!;
-    const dayKeys = [...bucket.days.keys()].sort((a, b) => b.localeCompare(a));
-    const days: BetsDayGroup[] = dayKeys.map((dk) => {
-      const { bets: dayBets, sample } = bucket.days.get(dk)!;
-      const profitTotal = dayBets.reduce(
-        (s, x) =>
-          s + betSettledPnL(x.status, x.stake, x.odds, x.profit),
-        0,
-      );
-      return {
-        dayKey: dk,
-        dayTitle: dayTitleCompact(sample),
-        profitTotal,
-        bets: dayBets,
-      };
-    });
-    out.push({
-      monthKey: mk,
-      monthTitle: monthTitleFromKey(mk),
-      profitTotal: bucket.profitTotal,
-      days,
-    });
-  }
-  return out;
 }
 
 function headerProfitClass(n: number): string {
@@ -529,6 +440,8 @@ function BetsPageContent() {
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const realtimeRefreshLock = useRef(false);
   const [stakers, setStakers] = useState<StakerRow[]>([]);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);
   const [bets, setBets] = useState<BetRow[]>([]);
@@ -596,14 +509,13 @@ function BetsPageContent() {
 
   const loadRefs = useCallback(async (userId: string) => {
     setLoadError(null);
-    const cached = readSessionJsonCache<{ stakers: StakerRow[]; accounts: AccountRow[] }>(
-      "bet_refs",
+    const cached = await readStaleCache<{ stakers: StakerRow[]; accounts: AccountRow[] }>(
       userId,
-      120_000,
+      "bet_refs",
     );
-    if (cached) {
-      setStakers(cached.stakers);
-      setAccounts(cached.accounts);
+    if (cached.data) {
+      setStakers(cached.data.stakers);
+      setAccounts(cached.data.accounts);
     }
     const [sRes, aRes] = await Promise.all([
       supabase.from("stakers").select("id, name, player_id").order("name"),
@@ -633,7 +545,7 @@ function BetsPageContent() {
     const ac = (aRes.data as AccountRow[]) ?? [];
     setStakers(st);
     setAccounts(ac);
-    writeSessionJsonCache("bet_refs", userId, { stakers: st, accounts: ac });
+    void writeFreshCache(userId, "bet_refs", { stakers: st, accounts: ac });
   }, [supabase]);
 
   const loadRollup = useCallback(async () => {
@@ -666,7 +578,9 @@ function BetsPageContent() {
   }, [accounts]);
 
   const loadBetsReset = useCallback(async () => {
-    const res = await fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, cursor: null });
+    const res = await withRetry(() =>
+      fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, cursor: null }),
+    );
     if (!res.ok) {
       setLoadError(res.message);
       setBets([]);
@@ -675,7 +589,13 @@ function BetsPageContent() {
     }
     setBets(res.rows);
     setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
-  }, [supabase]);
+    if (userId) {
+      void writeFreshCache(userId, BETS_LIST_CACHE_NS, {
+        rows: res.rows,
+        hasMore: res.rows.length === BETS_PAGE_SIZE,
+      });
+    }
+  }, [supabase, userId]);
 
   const loadBetsAppend = useCallback(async () => {
     if (betsLoadingMore || !betsHasMore) return;
@@ -686,10 +606,12 @@ function BetsPageContent() {
       return;
     }
     setBetsLoadingMore(true);
-    const res = await fetchBetsPage(supabase, {
-      limit: BETS_PAGE_SIZE,
-      cursor: { placed_at: last.placed_at, id: last.id },
-    });
+    const res = await withRetry(() =>
+      fetchBetsPage(supabase, {
+        limit: BETS_PAGE_SIZE,
+        cursor: { placed_at: last.placed_at, id: last.id },
+      }),
+    );
     if (!res.ok) {
       setLoadError(res.message);
       setBetsLoadingMore(false);
@@ -711,12 +633,39 @@ function BetsPageContent() {
   }, [betsHasMore, betsLoadingMore, supabase]);
 
   const loadAll = useCallback(
-    async (userId: string) => {
-      await loadRefs(userId);
+    async (uid: string) => {
+      const cachedBets = await readStaleCache<{
+        rows: BetRow[];
+        hasMore: boolean;
+      }>(uid, BETS_LIST_CACHE_NS);
+      if (cachedBets.data?.rows?.length) {
+        setBets(cachedBets.data.rows);
+        setBetsHasMore(cachedBets.data.hasMore);
+      }
+      await loadRefs(uid);
       await Promise.all([loadBetsReset(), loadRollup()]);
     },
     [loadBetsReset, loadRefs, loadRollup],
   );
+
+  const scheduleRealtimeRefresh = useCallback(() => {
+    if (realtimeRefreshLock.current) return;
+    realtimeRefreshLock.current = true;
+    window.setTimeout(() => {
+      realtimeRefreshLock.current = false;
+      void loadBetsReset();
+      void loadRollup();
+    }, 400);
+  }, [loadBetsReset, loadRollup]);
+
+  useSupabaseRealtime({
+    userId,
+    enabled: Boolean(userId) && ready,
+    onBetChange: scheduleRealtimeRefresh,
+    onGamingAccountChange: () => {
+      void mergeAccountBalances();
+    },
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -735,6 +684,7 @@ function BetsPageContent() {
       if (!user) {
         return;
       }
+      if (!cancelled) setUserId(user.id);
       await loadAll(user.id);
       if (!cancelled) setReady(true);
     })();
@@ -792,8 +742,6 @@ function BetsPageContent() {
       );
     });
   }, [bets, filterAccountId, searchQuery]);
-
-  const betGroups = useMemo(() => buildBetGroups(filteredBets), [filteredBets]);
 
   const accountFilterChips = useMemo(() => {
     const chips = [{ value: "", label: "Tutti" }] as { value: string; label: string }[];
@@ -903,7 +851,7 @@ function BetsPageContent() {
     router.replace("/bets", { scroll: false });
   }
 
-  function openBetDetail(b: BetRow) {
+  const openBetDetail = useCallback((b: BetRow) => {
     setStatusSheetBet(null);
     setEditingBet(b);
     setEditGamingAccountId(b.gaming_account_id);
@@ -915,7 +863,7 @@ function BetsPageContent() {
     setEditStatus(b.status);
     setEditNote(b.note?.trim() ?? "");
     setEditError(null);
-  }
+  }, []);
 
   async function handleSaveBetEdit(e: React.FormEvent) {
     e.preventDefault();
@@ -1188,16 +1136,37 @@ function BetsPageContent() {
     [handleBetStatusChange],
   );
 
+  const renderBetCard = useCallback(
+    (b: BetRow) => (
+      <BetTimelineCard
+        bet={b}
+        settling={settlingBetId === b.id}
+        flash={betFlash?.id === b.id ? betFlash.kind : null}
+        onOpenDetail={openBetDetail}
+        onOpenQuickStatus={(bet) => {
+          setEditingBet(null);
+          setStatusSheetBet(bet);
+        }}
+        onSwipeWin={swipeMarkWon}
+        onSwipeLoss={swipeMarkLost}
+      />
+    ),
+    [
+      betFlash,
+      openBetDetail,
+      settlingBetId,
+      swipeMarkLost,
+      swipeMarkWon,
+    ],
+  );
+
+  const timelineVirtualEnabled =
+    !filterAccountId && !searchQuery.trim();
+
   if (!ready) {
     return (
       <AppShell title="Giocate">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-sm text-[#8B93A7]">
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
-            aria-hidden
-          />
-          <p>Caricamento…</p>
-        </div>
+        <SkeletonList count={5} />
       </AppShell>
     );
   }
@@ -1294,84 +1263,26 @@ function BetsPageContent() {
           </div>
         ) : null}
         {bets.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-2.5 py-6 text-center text-xs sm:rounded-xl sm:px-3 sm:py-8 sm:text-xs">
-            Nessuna giocata. Tocca + per aggiungerne una.
-          </p>
+          <EmptyState
+            title="Nessuna giocata"
+            description="Tocca + per registrare la prima scommessa."
+          />
         ) : filteredBets.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/50 px-2.5 py-7 text-center text-xs sm:rounded-xl sm:px-3 sm:py-10 sm:text-xs">
-            Nessun risultato
-          </p>
+          <EmptyState
+            title="Nessun risultato"
+            description="Prova a modificare filtri o testo di ricerca."
+          />
         ) : (
-          <div className="space-y-3 sm:space-y-8">
-            {betGroups.map((month) => (
-              <section
-                key={month.monthKey}
-                className="space-y-2 sm:space-y-5"
-                aria-labelledby={`bet-month-${month.monthKey}`}
-              >
-                <header className="flex items-end justify-between gap-2 border-b border-white/10 pb-1 sm:pb-2">
-                  <h3
-                    id={`bet-month-${month.monthKey}`}
-                    className="text-base font-bold capitalize leading-tight tracking-tight text-[#E6EAF2] sm:text-xl"
-                  >
-                    {month.monthTitle}
-                  </h3>
-                  <p
-                    className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-2xl sm:font-bold ${headerProfitClass(month.profitTotal)}`}
-                  >
-                    {formatSignedProfitEuro(month.profitTotal)}
-                  </p>
-                </header>
-
-                {month.days.map((day) => (
-                  <div key={day.dayKey} className="space-y-1.5 sm:space-y-3">
-                    <div className="flex items-baseline justify-between gap-2 border-l-2 border-emerald-500/35 pl-2 sm:pl-2">
-                      <h4 className="text-[11px] font-bold uppercase tracking-wide text-[#8B93A7] sm:text-lg sm:font-semibold">
-                        {day.dayTitle}
-                      </h4>
-                      <p
-                        className={`shrink-0 whitespace-nowrap text-sm font-bold tabular-nums sm:text-xl sm:font-bold ${headerProfitClass(day.profitTotal)}`}
-                      >
-                        {formatSignedProfitEuro(day.profitTotal)}
-                      </p>
-                    </div>
-                    <ul className="flex flex-col gap-1.5 sm:gap-3">
-                      {day.bets.map((b) => (
-                        <li key={b.id}>
-                          <BetTimelineCard
-                            bet={b}
-                            settling={settlingBetId === b.id}
-                            flash={
-                              betFlash?.id === b.id ? betFlash.kind : null
-                            }
-                            onOpenDetail={openBetDetail}
-                            onOpenQuickStatus={(bet) => {
-                              setEditingBet(null);
-                              setStatusSheetBet(bet);
-                            }}
-                            onSwipeWin={swipeMarkWon}
-                            onSwipeLoss={swipeMarkLost}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </section>
-            ))}
-            {betsHasMore && !filterAccountId && !searchQuery.trim() ? (
-              <div className="flex justify-center pt-1 sm:pt-2">
-                <button
-                  type="button"
-                  onClick={() => void loadBetsAppend()}
-                  disabled={betsLoadingMore}
-                  className="sm-touch min-h-11 w-full max-w-xs rounded-full border border-white/[0.08] bg-[#131C31] px-4 text-sm font-semibold text-[#E6EAF2] transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-10 sm:text-xs"
-                >
-                  {betsLoadingMore ? "Caricamento…" : "Carica altre giocate"}
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <BetsTimeline
+            bets={filteredBets}
+            enableVirtual={timelineVirtualEnabled}
+            loadingMore={betsLoadingMore}
+            hasMore={betsHasMore && timelineVirtualEnabled}
+            onLoadMore={() => void loadBetsAppend()}
+            formatSignedProfitEuro={formatSignedProfitEuro}
+            headerProfitClass={headerProfitClass}
+            renderBetCard={renderBetCard}
+          />
         )}
       </section>
 

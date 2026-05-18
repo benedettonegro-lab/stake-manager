@@ -19,7 +19,9 @@ export default function DashboardPage() {
   return (
     <AuthGate>
       <AppShell title="Home">
-        <DashboardAnalytics />
+        <div className="sm-route-enter">
+          <DashboardAnalytics />
+        </div>
       </AppShell>
     </AuthGate>
   );

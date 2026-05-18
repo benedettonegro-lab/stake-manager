@@ -8,9 +8,13 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import Link from "next/link";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { paymentMethodTitle } from "@/lib/payment-methods";
+import { fetchGamingAccountBalanceMap } from "@/lib/repositories/gaming-accounts-repository";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
+import { useSupabaseRealtime } from "@/hooks/use-supabase-realtime";
+import { SkeletonList } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type PlayerOption = { id: string; name: string };
 
@@ -81,6 +85,8 @@ export default function AccountsListPage() {
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   const [ready, setReady] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const balanceRefreshLock = useRef(false);
   const [accounts, setAccounts] = useState<AccountListRow[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
   const [players, setPlayers] = useState<PlayerOption[]>([]);
@@ -123,8 +129,23 @@ export default function AccountsListPage() {
   /** Conto selezionato — azioni in bottom sheet */
   const [detailAccount, setDetailAccount] = useState<AccountListRow | null>(null);
 
-  const loadData = useCallback(async () => {
+  const refreshBalancesLight = useCallback(async () => {
+    const res = await fetchGamingAccountBalanceMap(supabase);
+    if (!res.ok) return;
+    setAccounts((prev) =>
+      prev.map((a) => {
+        const bal = res.map.get(a.id);
+        return bal !== undefined ? { ...a, current_balance: bal } : a;
+      }),
+    );
+  }, [supabase]);
+
+  const loadData = useCallback(async (uid?: string) => {
     setLoadError(null);
+    if (uid) {
+      const cached = await readStaleCache<AccountListRow[]>(uid, "accounts_list_v1");
+      if (cached.data?.length) setAccounts(cached.data);
+    }
     const [aRes, pmRes, pRes, bmRes] = await Promise.all([
       supabase
         .from("gaming_accounts")
@@ -177,11 +198,26 @@ export default function AccountsListPage() {
       setBookmakers([]);
       return;
     }
-    setAccounts((aRes.data as unknown as AccountListRow[]) ?? []);
+    const acc = (aRes.data as unknown as AccountListRow[]) ?? [];
+    setAccounts(acc);
     setPaymentMethods((pmRes.data as unknown as PaymentMethodRow[]) ?? []);
     setPlayers((pRes.data as PlayerOption[]) ?? []);
     setBookmakers((bmRes.data as BookmakerOption[]) ?? []);
+    if (uid) void writeFreshCache(uid, "accounts_list_v1", acc);
   }, [supabase]);
+
+  useSupabaseRealtime({
+    userId,
+    enabled: Boolean(userId) && ready,
+    onGamingAccountChange: () => {
+      if (balanceRefreshLock.current) return;
+      balanceRefreshLock.current = true;
+      window.setTimeout(() => {
+        balanceRefreshLock.current = false;
+        void refreshBalancesLight();
+      }, 300);
+    },
+  });
 
   const identityNameById = useMemo(() => {
     const m = new Map<string, string>();
@@ -295,7 +331,8 @@ export default function AccountsListPage() {
       if (!user) {
         return;
       }
-      await loadData();
+      if (!cancelled) setUserId(user.id);
+      await loadData(user.id);
       if (!cancelled) setReady(true);
     })();
 
@@ -428,13 +465,7 @@ export default function AccountsListPage() {
   if (!ready) {
     return (
       <AppShell title="Conti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-[16px] text-[#8B93A7] sm:text-sm">
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
-            aria-hidden
-          />
-          <p>Caricamento…</p>
-        </div>
+        <SkeletonList count={6} />
       </AppShell>
     );
   }
