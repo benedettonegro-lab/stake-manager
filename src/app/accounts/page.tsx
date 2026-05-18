@@ -12,8 +12,8 @@ import { fetchGamingAccountBalanceMap } from "@/lib/repositories/gaming-accounts
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
 import { useSupabaseRealtime } from "@/hooks/use-supabase-realtime";
-import { SkeletonList } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
+import { PageLoadGate } from "@/components/ui/page-load-gate";
+import { usePageLoad } from "@/hooks/use-page-load";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type PlayerOption = { id: string; name: string };
@@ -81,11 +81,8 @@ function parseAmount(s: string): number {
 }
 
 export default function AccountsListPage() {
-  const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const balanceRefreshLock = useRef(false);
   const [accounts, setAccounts] = useState<AccountListRow[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
@@ -140,12 +137,7 @@ export default function AccountsListPage() {
     );
   }, [supabase]);
 
-  const loadData = useCallback(async (uid?: string) => {
-    setLoadError(null);
-    if (uid) {
-      const cached = await readStaleCache<AccountListRow[]>(uid, "accounts_list_v1");
-      if (cached.data?.length) setAccounts(cached.data);
-    }
+  const loadData = useCallback(async (uid: string) => {
     const [aRes, pmRes, pRes, bmRes] = await Promise.all([
       supabase
         .from("gaming_accounts")
@@ -185,18 +177,18 @@ export default function AccountsListPage() {
     ]);
 
     if (aRes.error || pmRes.error || pRes.error || bmRes.error) {
-      setLoadError(
+      const msg =
         aRes.error?.message ??
-          pmRes.error?.message ??
-          pRes.error?.message ??
-          bmRes.error?.message ??
-          "Errore caricamento",
-      );
+        pmRes.error?.message ??
+        pRes.error?.message ??
+        bmRes.error?.message ??
+        "Errore caricamento";
+      setLoadError(msg);
       setAccounts([]);
       setPaymentMethods([]);
       setPlayers([]);
       setBookmakers([]);
-      return;
+      throw new Error(msg);
     }
     const acc = (aRes.data as unknown as AccountListRow[]) ?? [];
     setAccounts(acc);
@@ -206,9 +198,30 @@ export default function AccountsListPage() {
     if (uid) void writeFreshCache(uid, "accounts_list_v1", acc);
   }, [supabase]);
 
+  const {
+    ready,
+    userId,
+    loadError: pageLoadError,
+    initialFetchComplete,
+    retry: retryPageLoad,
+  } = usePageLoad({
+    page: "accounts",
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<AccountListRow[]>(uid, "accounts_list_v1");
+      if (cached.data?.length) {
+        setAccounts(cached.data);
+        return true;
+      }
+      return false;
+    },
+    fetch: loadData,
+  });
+
+  const displayLoadError = pageLoadError ?? loadError;
+
   useSupabaseRealtime({
     userId,
-    enabled: Boolean(userId) && ready,
+    enabled: Boolean(userId) && initialFetchComplete,
     onGamingAccountChange: () => {
       if (balanceRefreshLock.current) return;
       balanceRefreshLock.current = true;
@@ -319,29 +332,6 @@ export default function AccountsListPage() {
     };
   }, [createPlayerId, supabase]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      if (!cancelled) setUserId(user.id);
-      await loadData(user.id);
-      if (!cancelled) setReady(true);
-    })();
-
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [loadData, router, supabase]);
-
   function openEdit(a: AccountListRow) {
     setEditing(a);
     setEditName(a.account_name);
@@ -385,7 +375,7 @@ export default function AccountsListPage() {
     }
     setEditOpen(false);
     setEditing(null);
-    await loadData();
+    if (userId) await loadData(userId);
   }
 
   async function handleConfirmDelete() {
@@ -403,7 +393,7 @@ export default function AccountsListPage() {
       return;
     }
     setDeleteTarget(null);
-    await loadData();
+    if (userId) await loadData(userId);
   }
 
   async function handleCreateAccount(e: React.FormEvent) {
@@ -459,29 +449,22 @@ export default function AccountsListPage() {
     setCreateNote("");
     setCreateStatus("active");
     setCreateOpen(false);
-    await loadData();
+    if (userId) await loadData(userId);
   }
 
-  if (!ready) {
-    return (
-      <AppShell title="Conti">
-        <SkeletonList count={6} />
-      </AppShell>
-    );
-  }
+  const hasPageContent =
+    accounts.length > 0 || paymentMethods.length > 0 || players.length > 0;
 
   return (
     <AuthGate>
       <AppShell title="Conti">
-        {loadError ? (
-          <p
-            className="mb-3 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-sm text-[#fb7185] sm:mb-4 sm:rounded-xl sm:py-3 sm:text-sm"
-            role="alert"
-          >
-            {loadError}
-          </p>
-        ) : null}
-
+        <PageLoadGate
+          ready={ready}
+          loadError={displayLoadError}
+          onRetry={retryPageLoad}
+          hasContent={hasPageContent}
+          skeletonCount={6}
+        >
       <div className="sticky top-12 z-[25] -mx-2.5 mb-1.5 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
         <SearchInput
           value={searchQuery}
@@ -933,6 +916,7 @@ export default function AccountsListPage() {
         }}
         onConfirm={() => void handleConfirmDelete()}
       />
+        </PageLoadGate>
       </AppShell>
     </AuthGate>
   );

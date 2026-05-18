@@ -4,9 +4,10 @@ import { AppCard, QuickActionButton, StatPill } from "@/components/app";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { PageLoadGate } from "@/components/ui/page-load-gate";
+import { usePageLoad } from "@/hooks/use-page-load";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 type AccountRow = {
   id: string;
@@ -109,10 +110,8 @@ function topEntry(
 }
 
 export function DashboardAnalytics() {
-  const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
   const [bets, setBets] = useState<BetAggRow[]>([]);
@@ -145,14 +144,14 @@ export function DashboardAnalytics() {
     ]);
 
     if (aRes.error || pmRes.error || bRes.error || pRes.error) {
-      setError(
+      const msg =
         aRes.error?.message ??
-          pmRes.error?.message ??
-          bRes.error?.message ??
-          pRes.error?.message ??
-          "Errore caricamento",
-      );
-      return;
+        pmRes.error?.message ??
+        bRes.error?.message ??
+        pRes.error?.message ??
+        "Errore caricamento";
+      setError(msg);
+      throw new Error(msg);
     }
     setAccounts((aRes.data as AccountRow[]) ?? []);
     setPaymentMethods((pmRes.data as PaymentMethodRow[]) ?? []);
@@ -160,27 +159,18 @@ export function DashboardAnalytics() {
     setPlayers((pRes.data as PlayerRow[]) ?? []);
   }, [supabase]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
+  const {
+    ready,
+    loadError: pageLoadError,
+    retry: retryPageLoad,
+  } = usePageLoad({
+    page: "dashboard",
+    fetch: async () => {
       await load();
-      if (!cancelled) setReady(true);
-    })();
+    },
+  });
 
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [load, router, supabase]);
+  const displayError = pageLoadError ?? error;
 
   const totals = useMemo(() => {
     const saldoConti = sumBalances(accounts);
@@ -245,29 +235,18 @@ export function DashboardAnalytics() {
           ? "negative"
           : "default";
 
-  if (!ready) {
-    return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 py-12 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
-        <div
-          className="h-9 w-9 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
-          aria-hidden
-        />
-        <p>Caricamento panoramica…</p>
-      </div>
-    );
-  }
+  const hasPageContent =
+    accounts.length > 0 || bets.length > 0 || paymentMethods.length > 0;
 
   return (
+    <PageLoadGate
+      ready={ready}
+      loadError={displayError}
+      onRetry={retryPageLoad}
+      hasContent={hasPageContent}
+      skeletonCount={4}
+    >
     <div className="flex flex-col gap-2 pb-2 sm:gap-4 sm:pb-2">
-      {error ? (
-        <p
-          className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[14px] text-[#fb7185] sm:text-sm"
-          role="alert"
-        >
-          {error}
-        </p>
-      ) : null}
-
       <section aria-label="Cassa totale">
         <div className="sm-gradient-border">
           <div className="sm-gradient-inner px-2.5 py-2 sm:p-4">
@@ -424,5 +403,6 @@ export function DashboardAnalytics() {
         )}
       </section>
     </div>
+    </PageLoadGate>
   );
 }

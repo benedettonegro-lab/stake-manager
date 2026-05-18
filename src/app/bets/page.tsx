@@ -6,7 +6,8 @@ import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { SkeletonList } from "@/components/ui/skeleton";
+import { PageLoadGate } from "@/components/ui/page-load-gate";
+import { usePageLoad } from "@/hooks/use-page-load";
 import { BET_TYPE_DEFAULT } from "@/lib/bet-constants";
 import { betBalanceContributionDelta, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
@@ -439,8 +440,6 @@ function BetsPageContent() {
   const searchParams = useSearchParams();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const realtimeRefreshLock = useRef(false);
   const [stakers, setStakers] = useState<StakerRow[]>([]);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);
@@ -507,16 +506,7 @@ function BetsPageContent() {
     );
   }, [nuovaOpen, stakeStr, accountId, accounts]);
 
-  const loadRefs = useCallback(async (userId: string) => {
-    setLoadError(null);
-    const cached = await readStaleCache<{ stakers: StakerRow[]; accounts: AccountRow[] }>(
-      userId,
-      "bet_refs",
-    );
-    if (cached.data) {
-      setStakers(cached.data.stakers);
-      setAccounts(cached.data.accounts);
-    }
+  const loadRefs = useCallback(async (uid: string) => {
     const [sRes, aRes] = await Promise.all([
       supabase.from("stakers").select("id, name, player_id").order("name"),
       supabase
@@ -536,16 +526,18 @@ function BetsPageContent() {
         .order("account_name"),
     ]);
     if (sRes.error || aRes.error) {
-      setLoadError(
-        formatClientError(sRes.error ?? aRes.error ?? "Errore caricamento", "Errore caricamento."),
+      const msg = formatClientError(
+        sRes.error ?? aRes.error ?? "Errore caricamento",
+        "Errore caricamento.",
       );
-      return;
+      setLoadError(msg);
+      throw new Error(msg);
     }
     const st = (sRes.data as StakerRow[]) ?? [];
     const ac = (aRes.data as AccountRow[]) ?? [];
     setStakers(st);
     setAccounts(ac);
-    void writeFreshCache(userId, "bet_refs", { stakers: st, accounts: ac });
+    void writeFreshCache(uid, "bet_refs", { stakers: st, accounts: ac });
   }, [supabase]);
 
   const loadRollup = useCallback(async () => {
@@ -577,25 +569,34 @@ function BetsPageContent() {
     accountsRef.current = accounts;
   }, [accounts]);
 
-  const loadBetsReset = useCallback(async () => {
-    const res = await withRetry(() =>
-      fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, cursor: null }),
-    );
-    if (!res.ok) {
-      setLoadError(res.message);
-      setBets([]);
-      setBetsHasMore(false);
-      return;
-    }
-    setBets(res.rows);
-    setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
-    if (userId) {
-      void writeFreshCache(userId, BETS_LIST_CACHE_NS, {
-        rows: res.rows,
-        hasMore: res.rows.length === BETS_PAGE_SIZE,
-      });
-    }
-  }, [supabase, userId]);
+  const loadBetsReset = useCallback(
+    async (uid: string) => {
+      try {
+        const res = await withRetry(
+          () => fetchBetsPage(supabase, { limit: BETS_PAGE_SIZE, cursor: null }),
+          { timeoutMs: 12_000, retries: 1 },
+        );
+        if (!res.ok) {
+          setLoadError(res.message);
+          setBets([]);
+          setBetsHasMore(false);
+          throw new Error(res.message);
+        }
+        setBets(res.rows);
+        setBetsHasMore(res.rows.length === BETS_PAGE_SIZE);
+        void writeFreshCache(uid, BETS_LIST_CACHE_NS, {
+          rows: res.rows,
+          hasMore: res.rows.length === BETS_PAGE_SIZE,
+        });
+      } catch (e) {
+        const msg =
+          e instanceof Error ? e.message : "Errore caricamento giocate";
+        setLoadError(msg);
+        throw e instanceof Error ? e : new Error(msg);
+      }
+    },
+    [supabase],
+  );
 
   const loadBetsAppend = useCallback(async () => {
     if (betsLoadingMore || !betsHasMore) return;
@@ -632,35 +633,59 @@ function BetsPageContent() {
     setBetsLoadingMore(false);
   }, [betsHasMore, betsLoadingMore, supabase]);
 
-  const loadAll = useCallback(
-    async (uid: string) => {
-      const cachedBets = await readStaleCache<{
-        rows: BetRow[];
-        hasMore: boolean;
-      }>(uid, BETS_LIST_CACHE_NS);
-      if (cachedBets.data?.rows?.length) {
-        setBets(cachedBets.data.rows);
-        setBetsHasMore(cachedBets.data.hasMore);
+  const {
+    ready,
+    userId,
+    loadError: pageLoadError,
+    initialFetchComplete,
+    retry: retryPageLoad,
+  } = usePageLoad({
+    page: "bets",
+    hydrateFromCache: async (uid) => {
+      const [refs, betsCached] = await Promise.all([
+        readStaleCache<{ stakers: StakerRow[]; accounts: AccountRow[] }>(
+          uid,
+          "bet_refs",
+        ),
+        readStaleCache<{ rows: BetRow[]; hasMore: boolean }>(
+          uid,
+          BETS_LIST_CACHE_NS,
+        ),
+      ]);
+      let applied = false;
+      if (refs.data) {
+        setStakers(refs.data.stakers);
+        setAccounts(refs.data.accounts);
+        applied = true;
       }
-      await loadRefs(uid);
-      await Promise.all([loadBetsReset(), loadRollup()]);
+      if (betsCached.data?.rows?.length) {
+        setBets(betsCached.data.rows);
+        setBetsHasMore(betsCached.data.hasMore);
+        applied = true;
+      }
+      return applied;
     },
-    [loadBetsReset, loadRefs, loadRollup],
-  );
+    fetch: async (uid) => {
+      await loadRefs(uid);
+      await Promise.all([loadBetsReset(uid), loadRollup()]);
+    },
+  });
+
+  const displayLoadError = pageLoadError ?? loadError;
 
   const scheduleRealtimeRefresh = useCallback(() => {
-    if (realtimeRefreshLock.current) return;
+    if (!userId || realtimeRefreshLock.current) return;
     realtimeRefreshLock.current = true;
     window.setTimeout(() => {
       realtimeRefreshLock.current = false;
-      void loadBetsReset();
+      void loadBetsReset(userId);
       void loadRollup();
     }, 400);
-  }, [loadBetsReset, loadRollup]);
+  }, [loadBetsReset, loadRollup, userId]);
 
   useSupabaseRealtime({
     userId,
-    enabled: Boolean(userId) && ready,
+    enabled: Boolean(userId) && initialFetchComplete,
     onBetChange: scheduleRealtimeRefresh,
     onGamingAccountChange: () => {
       void mergeAccountBalances();
@@ -668,32 +693,13 @@ function BetsPageContent() {
   });
 
   useEffect(() => {
-    let cancelled = false;
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      if (cancelled) return;
-      if (event === "TOKEN_REFRESHED") {
+      if (event === "TOKEN_REFRESHED" && initialFetchComplete) {
         void mergeAccountBalances();
       }
     });
-
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      if (!cancelled) setUserId(user.id);
-      await loadAll(user.id);
-      if (!cancelled) setReady(true);
-    })();
-
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [loadAll, mergeAccountBalances, supabase]);
+    return () => authSub.subscription.unsubscribe();
+  }, [initialFetchComplete, mergeAccountBalances, supabase]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -1163,13 +1169,8 @@ function BetsPageContent() {
   const timelineVirtualEnabled =
     !filterAccountId && !searchQuery.trim();
 
-  if (!ready) {
-    return (
-      <AppShell title="Giocate">
-        <SkeletonList count={5} />
-      </AppShell>
-    );
-  }
+  const hasPageContent =
+    bets.length > 0 || accounts.length > 0 || stakers.length > 0;
 
   const previewProfit = betSettledPnL(status, stakeNum, oddsNum, 0);
   const profitPreviewClass =
@@ -1181,16 +1182,13 @@ function BetsPageContent() {
 
   return (
     <AppShell title="Giocate">
-
-      {loadError ? (
-        <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-sm text-[#fb7185]"
-          role="alert"
-        >
-          {loadError}
-        </p>
-      ) : null}
-
+      <PageLoadGate
+        ready={ready}
+        loadError={displayLoadError}
+        onRetry={retryPageLoad}
+        hasContent={hasPageContent}
+        skeletonCount={5}
+      >
       {refertoError ? (
         <p
           className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-sm text-[#fb7185]"
@@ -1664,6 +1662,7 @@ function BetsPageContent() {
           await handleConfirmDeleteBet();
         }}
       />
+      </PageLoadGate>
     </AppShell>
   );
 }

@@ -6,8 +6,9 @@ import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { PageLoadGate } from "@/components/ui/page-load-gate";
+import { usePageLoad } from "@/hooks/use-page-load";
+import { useCallback, useMemo, useState } from "react";
 
 type StakerRow = {
   id: string;
@@ -52,10 +53,8 @@ type BetMini = {
 };
 
 export default function StakersPage() {
-  const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<StakerRow[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,10 +84,11 @@ export default function StakersPage() {
       supabase.from("bets").select("staker_id, stake, profit, status, odds"),
     ]);
     if (sRes.error) {
-      setLoadError(sRes.error.message);
+      const msg = sRes.error.message;
+      setLoadError(msg);
       setRows([]);
       setBetRows([]);
-      return;
+      throw new Error(msg);
     }
     setRows((sRes.data as StakerRow[]) ?? []);
     if (bRes.error) {
@@ -119,25 +119,18 @@ export default function StakersPage() {
     return rows.filter((s) => s.name.toLowerCase().includes(q));
   }, [rows, searchQuery]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
+  const {
+    ready,
+    loadError: pageLoadError,
+    retry: retryPageLoad,
+  } = usePageLoad({
+    page: "stakers",
+    fetch: async () => {
       await load();
-      if (!cancelled) setReady(true);
-    })();
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [load, router, supabase]);
+    },
+  });
+
+  const displayLoadError = pageLoadError ?? loadError;
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -226,25 +219,18 @@ export default function StakersPage() {
     await load();
   }
 
-  if (!ready) {
-    return (
-      <AppShell title="Staker">
-        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#8B93A7] sm:text-sm">
-          Caricamento…
-        </div>
-      </AppShell>
-    );
-  }
+  const hasPageContent = rows.length > 0;
 
   return (
     <AuthGate>
       <AppShell title="Staker">
-        {loadError ? (
-          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[16px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-xs">
-            {loadError}
-          </p>
-        ) : null}
-
+        <PageLoadGate
+          ready={ready}
+          loadError={displayLoadError}
+          onRetry={retryPageLoad}
+          hasContent={hasPageContent}
+          skeletonCount={4}
+        >
       <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
         <SearchInput
           value={searchQuery}
@@ -288,7 +274,7 @@ export default function StakersPage() {
         </form>
       </BottomSheet>
 
-      {rows.length === 0 && !loadError ? (
+      {rows.length === 0 && !displayLoadError ? (
         <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-[16px] text-[#8B93A7] sm:py-8 sm:text-xs">
           Nessuno staker. Tocca + Staker.
         </p>
@@ -465,6 +451,7 @@ export default function StakersPage() {
         }}
         onConfirm={() => void handleConfirmDelete()}
       />
+        </PageLoadGate>
       </AppShell>
     </AuthGate>
   );
