@@ -288,7 +288,7 @@ function StakersPageContent() {
         />
       </div>
 
-      <div className="mb-1.5 sm:mb-3">
+      <div className="sm:mb-3">
         <QuickActionButton variant="primary" onClick={openAddModal}>
           + Staker
         </QuickActionButton>
@@ -302,11 +302,11 @@ function StakersPageContent() {
         skeletonCount={4}
       >
         {rows.length === 0 && !displayLoadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-sm text-[#8B93A7]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
             Nessuno staker. Tocca + Staker per aggiungerne uno.
           </p>
         ) : filteredRows.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-sm text-[#8B93A7]">
+          <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
             Nessun risultato per la ricerca.
           </p>
         ) : (

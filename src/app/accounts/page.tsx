@@ -473,7 +473,7 @@ export default function AccountsListPage() {
         />
       </div>
 
-      <section className="mb-1 grid grid-cols-3 gap-1.5 sm:mb-2 sm:gap-1.5">
+      <section className="grid grid-cols-3 gap-1.5 sm:mb-2 sm:gap-1.5">
         <StatPill
           className="!px-2 !py-1.5"
           label="Conti"
@@ -494,7 +494,7 @@ export default function AccountsListPage() {
         />
       </section>
 
-      <div className="mb-1 flex flex-wrap gap-1.5 sm:mb-2 sm:gap-2">
+      <div className="flex flex-wrap gap-1.5 sm:mb-2 sm:gap-2">
         <QuickActionButton variant="primary" onClick={() => setCreateOpen(true)}>
           + Conto
         </QuickActionButton>

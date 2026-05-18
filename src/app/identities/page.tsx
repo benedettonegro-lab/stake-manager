@@ -810,7 +810,7 @@ export default function IdentitiesPage() {
           />
         </div>
 
-        <div className="mb-1.5 sm:mb-3">
+        <div className="sm:mb-3">
           <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
             + Identità
           </QuickActionButton>
@@ -839,7 +839,7 @@ export default function IdentitiesPage() {
         </BottomSheet>
 
         {identities.length === 0 && !loadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-[16px] text-[#8B93A7] sm:py-8 sm:text-xs">
+          <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-[16px] text-[#8B93A7] sm:py-8 sm:text-xs">
             Nessuna identità. Tocca + Identità.
           </p>
         ) : filteredIdentities.length === 0 ? (
@@ -1103,7 +1103,7 @@ export default function IdentitiesPage() {
               </div>
             </div>
 
-            <div className="sticky bottom-0 z-[2] mt-6 flex justify-center bg-gradient-to-t from-[#0A1020] via-[#0A1020]/92 to-transparent pb-1 pt-6 sm:mt-8 sm:pt-8">
+            <div className="sticky bottom-0 z-[2] mt-3 flex justify-center bg-gradient-to-t from-[#0A1020] via-[#0A1020]/92 to-transparent pb-1 pt-3 sm:mt-8 sm:pt-8">
               <button
                 type="button"
                 disabled={accSubmitting || pmSubmitting || identityEditSaving}

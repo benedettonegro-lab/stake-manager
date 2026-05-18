@@ -513,7 +513,7 @@ function TransactionsPage() {
         </button>
       </form>
 
-      <section className="mt-5 sm:mt-10" aria-labelledby="tx-list-heading">
+      <section className="mt-3 sm:mt-10" aria-labelledby="tx-list-heading">
         <h2
           id="tx-list-heading"
           className="mb-2 text-sm sm:mb-3 sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#8B93A7]"
@@ -529,7 +529,7 @@ function TransactionsPage() {
           </p>
         ) : null}
         {transactions.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/60 px-4 py-10 text-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
+          <p className="rounded-2xl border border-dashed border-white/[0.06] bg-[#11182B]/60 px-4 py-6 text-center text-lg sm:py-10 sm:text-base sm:text-sm text-[#8B93A7]">
             Nessun movimento ancora.
           </p>
         ) : (

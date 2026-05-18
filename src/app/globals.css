@@ -59,18 +59,20 @@ body {
     line-height: 1.32;
   }
 
-  /** Barra ricerca sticky: allineata sotto header compatto + safe area */
+  /** Barra ricerca: subito sotto header; gap verticale da main (gap-3) */
   .sm-page-search-sticky {
     position: sticky;
     z-index: 25;
-    top: calc(2.5rem + env(safe-area-inset-top, 0px));
+    top: calc(2.25rem + env(safe-area-inset-top, 0px) + 1px);
+    margin-top: 0;
     margin-left: -0.625rem;
     margin-right: -0.625rem;
-    margin-bottom: 0.25rem;
-    padding: 0.25rem 0.625rem;
+    margin-bottom: 0;
+    padding: 0.75rem 0.625rem 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     background: rgb(10 16 32 / 0.95);
   }
+
 }
 
 @media (min-width: 640px) {

@@ -219,7 +219,7 @@ export default function BookmakersPage() {
           </QuickActionButton>
         </div>
       ) : emptyFilter ? (
-        <p className="rounded-xl border border-dashed border-white/[0.06] py-10 text-center text-sm sm:text-xs text-[#8B93A7]">
+        <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm sm:py-8 sm:text-xs text-[#8B93A7]">
           Nessun risultato per «{searchQuery.trim()}»
         </p>
       ) : (
