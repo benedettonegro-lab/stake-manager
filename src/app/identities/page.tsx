@@ -797,12 +797,12 @@ export default function IdentitiesPage() {
     <AuthGate>
       <AppShell title="Identità">
         {loadError ? (
-          <p className="mb-4 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2.5 text-[16px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-sm">
+          <p className="mb-2 rounded-lg border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-[16px] text-[#fb7185] sm:mb-3 sm:py-2 sm:text-sm">
             {loadError}
           </p>
         ) : null}
 
-        <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5">
+        <div className="sm-page-search-sticky backdrop-blur-md sm:-mx-4 sm:px-4">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
@@ -810,7 +810,7 @@ export default function IdentitiesPage() {
           />
         </div>
 
-        <div className="mb-3 sm:mb-3">
+        <div className="mb-1.5 sm:mb-3">
           <QuickActionButton variant="primary" onClick={() => setNewIdentityOpen(true)}>
             + Identità
           </QuickActionButton>

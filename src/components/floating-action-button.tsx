@@ -11,7 +11,7 @@ export function FloatingActionButton({
   label = "Aggiungi",
 }: FloatingActionButtonProps) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[56] flex justify-center pb-[calc(5rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[56] flex justify-center pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]">
       <div className="sm-app-constrain flex w-full justify-center px-3">
         <button
           type="button"

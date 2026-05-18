@@ -9,7 +9,7 @@ type AppFabProps = {
 export function AppFab({ href, label = "Azione rapida" }: AppFabProps) {
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-[55] flex justify-center pb-[calc(4.35rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[55] flex justify-center pb-[calc(3.85rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
       aria-hidden={false}
     >
       <div className="sm-app-constrain flex w-full justify-center px-2.5 sm:px-3">

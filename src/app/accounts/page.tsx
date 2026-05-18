@@ -465,7 +465,7 @@ export default function AccountsListPage() {
           hasContent={hasPageContent}
           skeletonCount={6}
         >
-      <div className="sticky top-12 z-[25] -mx-2.5 mb-1.5 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:px-4 sm:py-2">
+      <div className="sm-page-search-sticky backdrop-blur-md sm:-mx-4 sm:px-4">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -473,7 +473,7 @@ export default function AccountsListPage() {
         />
       </div>
 
-      <section className="mb-2 grid grid-cols-3 gap-2 sm:mb-2 sm:gap-1.5">
+      <section className="mb-1 grid grid-cols-3 gap-1.5 sm:mb-2 sm:gap-1.5">
         <StatPill
           className="!px-2 !py-1.5"
           label="Conti"
@@ -494,7 +494,7 @@ export default function AccountsListPage() {
         />
       </section>
 
-      <div className="mb-2 flex flex-wrap gap-2 sm:mb-2 sm:gap-2">
+      <div className="mb-1 flex flex-wrap gap-1.5 sm:mb-2 sm:gap-2">
         <QuickActionButton variant="primary" onClick={() => setCreateOpen(true)}>
           + Conto
         </QuickActionButton>

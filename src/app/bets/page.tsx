@@ -1238,14 +1238,14 @@ function BetsPageContent() {
       >
       {refertoError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-sm text-[#fb7185]"
+          className="mb-2 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:mb-4 sm:px-4 sm:py-3 sm:text-sm text-[#fb7185]"
           role="alert"
         >
           Stato scommessa: {refertoError}
         </p>
       ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-2.5 mb-2 border-b border-white/[0.06] bg-[#0B1224]/96 px-2.5 py-1.5 max-sm:backdrop-blur-none sm:top-14 sm:-mx-4 sm:mb-3 sm:px-4 sm:py-2.5 sm:backdrop-blur-md">
+      <div className="sm-page-search-sticky bg-[#0B1224]/96 max-sm:backdrop-blur-none sm:-mx-4 sm:px-4 sm:backdrop-blur-md">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -1254,7 +1254,7 @@ function BetsPageContent() {
       </div>
 
       <section
-        className="mb-2 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-3"
+        className="mb-1 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-3"
         aria-labelledby="bets-analytics-heading"
       >
         <h2 id="bets-analytics-heading" className="sr-only">
@@ -1289,17 +1289,17 @@ function BetsPageContent() {
       </section>
 
       <section
-        className="mb-3 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-4"
+        className="mb-2 w-full max-w-[420px] px-0 sm:mx-auto sm:mb-4"
         aria-labelledby="bets-list-heading"
       >
         <h2
           id="bets-list-heading"
-          className="mb-1.5 text-xl font-bold uppercase tracking-[0.1em] text-[#8B93A7] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
+          className="mb-1 text-xl font-bold uppercase tracking-[0.1em] text-[#8B93A7] sm:mb-2 sm:text-2xl sm:font-semibold sm:tracking-[0.14em]"
         >
           Timeline
         </h2>
         {accounts.length > 0 ? (
-          <div className="mb-1.5">
+          <div className="mb-1 sm:mb-1.5">
             <FilterChips
               items={accountFilterChips}
               value={filterAccountId}

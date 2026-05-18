@@ -24,10 +24,10 @@ export function AppShell({
     <div className="flex min-h-dvh flex-col bg-[#0B1224] text-[#E6EAF2]">
       <TopBar title={title} showBrand={showBrand} />
       <main
-        className={`sm-app-constrain sm-app-scroll flex-1 px-2 pt-1.5 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:px-4 sm:pt-4 ${showBottomNav ? "pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:pb-36" : "pb-6 sm:pb-10"}`}
+        className={`sm-app-constrain sm-app-scroll flex-1 px-2 pt-0 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:px-4 sm:pt-4 ${showBottomNav ? "pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:pb-36" : "pb-6 sm:pb-10"}`}
       >
         {subtitle ? (
-          <p className="mb-2 text-[13px] leading-snug text-[#8B93A7] sm:mb-4 sm:text-sm sm:leading-relaxed">
+          <p className="mb-1 text-[12px] leading-snug text-[#8B93A7] sm:mb-4 sm:text-sm sm:leading-relaxed">
             {subtitle}
           </p>
         ) : null}

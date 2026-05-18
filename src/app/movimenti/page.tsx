@@ -821,7 +821,7 @@ function MovimentiListaContent() {
         </p>
       ) : null}
 
-      <div className="sticky top-12 z-[25] -mx-2.5 mb-1.5 space-y-1.5 border-b border-white/[0.06] bg-[#0A1020]/95 px-2.5 py-1.5 backdrop-blur-md sm:top-14 sm:-mx-4 sm:mb-2 sm:space-y-2 sm:px-4 sm:py-2">
+      <div className="sm-page-search-sticky space-y-1 backdrop-blur-md sm:-mx-4 sm:mb-2 sm:space-y-2 sm:px-4">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}

@@ -367,7 +367,7 @@ function TransactionsPage() {
     <AppShell title="Movimenti" subtitle="Depositi e prelievi tra conto gioco e metodo.">
       {loadError ? (
         <p
-          className="mb-4 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-4 py-3 text-lg sm:text-base sm:text-sm text-[#fb7185]"
+          className="mb-2 rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:mb-4 sm:px-4 sm:py-3 sm:text-base sm:text-sm text-[#fb7185]"
           role="alert"
         >
           {loadError}
@@ -376,7 +376,7 @@ function TransactionsPage() {
 
       <form
         onSubmit={(e) => void handleSave(e)}
-        className="space-y-4 rounded-2xl border border-white/[0.06] bg-[#11182B] p-5 shadow-md shadow-black/12"
+        className="space-y-3 rounded-2xl border border-white/[0.06] bg-[#11182B] p-3.5 shadow-md shadow-black/12 sm:space-y-4 sm:p-5"
       >
         <div className="space-y-1.5">
           <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
@@ -513,10 +513,10 @@ function TransactionsPage() {
         </button>
       </form>
 
-      <section className="mt-10" aria-labelledby="tx-list-heading">
+      <section className="mt-5 sm:mt-10" aria-labelledby="tx-list-heading">
         <h2
           id="tx-list-heading"
-          className="mb-3 text-sm sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#8B93A7]"
+          className="mb-2 text-sm sm:mb-3 sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#8B93A7]"
         >
           Ultimi movimenti
         </h2>
