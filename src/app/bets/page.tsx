@@ -1,6 +1,8 @@
 "use client";
 
 import { BottomSheet, FilterChips, SearchInput } from "@/components/app";
+import { NewBetForm } from "@/components/bets/new-bet-form";
+import { NEW_BET_FORM_ID, NewBetSheet } from "@/components/bets/new-bet-sheet";
 import { BetsTimeline } from "@/components/bets/bets-timeline";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
@@ -9,6 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageLoadGate } from "@/components/ui/page-load-gate";
 import { usePageLoad } from "@/hooks/use-page-load";
 import { BET_TYPE_DEFAULT } from "@/lib/bet-constants";
+import { defaultPlacedDateTime, placedAtFromParts } from "@/lib/placed-at";
 import { betBalanceContributionDelta, betSettledPnL } from "@/lib/bet-balance-effect";
 import { gamingAccountBookmakerDisplay } from "@/lib/bookmaker-filters";
 import { assertGamingAccountCoversStake } from "@/lib/balance-validation";
@@ -456,6 +459,10 @@ function BetsPageContent() {
   const [stakeStr, setStakeStr] = useState("");
   const [status, setStatus] = useState<BetStatus>("open");
   const [formBetType, setFormBetType] = useState<string>(BET_TYPE_DEFAULT);
+  const [formSport, setFormSport] = useState("Calcio");
+  const [formNote, setFormNote] = useState("");
+  const [placedDate, setPlacedDate] = useState(() => defaultPlacedDateTime().date);
+  const [placedTime, setPlacedTime] = useState(() => defaultPlacedDateTime().time);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -491,6 +498,26 @@ function BetsPageContent() {
       if (searchParams.get("nuova") === "1") setNuovaOpen(true);
     });
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!nuovaOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    queueMicrotask(() => {
+      const { date, time } = defaultPlacedDateTime();
+      setPlacedDate(date);
+      setPlacedTime(time);
+    });
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [nuovaOpen]);
+
+  const closeNuovaSheet = useCallback(() => {
+    if (submitting) return;
+    setNuovaOpen(false);
+    router.replace("/bets", { scroll: false });
+  }, [router, submitting]);
 
   const newBetStakeExceedsBalance = useMemo(() => {
     const s = Number.parseFloat(stakeStr.replace(",", "."));
@@ -824,6 +851,19 @@ function BetsPageContent() {
     }
 
     const betType = formBetType.trim() || BET_TYPE_DEFAULT;
+    const placedIso = placedAtFromParts(placedDate, placedTime);
+    if (!placedIso) {
+      setSubmitting(false);
+      setFormError("Data o ora non valida.");
+      return;
+    }
+
+    const noteParts: string[] = [];
+    const sportLabel = formSport.trim();
+    const freeNote = formNote.trim();
+    if (sportLabel) noteParts.push(`Sport: ${sportLabel}`);
+    if (freeNote) noteParts.push(freeNote);
+    const note = noteParts.length > 0 ? noteParts.join("\n") : null;
 
     const ins = await insertBet(supabase, {
       user_id: user.id,
@@ -836,6 +876,8 @@ function BetsPageContent() {
       status,
       profit,
       bet_type: betType,
+      placed_at: placedIso,
+      note,
     });
 
     setSubmitting(false);
@@ -853,6 +895,11 @@ function BetsPageContent() {
     setStakeStr("");
     setStatus("open");
     setFormBetType(BET_TYPE_DEFAULT);
+    setFormSport("Calcio");
+    setFormNote("");
+    const { date, time } = defaultPlacedDateTime();
+    setPlacedDate(date);
+    setPlacedTime(time);
     setNuovaOpen(false);
     router.replace("/bets", { scroll: false });
   }
@@ -1284,159 +1331,67 @@ function BetsPageContent() {
         )}
       </section>
 
-      <BottomSheet
+      <NewBetSheet
         open={nuovaOpen}
-        title="Nuova giocata"
-        onClose={() => {
-          setNuovaOpen(false);
-          router.replace("/bets", { scroll: false });
-        }}
+        onClose={closeNuovaSheet}
         dismissDisabled={submitting}
-      >
-        <form onSubmit={(e) => void handleSave(e)} className="space-y-2 sm:space-y-3">
-          <div className="grid gap-2 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#8B93A7]">
-                Conto
-              </label>
-              <select
-                required
-                value={accountId}
-                onChange={(e) => setAccountId(e.target.value)}
-                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
-              >
-                <option value="">—</option>
-                {accounts.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.account_name}
-                    {gamingAccountBookmakerDisplay(a)
-                      ? ` · ${gamingAccountBookmakerDisplay(a)}`
-                      : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-sm sm:text-xs uppercase tracking-wide text-[#8B93A7]">
-                Staker
-              </label>
-              <select
-                required
-                value={stakerId}
-                onChange={(e) => setStakerId(e.target.value)}
-                className="sm-input min-h-11 text-lg sm:min-h-10 sm:text-sm"
-              >
-                <option value="">—</option>
-                {stakers.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="event_name"
-              className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]"
-            >
-              Nome evento
-            </label>
-            <input
-              id="event_name"
-              value={eventName}
-              onChange={(e) => setEventName(e.target.value)}
-              required
-              className="sm-input"
-              placeholder="Es. Inter — Juve 1X2"
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
-                Quota
-              </label>
-              <input
-                value={oddsStr}
-                onChange={(e) => setOddsStr(e.target.value)}
-                required
-                inputMode="decimal"
-                className="sm-input"
-                placeholder="2,50"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
-                Stake (€)
-              </label>
-              <input
-                value={stakeStr}
-                onChange={(e) => setStakeStr(e.target.value)}
-                required
-                inputMode="decimal"
-                className="sm-input"
-                placeholder="10"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm sm:text-xs font-medium uppercase tracking-wide text-[#8B93A7]">
-                Stato
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as BetStatus)}
-                className="sm-input"
-              >
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {!Number.isNaN(oddsNum) &&
-          oddsNum > 0 &&
-          !Number.isNaN(stakeNum) &&
-          stakeNum > 0 ? (
-            <p className="text-sm sm:text-xs text-[#8B93A7]">
-              Profit{" "}
-              <span className={`font-semibold tabular-nums ${profitPreviewClass}`}>
-                {formatMoney(previewProfit)} €
-              </span>
-            </p>
-          ) : null}
-
-          {newBetStakeExceedsBalance && !formError ? (
-            <p
-              className="rounded-lg border border-[#fb7185]/35 bg-[#fb7185]/10 px-2.5 py-1.5 text-sm sm:text-xs text-[#fb7185]"
-              role="status"
-            >
-              Saldo conto insufficiente
-            </p>
-          ) : null}
-
-          {formError ? (
-            <p
-              className="rounded-xl border border-[#fb7185]/40 bg-[#fb7185]/10 px-3 py-2 text-lg sm:text-sm text-[#fb7185]"
-              role="alert"
-            >
-              {formError}
-            </p>
-          ) : null}
-
+        submitFooter={
           <button
             type="submit"
+            form={NEW_BET_FORM_ID}
             disabled={submitting || newBetStakeExceedsBalance}
-            className="sm-btn-primary w-full rounded-full disabled:cursor-not-allowed disabled:opacity-45"
+            className="sm-btn-primary min-h-11 w-full rounded-full text-[15px] font-semibold disabled:cursor-not-allowed disabled:opacity-45"
           >
-            {submitting ? "Salvataggio…" : "Salva giocata"}
+            {submitting ? "Salvataggio…" : "Aggiungi scommessa"}
           </button>
-        </form>
-      </BottomSheet>
+        }
+      >
+        <NewBetForm
+          formId={NEW_BET_FORM_ID}
+          onSubmit={(e) => void handleSave(e)}
+          placedDate={placedDate}
+          onPlacedDateChange={setPlacedDate}
+          placedTime={placedTime}
+          onPlacedTimeChange={setPlacedTime}
+          accountId={accountId}
+          onAccountIdChange={setAccountId}
+          accounts={accounts}
+          stakerId={stakerId}
+          onStakerIdChange={setStakerId}
+          stakers={stakers}
+          eventName={eventName}
+          onEventNameChange={setEventName}
+          oddsStr={oddsStr}
+          onOddsStrChange={setOddsStr}
+          formSport={formSport}
+          onFormSportChange={setFormSport}
+          status={status}
+          onStatusChange={setStatus}
+          formBetType={formBetType}
+          onFormBetTypeChange={setFormBetType}
+          stakeStr={stakeStr}
+          onStakeStrChange={setStakeStr}
+          formNote={formNote}
+          onFormNoteChange={setFormNote}
+          submitting={submitting}
+          formError={formError}
+          newBetStakeExceedsBalance={newBetStakeExceedsBalance}
+          hideSubmit
+          profitPreview={
+            !Number.isNaN(oddsNum) &&
+            oddsNum > 0 &&
+            !Number.isNaN(stakeNum) &&
+            stakeNum > 0 ? (
+              <p className="text-sm text-[#8B93A7]">
+                Profit{" "}
+                <span className={`font-semibold tabular-nums ${profitPreviewClass}`}>
+                  {formatMoney(previewProfit)} €
+                </span>
+              </p>
+            ) : null
+          }
+        />
+      </NewBetSheet>
 
       <BottomSheet
         open={editingBet !== null}

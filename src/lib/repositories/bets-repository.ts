@@ -162,6 +162,8 @@ export async function insertBet(
     status: BetStatus;
     profit: number;
     bet_type: string;
+    placed_at?: string;
+    note?: string | null;
   },
 ): Promise<{ ok: true; bet: BetListRow } | { ok: false; message: string }> {
   const { data, error } = await supabase
