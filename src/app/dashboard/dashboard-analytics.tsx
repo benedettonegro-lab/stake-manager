@@ -248,12 +248,12 @@ export function DashboardAnalytics() {
     <div className="flex flex-col gap-2 pb-2 sm:gap-4 sm:pb-2">
       <section aria-label="Cassa totale">
         <div className="sm-gradient-border">
-          <div className="sm-gradient-inner px-2.5 py-2 sm:p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8B93A7] sm:text-xs sm:tracking-widest">
+          <div className="sm-gradient-inner px-3 py-2.5 sm:p-4">
+            <p className="text-[12px] font-semibold leading-snug text-[#8B93A7] max-sm:text-[13px] sm:text-xs sm:uppercase sm:tracking-widest">
               Cassa totale
             </p>
             <p
-              className={`mt-1.5 whitespace-nowrap text-xl font-bold tabular-nums leading-none tracking-tight sm:mt-2 sm:text-2xl sm:font-bold ${cassaTone}`}
+              className={`mt-1.5 min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[clamp(1.75rem,8.5vw,2.375rem)] font-bold tabular-nums leading-none tracking-tight max-sm:text-[36px] sm:mt-2 sm:text-2xl ${cassaTone}`}
             >
               {formatMoney(totals.saldoCassaTotale)} €
             </p>
@@ -261,15 +261,16 @@ export function DashboardAnalytics() {
         </div>
       </section>
 
-      <section aria-label="Indicatori" className="grid grid-cols-2 gap-1.5 sm:gap-2">
-        <StatPill label="Conti gioco" value={`${formatMoney(totals.saldoConti)} €`} />
-        <StatPill label="Metodi" value={`${formatMoney(totals.saldoMetodi)} €`} />
+      <section aria-label="Indicatori" className="grid grid-cols-2 gap-2 sm:gap-2">
+        <StatPill variant="summary" label="Conti gioco" value={`${formatMoney(totals.saldoConti)} €`} />
+        <StatPill variant="summary" label="Metodi" value={`${formatMoney(totals.saldoMetodi)} €`} />
         <StatPill
+          variant="summary"
           label="Profit"
           value={`${totals.totalProfit >= 0 ? "+" : ""}${formatMoney(totals.totalProfit)} €`}
           tone={totals.totalProfit > 0 ? "positive" : totals.totalProfit < 0 ? "negative" : "default"}
         />
-        <StatPill label="ROI" value={totals.roiLabel} tone={roiTone} />
+        <StatPill variant="summary" label="ROI" value={totals.roiLabel} tone={roiTone} />
       </section>
 
       <div className="flex flex-wrap gap-1.5 sm:gap-2">
