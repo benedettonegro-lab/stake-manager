@@ -5,20 +5,21 @@ import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { FloatingActionButton } from "@/components/floating-action-button";
+import { StakersErrorBoundary } from "@/components/stakers/stakers-error-boundary";
 import { PageLoadGate } from "@/components/ui/page-load-gate";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
+import { safeArray } from "@/lib/safe-array";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
+import {
+  parseStakersListCache,
+  STAKERS_LIST_NS,
+  type BetMini,
+  type StakerRow,
+} from "@/lib/stakers-cache";
 import { usePageLoad } from "@/hooks/use-page-load";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-
-type StakerRow = {
-  id: string;
-  name: string;
-  balance: string;
-  player_id: string | null;
-};
 
 function formatMoney(value: string | number): string {
   const n = typeof value === "string" ? Number.parseFloat(value) : value;
@@ -47,16 +48,10 @@ function formatRoi(totalProfit: number, totalStake: number): string {
   }).format(rounded)}%`;
 }
 
-type BetMini = {
-  staker_id: string;
-  stake: string;
-  profit: string;
-  status: string;
-  odds: string | number;
-};
-
-function sortStakers(list: StakerRow[]): StakerRow[] {
-  return [...list].sort((a, b) => a.name.localeCompare(b.name, "it"));
+function sortStakers(list: unknown): StakerRow[] {
+  return [...safeArray<StakerRow>(list)].sort((a, b) =>
+    a.name.localeCompare(b.name, "it"),
+  );
 }
 
 function StakersPageContent() {
@@ -84,6 +79,12 @@ function StakersPageContent() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [betRows, setBetRows] = useState<BetMini[]>([]);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const applyBundle = useCallback((bundle: { stakers: StakerRow[]; bets: BetMini[] }) => {
+    setRows(sortStakers(bundle.stakers));
+    setBetRows(safeArray<BetMini>(bundle.bets));
+  }, []);
 
   const openAddModal = useCallback(() => {
     setFormError(null);
@@ -106,31 +107,31 @@ function StakersPageContent() {
     });
   }, [searchParams, openAddModal]);
 
-  const load = useCallback(async (uid: string) => {
-    setLoadError(null);
-    const [sRes, bRes] = await Promise.all([
-      supabase.from("stakers").select("id, name, balance, player_id").order("name"),
-      supabase.from("bets").select("staker_id, stake, profit, status, odds"),
-    ]);
-    if (sRes.error) {
-      const msg = sRes.error.message;
-      setLoadError(msg);
-      setRows([]);
-      setBetRows([]);
-      throw new Error(msg);
-    }
-    const st = (sRes.data as StakerRow[]) ?? [];
-    setRows(st);
-    void writeFreshCache(uid, "stakers_list_v1", {
-      stakers: st,
-      bets: bRes.error ? [] : ((bRes.data as BetMini[]) ?? []),
-    });
-    if (bRes.error) {
-      setBetRows([]);
-    } else {
-      setBetRows((bRes.data as BetMini[]) ?? []);
-    }
-  }, [supabase]);
+  const load = useCallback(
+    async (uid: string) => {
+      setLoadError(null);
+      const [sRes, bRes] = await Promise.all([
+        supabase.from("stakers").select("id, name, balance, player_id").order("name"),
+        supabase.from("bets").select("staker_id, stake, profit, status, odds"),
+      ]);
+
+      if (sRes.error) {
+        const msg = sRes.error.message;
+        setLoadError(msg);
+        applyBundle({ stakers: [], bets: [] });
+        throw new Error(msg);
+      }
+
+      const bundle = {
+        stakers: safeArray<StakerRow>(sRes.data),
+        bets: bRes.error ? [] : safeArray<BetMini>(bRes.data),
+      };
+
+      applyBundle(bundle);
+      void writeFreshCache(uid, STAKERS_LIST_NS, bundle);
+    },
+    [applyBundle, supabase],
+  );
 
   const {
     userId,
@@ -140,14 +141,11 @@ function StakersPageContent() {
   } = usePageLoad({
     page: "stakers",
     hydrateFromCache: async (uid) => {
-      const cached = await readStaleCache<{
-        stakers: StakerRow[];
-        bets: BetMini[];
-      }>(uid, "stakers_list_v1");
+      const cached = await readStaleCache<unknown>(uid, STAKERS_LIST_NS);
       if (!cached.data) return false;
-      setRows(cached.data.stakers);
-      setBetRows(cached.data.bets);
-      return cached.data.stakers.length > 0;
+      const bundle = parseStakersListCache(cached.data, STAKERS_LIST_NS);
+      applyBundle(bundle);
+      return bundle.stakers.length > 0;
     },
     fetch: load,
   });
@@ -156,23 +154,28 @@ function StakersPageContent() {
 
   const aggByStaker = useMemo(() => {
     const m = new Map<string, { count: number; stake: number; profit: number }>();
-    for (const r of betRows) {
-      const prev = m.get(r.staker_id) ?? { count: 0, stake: 0, profit: 0 };
+    const bets = safeArray<BetMini>(betRows);
+    for (const r of bets) {
+      if (!r || typeof r !== "object") continue;
+      const stakerId = String((r as BetMini).staker_id ?? "");
+      if (!stakerId) continue;
+      const prev = m.get(stakerId) ?? { count: 0, stake: 0, profit: 0 };
       prev.count += 1;
       prev.profit += betSettledPnL(r.status, r.stake, r.odds, r.profit);
       if (betIsSettled(r.status)) {
-        prev.stake += Number.parseFloat(r.stake) || 0;
+        prev.stake += Number.parseFloat(String(r.stake)) || 0;
       }
-      m.set(r.staker_id, prev);
+      m.set(stakerId, prev);
     }
     return m;
   }, [betRows]);
 
   const filteredRows = useMemo(() => {
+    const list = safeArray<StakerRow>(rows);
     const raw = searchQuery.trim();
-    if (!raw) return rows;
+    if (!raw) return list;
     const q = raw.toLowerCase();
-    return rows.filter((s) => s.name.toLowerCase().includes(q));
+    return list.filter((s) => s.name.toLowerCase().includes(q));
   }, [rows, searchQuery]);
 
   async function handleAdd(e: React.FormEvent) {
@@ -213,7 +216,7 @@ function StakersPageContent() {
       }
 
       if (data) {
-        setRows((prev) => sortStakers([...prev, data as StakerRow]));
+        setRows((prev) => sortStakers([...safeArray<StakerRow>(prev), data as StakerRow]));
       }
 
       setName("");
@@ -264,7 +267,9 @@ function StakersPageContent() {
       if (data) {
         setRows((prev) =>
           sortStakers(
-            prev.map((r) => (r.id === editing.id ? (data as StakerRow) : r)),
+            safeArray<StakerRow>(prev).map((r) =>
+              r.id === editing.id ? (data as StakerRow) : r,
+            ),
           ),
         );
       }
@@ -286,11 +291,16 @@ function StakersPageContent() {
       }
       const removedId = deleteTarget.id;
       setDeleteTarget(null);
-      setRows((prev) => prev.filter((r) => r.id !== removedId));
+      setRows((prev) => safeArray<StakerRow>(prev).filter((r) => r.id !== removedId));
     } finally {
       setDeleteLoading(false);
     }
   }
+
+  const handleBoundaryReset = useCallback(() => {
+    setReloadKey((k) => k + 1);
+    retryPageLoad();
+  }, [retryPageLoad]);
 
   return (
     <AppShell title="Staker">
@@ -308,109 +318,111 @@ function StakersPageContent() {
         </QuickActionButton>
       </div>
 
-      <PageLoadGate
-        loadError={displayLoadError}
-        onRetry={retryPageLoad}
-        hasContent={rows.length > 0}
-        isRefreshing={isRefreshing}
-      >
-        {rows.length === 0 && !displayLoadError ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
-            Nessuno staker. Tocca + Staker per aggiungerne uno.
-          </p>
-        ) : filteredRows.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
-            Nessun risultato per la ricerca.
-          </p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {filteredRows.map((s) => {
-              const b = Number.parseFloat(s.balance) || 0;
-              const locked = s.player_id !== null;
-              const g = aggByStaker.get(s.id) ?? { count: 0, stake: 0, profit: 0 };
-              const roi = formatRoi(g.profit, g.stake);
-              const roiTone =
-                g.stake <= 0
-                  ? ("default" as const)
-                  : g.profit > 0
-                    ? ("positive" as const)
-                    : g.profit < 0
-                      ? ("negative" as const)
-                      : ("default" as const);
-              return (
-                <li
-                  key={s.id}
-                  className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B] shadow-sm"
-                >
-                  <button
-                    type="button"
-                    onClick={() => openEdit(s)}
-                    className="w-full px-2.5 pb-2 pt-2 text-left transition active:bg-[#11182B]/80 sm:px-3 sm:pt-3"
+      <StakersErrorBoundary key={reloadKey} onReset={handleBoundaryReset}>
+        <PageLoadGate
+          loadError={displayLoadError}
+          onRetry={retryPageLoad}
+          hasContent={safeArray(rows).length > 0}
+          isRefreshing={isRefreshing}
+        >
+          {safeArray(rows).length === 0 && !displayLoadError ? (
+            <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
+              Nessuno staker. Tocca + Staker per aggiungerne uno.
+            </p>
+          ) : filteredRows.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">
+              Nessun risultato per la ricerca.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {filteredRows.map((s) => {
+                const b = Number.parseFloat(s.balance) || 0;
+                const locked = s.player_id !== null;
+                const g = aggByStaker.get(s.id) ?? { count: 0, stake: 0, profit: 0 };
+                const roi = formatRoi(g.profit, g.stake);
+                const roiTone =
+                  g.stake <= 0
+                    ? ("default" as const)
+                    : g.profit > 0
+                      ? ("positive" as const)
+                      : g.profit < 0
+                        ? ("negative" as const)
+                        : ("default" as const);
+                return (
+                  <li
+                    key={s.id}
+                    className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#11182B] shadow-sm"
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="truncate text-base font-bold leading-snug text-white sm:text-sm">
-                          {s.name}
-                        </p>
-                        {locked ? (
-                          <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#8B93A7]">
-                            Legato identità
-                          </p>
-                        ) : null}
-                      </div>
-                      <p
-                        className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-base ${toneClass(b)}`}
-                      >
-                        {formatMoney(s.balance)} €
-                      </p>
-                    </div>
-                    <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug text-[#8B93A7] sm:hidden">
-                      <span className="font-semibold tabular-nums text-[#E6EAF2]">{g.count}</span>{" "}
-                      giocate · P/L{" "}
-                      <span className={profitClass(g.profit)}>
-                        {g.profit >= 0 ? "+" : ""}
-                        {formatMoney(g.profit)} €
-                      </span>{" "}
-                      · ROI {roi}
-                    </p>
-                    <div className="mt-2 hidden grid-cols-3 gap-1 sm:grid">
-                      <StatPill label="Giocate" value={String(g.count)} />
-                      <StatPill
-                        label="P/L"
-                        value={`${g.profit >= 0 ? "+" : ""}${formatMoney(g.profit)}`}
-                        tone={
-                          g.profit > 0 ? "positive" : g.profit < 0 ? "negative" : "default"
-                        }
-                      />
-                      <StatPill label="ROI" value={roi} tone={roiTone} />
-                    </div>
-                  </button>
-                  <div className="flex flex-wrap gap-1.5 border-t border-[#141C2A] px-2.5 py-2">
-                    <QuickActionButton
+                    <button
+                      type="button"
                       onClick={() => openEdit(s)}
-                      variant="ghost"
-                      className="min-h-9 px-3 text-xs"
+                      className="w-full px-2.5 pb-2 pt-2 text-left transition active:bg-[#11182B]/80 sm:px-3 sm:pt-3"
                     >
-                      Modifica
-                    </QuickActionButton>
-                    <QuickActionButton
-                      variant="danger"
-                      className="min-h-9 px-3 text-xs"
-                      disabled={locked}
-                      onClick={() => {
-                        setDeleteError(null);
-                        setDeleteTarget(s);
-                      }}
-                    >
-                      Elimina
-                    </QuickActionButton>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </PageLoadGate>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="truncate text-base font-bold leading-snug text-white sm:text-sm">
+                            {s.name}
+                          </p>
+                          {locked ? (
+                            <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#8B93A7]">
+                              Legato identità
+                            </p>
+                          ) : null}
+                        </div>
+                        <p
+                          className={`shrink-0 whitespace-nowrap text-lg font-bold tabular-nums sm:text-base ${toneClass(b)}`}
+                        >
+                          {formatMoney(s.balance)} €
+                        </p>
+                      </div>
+                      <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug text-[#8B93A7] sm:hidden">
+                        <span className="font-semibold tabular-nums text-[#E6EAF2]">{g.count}</span>{" "}
+                        giocate · P/L{" "}
+                        <span className={profitClass(g.profit)}>
+                          {g.profit >= 0 ? "+" : ""}
+                          {formatMoney(g.profit)} €
+                        </span>{" "}
+                        · ROI {roi}
+                      </p>
+                      <div className="mt-2 hidden grid-cols-3 gap-1 sm:grid">
+                        <StatPill label="Giocate" value={String(g.count)} />
+                        <StatPill
+                          label="P/L"
+                          value={`${g.profit >= 0 ? "+" : ""}${formatMoney(g.profit)}`}
+                          tone={
+                            g.profit > 0 ? "positive" : g.profit < 0 ? "negative" : "default"
+                          }
+                        />
+                        <StatPill label="ROI" value={roi} tone={roiTone} />
+                      </div>
+                    </button>
+                    <div className="flex flex-wrap gap-1.5 border-t border-[#141C2A] px-2.5 py-2">
+                      <QuickActionButton
+                        onClick={() => openEdit(s)}
+                        variant="ghost"
+                        className="min-h-9 px-3 text-xs"
+                      >
+                        Modifica
+                      </QuickActionButton>
+                      <QuickActionButton
+                        variant="danger"
+                        className="min-h-9 px-3 text-xs"
+                        disabled={locked}
+                        onClick={() => {
+                          setDeleteError(null);
+                          setDeleteTarget(s);
+                        }}
+                      >
+                        Elimina
+                      </QuickActionButton>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </PageLoadGate>
+      </StakersErrorBoundary>
 
       <BottomSheet
         open={addOpen}
@@ -523,7 +535,12 @@ export default function StakersPage() {
       <Suspense
         fallback={
           <AppShell title="Staker">
-            <p className="py-12 text-center text-sm text-[#8B93A7]">Caricamento…</p>
+            <div className="sm-page-search-sticky backdrop-blur-md sm:-mx-4 sm:px-4">
+              <div className="h-11 rounded-xl bg-white/[0.06] motion-reduce:animate-none" aria-hidden />
+            </div>
+            <p className="mt-4 rounded-xl border border-dashed border-white/[0.06] py-8 text-center text-sm text-[#8B93A7]">
+              Nessuno staker.
+            </p>
           </AppShell>
         }
       >

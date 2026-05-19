@@ -58,7 +58,12 @@ export function prefetchTabRoute(userId: string, pathname: string): void {
         .from("stakers")
         .select("id, name, balance, player_id")
         .order("name");
-      if (data) void writeFreshCache(userId, "stakers_list_v1", data);
+      if (data) {
+        void writeFreshCache(userId, "stakers_list_v1", {
+          stakers: Array.isArray(data) ? data : [],
+          bets: [],
+        });
+      }
       store.markFetched("stakers");
       return true;
     }).catch(() => undefined);
