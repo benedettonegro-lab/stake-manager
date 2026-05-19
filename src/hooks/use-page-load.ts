@@ -3,17 +3,18 @@
 import { devPageLog } from "@/lib/dev-log";
 import { resolveAppSession } from "@/lib/resolve-session";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { useAppCacheStore } from "@/stores/app-cache-store";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const HARD_LOAD_TIMEOUT_MS = 4_000;
-const CACHE_SKELETON_MAX_MS = 1_800;
+const STALE_MS = 45_000;
 
 export type UsePageLoadResult = {
-  /** false = mostra skeleton */
+  /** Sempre true dopo il primo frame — niente skeleton full-page. */
   ready: boolean;
   userId: string | null;
   loadError: string | null;
+  isRefreshing: boolean;
   /** true dopo il primo fetch rete (abilita realtime) */
   initialFetchComplete: boolean;
   retry: () => void;
@@ -22,16 +23,17 @@ export type UsePageLoadResult = {
 
 type UsePageLoadOptions = {
   page: string;
-  /** Fetch rete obbligatorio — errori non devono bloccare `ready`. */
   fetch: (userId: string) => Promise<void>;
-  /** true se dati cache applicati (skeleton max ~1.8s) */
   hydrateFromCache?: (userId: string) => Promise<boolean> | boolean;
+  /** Forza refetch anche se cache pagina è fresca */
+  force?: boolean;
 };
 
 export function usePageLoad({
   page,
   fetch,
   hydrateFromCache,
+  force = false,
 }: UsePageLoadOptions): UsePageLoadResult {
   const router = useRouter();
   const supabase = getSupabaseBrowserClient();
@@ -44,111 +46,96 @@ export function usePageLoad({
     hydrateRef.current = hydrateFromCache;
   });
 
-  const [ready, setReady] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [ready] = useState(true);
+  const [userId, setUserId] = useState<string | null>(() => useAppCacheStore.getState().userId);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [attempt, setAttempt] = useState(0);
 
   const runIdRef = useRef(0);
-
-  const finish = useCallback((opts?: { error?: string | null }) => {
-    if (opts?.error !== undefined) setLoadError(opts.error);
-    setReady(true);
-    setInitialFetchComplete(true);
-  }, []);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
     const runId = ++runIdRef.current;
     let cancelled = false;
-    let cacheTimer: ReturnType<typeof setTimeout> | undefined;
-
     const isStale = () => cancelled || runIdRef.current !== runId;
 
-    queueMicrotask(() => {
-      if (isStale()) return;
-      setReady(false);
-      setInitialFetchComplete(false);
-      setLoadError(null);
-    });
+    const run = async () => {
+      if (!mountedRef.current) {
+        mountedRef.current = true;
+      }
 
-    devPageLog(page, "fetch start");
+      devPageLog(page, "instant load start");
 
-    const hardTimer = setTimeout(() => {
-      if (isStale()) return;
-      devPageLog(page, "loading timeout");
-      setLoadError((prev) =>
-        prev ?? "Caricamento troppo lento. Controlla la connessione e riprova.",
-      );
-      finish();
-    }, HARD_LOAD_TIMEOUT_MS);
+      let uid = useAppCacheStore.getState().userId;
 
-    void (async () => {
-      try {
+      if (!uid) {
         const { user, error: sessionError } = await resolveAppSession(supabase);
         if (isStale()) return;
-
         if (!user) {
           devPageLog(page, "session missing", sessionError);
           router.replace("/login?reason=session");
-          finish();
+          setInitialFetchComplete(true);
           return;
         }
+        uid = user.id;
+        useAppCacheStore.getState().setUserId(uid);
+      }
 
-        devPageLog(page, "session found", user.id);
-        setUserId(user.id);
+      if (isStale()) return;
+      setUserId(uid);
 
-        let hadCache = false;
-        try {
-          const hydrate = hydrateRef.current;
-          if (hydrate) {
-            const result = await Promise.resolve(hydrate(user.id));
-            hadCache = Boolean(result);
-            if (hadCache && !isStale()) {
-              devPageLog(page, "cache hydrated");
-              cacheTimer = setTimeout(() => {
-                if (!isStale()) setReady(true);
-              }, CACHE_SKELETON_MAX_MS);
-            }
-          }
-        } catch {
-          devPageLog(page, "cache hydrate error");
+      try {
+        const hydrate = hydrateRef.current;
+        if (hydrate) {
+          await Promise.resolve(hydrate(uid));
         }
+      } catch {
+        devPageLog(page, "cache hydrate error");
+      }
 
-        try {
-          await fetchRef.current(user.id);
-          if (isStale()) return;
-          devPageLog(page, "fetch success");
+      const fresh = !force && useAppCacheStore.getState().isFresh(page, STALE_MS);
+      if (fresh) {
+        devPageLog(page, "skip fetch (fresh)");
+        if (!isStale()) {
           setLoadError(null);
-        } catch (e) {
-          if (isStale()) return;
-          const msg =
-            e instanceof Error ? e.message : "Errore durante il caricamento";
-          devPageLog(page, "fetch error", msg);
-          setLoadError(msg);
+          setInitialFetchComplete(true);
         }
+        return;
+      }
+
+      if (!isStale()) setIsRefreshing(true);
+
+      try {
+        await fetchRef.current(uid);
+        if (isStale()) return;
+        useAppCacheStore.getState().markFetched(page);
+        devPageLog(page, "fetch success");
+        setLoadError(null);
       } catch (e) {
         if (isStale()) return;
-        const msg = e instanceof Error ? e.message : "Errore imprevisto";
+        const msg = e instanceof Error ? e.message : "Errore durante il caricamento";
         devPageLog(page, "fetch error", msg);
         setLoadError(msg);
       } finally {
-        if (isStale()) return;
-        if (cacheTimer) clearTimeout(cacheTimer);
-        if (hardTimer) clearTimeout(hardTimer);
-        finish();
+        if (!isStale()) {
+          setIsRefreshing(false);
+          setInitialFetchComplete(true);
+        }
       }
-    })();
+    };
+
+    void run();
 
     return () => {
       cancelled = true;
-      if (cacheTimer) clearTimeout(cacheTimer);
-      if (hardTimer) clearTimeout(hardTimer);
     };
-  }, [attempt, finish, page, router, supabase]);
+  }, [attempt, force, page, router, supabase]);
 
   const retry = useCallback(() => {
     devPageLog(page, "retry");
+    useAppCacheStore.getState().markStale(page);
     setAttempt((a) => a + 1);
   }, [page]);
 
@@ -158,6 +145,7 @@ export function usePageLoad({
     ready,
     userId,
     loadError,
+    isRefreshing,
     initialFetchComplete,
     retry,
     clearError,

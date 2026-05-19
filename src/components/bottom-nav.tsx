@@ -1,8 +1,10 @@
 "use client";
 
+import { prefetchOnNavIntent } from "@/components/tab-prefetch-trigger";
+import { useAppCacheStore } from "@/stores/app-cache-store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 const items = [
   { href: "/dashboard", label: "Home", match: ["/", "/dashboard"] },
@@ -129,6 +131,14 @@ const icons = [IconHome, IconUsers, IconWallet, IconStaker, IconTicket, IconMore
 
 function BottomNavInner() {
   const pathname = usePathname();
+  const userId = useAppCacheStore((s) => s.userId);
+
+  const onNavIntent = useCallback(
+    (href: string) => {
+      prefetchOnNavIntent(userId, href);
+    },
+    [userId],
+  );
 
   return (
     <nav
@@ -145,6 +155,10 @@ function BottomNavInner() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch
+              onMouseEnter={() => onNavIntent(item.href)}
+              onFocus={() => onNavIntent(item.href)}
+              onTouchStart={() => onNavIntent(item.href)}
               className={`flex min-h-[44px] min-w-0 max-h-full flex-col items-center justify-center gap-0 rounded-md py-0 transition-transform duration-150 ease-out active:scale-95 sm:min-h-[48px] sm:gap-0.5 sm:rounded-xl sm:py-1 ${
                 active ? "text-[#B89EFF]" : "text-[#8B93A7] hover:text-[#B4BCCC]"
               }`}

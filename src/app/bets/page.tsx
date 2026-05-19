@@ -33,7 +33,16 @@ import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
 import { useSupabaseRealtime } from "@/hooks/use-supabase-realtime";
 import { formatClientError } from "@/lib/user-message";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
+import {
+  Suspense,
+  memo,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export type BetStatus = "open" | "won" | "lost" | "void" | "cashout";
 
@@ -494,8 +503,9 @@ function BetsPageContent() {
   const [nuovaOpen, setNuovaOpen] = useState(false);
 
   useEffect(() => {
+    if (searchParams.get("nuova") !== "1") return;
     queueMicrotask(() => {
-      if (searchParams.get("nuova") === "1") setNuovaOpen(true);
+      startTransition(() => setNuovaOpen(true));
     });
   }, [searchParams]);
 
@@ -661,9 +671,9 @@ function BetsPageContent() {
   }, [betsHasMore, betsLoadingMore, supabase]);
 
   const {
-    ready,
     userId,
     loadError: pageLoadError,
+    isRefreshing,
     initialFetchComplete,
     retry: retryPageLoad,
   } = usePageLoad({
@@ -1230,11 +1240,10 @@ function BetsPageContent() {
   return (
     <AppShell title="Giocate">
       <PageLoadGate
-        ready={ready}
         loadError={displayLoadError}
         onRetry={retryPageLoad}
         hasContent={hasPageContent}
-        skeletonCount={5}
+        isRefreshing={isRefreshing}
       >
       {refertoError ? (
         <p

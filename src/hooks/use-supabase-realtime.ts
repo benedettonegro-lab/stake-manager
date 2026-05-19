@@ -45,7 +45,7 @@ export function useSupabaseRealtime({
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         onBetRef.current?.(payload);
-      }, 120);
+      }, 400);
     };
 
     const emitAccount = (payload: PostgresChangePayload) => {

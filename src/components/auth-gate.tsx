@@ -7,6 +7,7 @@ import {
   writeProfileApprovedCache,
 } from "@/lib/profile-gate-cache";
 import { isLikelyOfflineOrNetworkError } from "@/lib/supabase-network";
+import { useAppCacheStore } from "@/stores/app-cache-store";
 import type { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
@@ -21,6 +22,15 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
     let cancelled = false;
+
+    void supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user?.id;
+      if (!uid || cancelled) return;
+      if (readProfileApprovedCache(uid)) {
+        useAppCacheStore.getState().setUserId(uid);
+        startTransition(() => setAllowed(true));
+      }
+    });
 
     async function ensureProfile(userId: string): Promise<boolean> {
       if (readProfileApprovedCache(userId)) {

@@ -472,6 +472,15 @@ textarea.sm-input {
 }
 
 /* Page route fade (view transitions friendly) */
+@keyframes sm-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
 @keyframes sm-route-in {
   from {
     opacity: 0;

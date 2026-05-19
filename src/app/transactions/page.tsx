@@ -17,8 +17,19 @@ import {
 import { recalculatePaymentMethodBalanceFromLedger } from "@/lib/recalculate-movement-balances";
 import { applyWithdrawalStatusChange } from "@/lib/withdrawal-status-client";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { useRouter, useSearchParams } from "next/navigation";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
+import { usePageLoad } from "@/hooks/use-page-load";
+import { useAppCacheStore } from "@/stores/app-cache-store";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+
+const TRANSACTIONS_CACHE_NS = "transactions_bundle_v1";
+
+type TransactionsCacheBundle = {
+  accounts: AccountRow[];
+  paymentMethods: PaymentMethodRow[];
+  transactions: TransactionRow[];
+};
 
 /** Tipo movimento su `transactions.type` (deposit / withdrawal). */
 type TxnType = "deposit" | "withdrawal";
@@ -77,11 +88,9 @@ function txnTypeLabel(t: TxnType): string {
 }
 
 function TransactionsPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [accounts, setAccounts] = useState<AccountRow[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
   const [transactions, setTransactions] = useState<TransactionRow[]>([]);
@@ -106,7 +115,7 @@ function TransactionsPage() {
     );
   }, [accountId, accounts, paymentMethods]);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (uid: string) => {
     setLoadError(null);
     const [aRes, pmRes, tRes] = await Promise.all([
       supabase
@@ -151,19 +160,48 @@ function TransactionsPage() {
     ]);
 
     if (aRes.error || pmRes.error || tRes.error) {
-      setLoadError(
+      const msg =
         aRes.error?.message ??
-          pmRes.error?.message ??
-          tRes.error?.message ??
-          "Errore caricamento",
-      );
-      return;
+        pmRes.error?.message ??
+        tRes.error?.message ??
+        "Errore caricamento";
+      setLoadError(msg);
+      throw new Error(msg);
     }
-    setAccounts((aRes.data as AccountRow[]) ?? []);
-    setPaymentMethods((pmRes.data as PaymentMethodRow[]) ?? []);
-    setTransactions((tRes.data as unknown as TransactionRow[]) ?? []);
+    const bundle: TransactionsCacheBundle = {
+      accounts: (aRes.data as AccountRow[]) ?? [],
+      paymentMethods: (pmRes.data as PaymentMethodRow[]) ?? [],
+      transactions: (tRes.data as unknown as TransactionRow[]) ?? [],
+    };
+    setAccounts(bundle.accounts);
+    setPaymentMethods(bundle.paymentMethods);
+    setTransactions(bundle.transactions);
     setListActionError(null);
+    void writeFreshCache(uid, TRANSACTIONS_CACHE_NS, bundle);
   }, [supabase]);
+
+  const { userId, initialFetchComplete } = usePageLoad({
+    page: "transactions",
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<TransactionsCacheBundle>(uid, TRANSACTIONS_CACHE_NS);
+      if (!cached.data) return false;
+      setAccounts(cached.data.accounts);
+      setPaymentMethods(cached.data.paymentMethods);
+      setTransactions(cached.data.transactions);
+      return cached.data.accounts.length > 0;
+    },
+    fetch: loadData,
+  });
+
+  const reloadData = useCallback(async () => {
+    const uid =
+      userId ??
+      useAppCacheStore.getState().userId ??
+      (await supabase.auth.getUser()).data.user?.id;
+    if (!uid) return;
+    useAppCacheStore.getState().markStale("transactions");
+    await loadData(uid);
+  }, [userId, loadData, supabase]);
 
   async function updateWithdrawalStatus(t: TransactionRow, newStatus: TransactionStatus) {
     setListActionError(null);
@@ -175,34 +213,12 @@ function TransactionsPage() {
       console.error("[withdrawal status]", result.message);
       return;
     }
-    await loadData();
+    await reloadData();
   }
 
   useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      await loadData();
-      if (!cancelled) setReady(true);
-    })();
-
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [loadData, router, supabase]);
-
-  useEffect(() => {
     queueMicrotask(() => {
-      if (!ready || accounts.length === 0) return;
+      if (!initialFetchComplete || accounts.length === 0) return;
       const accParam = searchParams.get("account");
       const typeParam = searchParams.get("type");
       if (accParam && accounts.some((a) => a.id === accParam)) {
@@ -212,7 +228,7 @@ function TransactionsPage() {
         setTxnType(typeParam);
       }
     });
-  }, [ready, accounts, searchParams]);
+  }, [initialFetchComplete, accounts, searchParams]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -346,21 +362,7 @@ function TransactionsPage() {
 
     setAmountStr("");
     setFormNote("");
-    await loadData();
-  }
-
-  if (!ready) {
-    return (
-      <AppShell title="Movimenti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-lg sm:text-base sm:text-sm text-[#8B93A7]">
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-white/[0.12] border-t-[#A970FF]/45"
-            aria-hidden
-          />
-          <p>Caricamento…</p>
-        </div>
-      </AppShell>
-    );
+    await reloadData();
   }
 
   return (

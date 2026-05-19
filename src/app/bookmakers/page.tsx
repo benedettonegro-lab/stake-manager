@@ -4,8 +4,12 @@ import { BottomSheet, QuickActionButton, SearchInput } from "@/components/app";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
+import { usePageLoad } from "@/hooks/use-page-load";
+import { useAppCacheStore } from "@/stores/app-cache-store";
+import { startTransition, useCallback, useMemo, useState } from "react";
+
+const BOOKMAKERS_CACHE_NS = "bookmakers_list_v1";
 import { BookmakerCard, type BookmakerCardRow } from "./bookmaker-card";
 import { FloatingActionButton } from "./floating-action-button";
 function sortBookmakers(list: BookmakerCardRow[]): BookmakerCardRow[] {
@@ -13,10 +17,8 @@ function sortBookmakers(list: BookmakerCardRow[]): BookmakerCardRow[] {
 }
 
 export default function BookmakersPage() {
-  const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<BookmakerCardRow[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -42,7 +44,7 @@ export default function BookmakersPage() {
   /** Evidenziazione breve dopo salvataggio modifica */
   const [flashId, setFlashId] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (uid: string) => {
     setLoadError(null);
     const { data, error } = await supabase
       .from("bookmakers")
@@ -51,31 +53,33 @@ export default function BookmakersPage() {
     if (error) {
       setLoadError(error.message);
       setRows([]);
-      return;
+      throw new Error(error.message);
     }
-    const raw = (data ?? []) as BookmakerCardRow[];
-    setRows(sortBookmakers(raw));
+    const raw = sortBookmakers((data ?? []) as BookmakerCardRow[]);
+    setRows(raw);
+    void writeFreshCache(uid, BOOKMAKERS_CACHE_NS, raw);
   }, [supabase]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      await load();
-      if (!cancelled) setReady(true);
-    })();
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [load, router, supabase]);
+  const { userId, isRefreshing } = usePageLoad({
+    page: "bookmakers",
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<BookmakerCardRow[]>(uid, BOOKMAKERS_CACHE_NS);
+      if (!cached.data?.length) return false;
+      setRows(cached.data);
+      return true;
+    },
+    fetch: load,
+  });
+
+  const reload = useCallback(async () => {
+    const uid =
+      userId ??
+      useAppCacheStore.getState().userId ??
+      (await supabase.auth.getUser()).data.user?.id;
+    if (!uid) return;
+    useAppCacheStore.getState().markStale("bookmakers");
+    await load(uid);
+  }, [userId, load, supabase]);
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -124,7 +128,7 @@ export default function BookmakersPage() {
       setEnterAnimId(inserted.id);
       window.setTimeout(() => setEnterAnimId(null), 550);
     }
-    await load();
+    await reload();
   }
 
   function openEdit(b: BookmakerCardRow) {
@@ -160,7 +164,7 @@ export default function BookmakersPage() {
     setEditing(null);
     setFlashId(id);
     window.setTimeout(() => setFlashId(null), 900);
-    await load();
+    await reload();
   }
 
   async function handleConfirmDelete() {
@@ -174,17 +178,7 @@ export default function BookmakersPage() {
       return;
     }
     setDeleteTarget(null);
-    await load();
-  }
-
-  if (!ready) {
-    return (
-      <AppShell title="Bookmakers">
-        <div className="flex min-h-[30vh] items-center justify-center text-lg sm:text-base sm:text-sm text-[#8B93A7]">
-          Caricamento…
-        </div>
-      </AppShell>
-    );
+    await reload();
   }
 
   const emptyDb = rows.length === 0 && !loadError;
@@ -192,6 +186,14 @@ export default function BookmakersPage() {
 
   return (
     <AppShell title="Bookmakers">
+      {isRefreshing ? (
+        <div
+          className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden bg-white/[0.06]"
+          aria-hidden
+        >
+          <div className="h-full w-1/3 animate-[sm-shimmer_0.9s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#A970FF]/70 to-transparent" />
+        </div>
+      ) : null}
       <div className="sm-page-search-sticky backdrop-blur-md sm:-mx-4 sm:px-4">
         <SearchInput value={searchQuery} onChange={setSearchQuery} />
       </div>
@@ -214,7 +216,11 @@ export default function BookmakersPage() {
           </div>
           <p className="text-lg sm:text-base sm:text-sm font-medium text-[#8B93A7]">Nessun bookmaker</p>
           <p className="mt-2 text-[14px] text-[#6B7385]">Oppure usa il pulsante + in basso.</p>
-          <QuickActionButton variant="primary" className="mt-4" onClick={() => setAddOpen(true)}>
+          <QuickActionButton
+            variant="primary"
+            className="mt-4"
+            onClick={() => startTransition(() => setAddOpen(true))}
+          >
             Aggiungi
           </QuickActionButton>
         </div>
@@ -241,7 +247,10 @@ export default function BookmakersPage() {
         </ul>
       )}
 
-      <FloatingActionButton onClick={() => setAddOpen(true)} label="Aggiungi bookmaker" />
+      <FloatingActionButton
+        onClick={() => startTransition(() => setAddOpen(true))}
+        label="Aggiungi bookmaker"
+      />
 
       <BottomSheet
         open={addOpen}

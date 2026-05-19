@@ -8,12 +8,15 @@ import { paymentMethodTitle } from "@/lib/payment-methods";
 import { applyWithdrawalStatusChange } from "@/lib/withdrawal-status-client";
 import { WITHDRAWAL_STATUS_SELECT_OPTIONS } from "@/lib/withdrawal-status-delta";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
 import {
   isTransactionStatus,
   transactionStatusLabel,
   type TransactionStatus,
 } from "@/lib/transaction-status";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePageLoad } from "@/hooks/use-page-load";
+import { useAppCacheStore } from "@/stores/app-cache-store";
+import { useSearchParams } from "next/navigation";
 import {
   Suspense,
   useCallback,
@@ -23,6 +26,8 @@ import {
   useRef,
   useState,
 } from "react";
+
+const MOVIMENTI_REFS_NS = "movimenti_refs_v1";
 
 type TxType = "deposit" | "withdrawal";
 
@@ -43,6 +48,12 @@ type PaymentMethodRow = {
   method_name: string;
   type: string | null;
   player_id: string;
+};
+
+type MovimentiRefsCache = {
+  players: PlayerRow[];
+  accounts: GamingAccountRow[];
+  methods: PaymentMethodRow[];
 };
 
 /** Riga transazione senza join (solo FK). */
@@ -409,11 +420,9 @@ const dateInputGlass =
   "min-h-[36px] w-full min-w-0 flex-1 rounded-lg border border-white/[0.06] bg-[#131C31]/90 py-1 pl-8 pr-2 text-sm leading-snug text-[#e2e8f0] outline-none transition focus:border-[#A970FF]/30 focus:ring-1 focus:ring-[#A970FF]/08 [color-scheme:dark] sm:h-[38px] sm:max-h-[38px] sm:min-h-0 sm:py-1 sm:pr-2 sm:text-xs";
 
 function MovimentiListaContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -469,7 +478,7 @@ function MovimentiListaContent() {
     return methods.filter((m) => m.player_id === filterPlayer);
   }, [methods, filterPlayer]);
 
-  const loadReference = useCallback(async () => {
+  const loadReference = useCallback(async (uid: string) => {
     setLoadError(null);
     const [pRes, gaRes, pmRes] = await Promise.all([
       supabase.from("players").select("id, name").order("name"),
@@ -492,21 +501,50 @@ function MovimentiListaContent() {
         .order("method_name"),
     ]);
     if (pRes.error || gaRes.error || pmRes.error) {
-      setLoadError(
+      const msg =
         pRes.error?.message ??
-          gaRes.error?.message ??
-          pmRes.error?.message ??
-          "Errore caricamento",
-      );
+        gaRes.error?.message ??
+        pmRes.error?.message ??
+        "Errore caricamento";
+      setLoadError(msg);
       setPlayers([]);
       setAccounts([]);
       setMethods([]);
-      return;
+      throw new Error(msg);
     }
-    setPlayers((pRes.data as PlayerRow[]) ?? []);
-    setAccounts((gaRes.data as GamingAccountRow[]) ?? []);
-    setMethods((pmRes.data as PaymentMethodRow[]) ?? []);
+    const bundle: MovimentiRefsCache = {
+      players: (pRes.data as PlayerRow[]) ?? [],
+      accounts: (gaRes.data as GamingAccountRow[]) ?? [],
+      methods: (pmRes.data as PaymentMethodRow[]) ?? [],
+    };
+    setPlayers(bundle.players);
+    setAccounts(bundle.accounts);
+    setMethods(bundle.methods);
+    void writeFreshCache(uid, MOVIMENTI_REFS_NS, bundle);
   }, [supabase]);
+
+  const { userId, initialFetchComplete } = usePageLoad({
+    page: "movimenti",
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<MovimentiRefsCache>(uid, MOVIMENTI_REFS_NS);
+      if (!cached.data) return false;
+      setPlayers(cached.data.players);
+      setAccounts(cached.data.accounts);
+      setMethods(cached.data.methods);
+      return cached.data.players.length > 0;
+    },
+    fetch: loadReference,
+  });
+
+  const reloadReference = useCallback(async () => {
+    const uid =
+      userId ??
+      useAppCacheStore.getState().userId ??
+      (await supabase.auth.getUser()).data.user?.id;
+    if (!uid) return;
+    useAppCacheStore.getState().markStale("movimenti");
+    await loadReference(uid);
+  }, [userId, loadReference, supabase]);
 
   const filterRef = useRef({
     filterPlayer,
@@ -650,16 +688,16 @@ function MovimentiListaContent() {
         return;
       }
       setWithdrawalStatusTx(null);
-      await Promise.all([fetchTransactions(), loadReference()]);
+      await Promise.all([fetchTransactions(), reloadReference()]);
     },
-    [supabase, fetchTransactions, loadReference],
+    [supabase, fetchTransactions, reloadReference],
   );
 
   const FILTER_DEBOUNCE_MS = 280;
   const didInitialFetch = useRef(false);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!initialFetchComplete) return;
     if (!didInitialFetch.current) {
       didInitialFetch.current = true;
       void fetchTransactions();
@@ -667,7 +705,7 @@ function MovimentiListaContent() {
     }
     const id = window.setTimeout(() => void fetchTransactions(), FILTER_DEBOUNCE_MS);
     return () => window.clearTimeout(id);
-  }, [ready, filterSignature, fetchTransactions]);
+  }, [initialFetchComplete, filterSignature, fetchTransactions]);
 
   const rows = useMemo(() => {
     const rawSearch = searchQuery.trim();
@@ -686,26 +724,6 @@ function MovimentiListaContent() {
       if (account) setFilterAccount(account);
     });
   }, [searchParams]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      await loadReference();
-      if (!cancelled) setReady(true);
-    })();
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [loadReference, router, supabase]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -769,17 +787,6 @@ function MovimentiListaContent() {
       count,
     };
   }, [rows]);
-
-  if (!ready) {
-    return (
-      <AppShell title="Movimenti">
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-2 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#A970FF] border-t-transparent" />
-          Caricamento…
-        </div>
-      </AppShell>
-    );
-  }
 
   const periodChips = [
     { value: "today" as const, label: "Oggi" },

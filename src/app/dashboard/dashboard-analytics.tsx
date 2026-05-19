@@ -160,8 +160,8 @@ export function DashboardAnalytics() {
   }, [supabase]);
 
   const {
-    ready,
     loadError: pageLoadError,
+    isRefreshing,
     retry: retryPageLoad,
   } = usePageLoad({
     page: "dashboard",
@@ -240,11 +240,10 @@ export function DashboardAnalytics() {
 
   return (
     <PageLoadGate
-      ready={ready}
       loadError={displayError}
       onRetry={retryPageLoad}
       hasContent={hasPageContent}
-      skeletonCount={4}
+      isRefreshing={isRefreshing}
     >
     <div className="flex flex-col gap-2 pb-2 sm:gap-4 sm:pb-2">
       <section aria-label="Cassa totale">

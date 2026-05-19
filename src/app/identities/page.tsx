@@ -12,10 +12,21 @@ import {
 } from "@/lib/balance-validation";
 import { recalculatePaymentMethodBalanceFromLedger } from "@/lib/recalculate-movement-balances";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
 import { type TransactionStatus } from "@/lib/transaction-status";
+import { usePageLoad } from "@/hooks/use-page-load";
+import { useAppCacheStore } from "@/stores/app-cache-store";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+const IDENTITIES_CACHE_NS = "identities_bundle_v1";
+
+type IdentitiesCacheBundle = {
+  identities: IdentityRow[];
+  accounts: GamingAccountRow[];
+  paymentMethods: PaymentMethodRow[];
+  bookmakers: BookmakerOption[];
+};
 
 const PAYMENT_TYPES = [
   "Revolut",
@@ -97,10 +108,8 @@ function paymentMethodsForIdentity(
 }
 
 export default function IdentitiesPage() {
-  const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
-  const [ready, setReady] = useState(false);
   const [identities, setIdentities] = useState<IdentityRow[]>([]);
   const [accounts, setAccounts] = useState<GamingAccountRow[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodRow[]>([]);
@@ -164,7 +173,7 @@ export default function IdentitiesPage() {
   const [txSubmitting, setTxSubmitting] = useState(false);
   const [txError, setTxError] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (uid: string) => {
     setLoadError(null);
     const [pRes, gaRes, pmRes, bmRes] = await Promise.all([
       supabase.from("players").select("id, name").order("name"),
@@ -207,11 +216,42 @@ export default function IdentitiesPage() {
       return;
     }
 
-    setIdentities((pRes.data as IdentityRow[]) ?? []);
-    setAccounts((gaRes.data as GamingAccountRow[]) ?? []);
-    setPaymentMethods((pmRes.data as PaymentMethodRow[]) ?? []);
-    setBookmakers((bmRes.data as BookmakerOption[]) ?? []);
+    const bundle: IdentitiesCacheBundle = {
+      identities: (pRes.data as IdentityRow[]) ?? [],
+      accounts: (gaRes.data as GamingAccountRow[]) ?? [],
+      paymentMethods: (pmRes.data as PaymentMethodRow[]) ?? [],
+      bookmakers: (bmRes.data as BookmakerOption[]) ?? [],
+    };
+    setIdentities(bundle.identities);
+    setAccounts(bundle.accounts);
+    setPaymentMethods(bundle.paymentMethods);
+    setBookmakers(bundle.bookmakers);
+    void writeFreshCache(uid, IDENTITIES_CACHE_NS, bundle);
   }, [supabase]);
+
+  const { userId } = usePageLoad({
+    page: "identities",
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<IdentitiesCacheBundle>(uid, IDENTITIES_CACHE_NS);
+      if (!cached.data) return false;
+      setIdentities(cached.data.identities);
+      setAccounts(cached.data.accounts);
+      setPaymentMethods(cached.data.paymentMethods);
+      setBookmakers(cached.data.bookmakers);
+      return cached.data.identities.length > 0;
+    },
+    fetch: loadData,
+  });
+
+  const reloadData = useCallback(async () => {
+    const uid =
+      userId ??
+      useAppCacheStore.getState().userId ??
+      (await supabase.auth.getUser()).data.user?.id;
+    if (!uid) return;
+    useAppCacheStore.getState().markStale("identities");
+    await loadData(uid);
+  }, [userId, loadData, supabase]);
 
   const accountsByPlayer = useMemo(() => {
     const m = new Map<string, GamingAccountRow[]>();
@@ -273,28 +313,6 @@ export default function IdentitiesPage() {
     });
   }, [accountsByPlayer, identities, paymentMethods, searchQuery]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {});
-
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!user) {
-        return;
-      }
-      await loadData();
-      if (!cancelled) setReady(true);
-    })();
-
-    return () => {
-      cancelled = true;
-      authSub.subscription.unsubscribe();
-    };
-  }, [loadData, router, supabase]);
-
   async function handleNewIdentity(e: React.FormEvent) {
     e.preventDefault();
     setNewIdError(null);
@@ -322,7 +340,7 @@ export default function IdentitiesPage() {
     }
     setNewIdentityName("");
     setNewIdentityOpen(false);
-    await loadData();
+    await reloadData();
   }
 
   const openDetailSheet = useCallback((id: string) => {
@@ -408,7 +426,7 @@ export default function IdentitiesPage() {
     setAccBookmakerId("");
     setAccInitStr("");
     setAddAccountOpen(false);
-    await loadData();
+    await reloadData();
   }
 
   async function handleDeleteGamingAccount(account: GamingAccountRow) {
@@ -428,7 +446,7 @@ export default function IdentitiesPage() {
       setAccDeleteError(error.message);
       return;
     }
-    await loadData();
+    await reloadData();
   }
 
   function closeTxModal() {
@@ -594,7 +612,7 @@ export default function IdentitiesPage() {
     }
 
     closeTxModal();
-    await loadData();
+    await reloadData();
   }
 
   async function handleAddMethod(e: React.FormEvent, playerId: string) {
@@ -649,7 +667,7 @@ export default function IdentitiesPage() {
       setPaymentMethods((prev) => [...prev, inserted as PaymentMethodRow]);
     }
     setAddMethodOpen(false);
-    await loadData();
+    await reloadData();
   }
 
   function openEdit(m: PaymentMethodRow) {
@@ -696,7 +714,7 @@ export default function IdentitiesPage() {
       return;
     }
     setEditingMethod(null);
-    await loadData();
+    await reloadData();
   }
 
   async function handleConfirmDelete() {
@@ -710,7 +728,7 @@ export default function IdentitiesPage() {
       return;
     }
     setDeleteTarget(null);
-    await loadData();
+    await reloadData();
   }
 
   async function handleConfirmDeleteIdentity() {
@@ -736,7 +754,7 @@ export default function IdentitiesPage() {
       prev && (prev.player_id === removedId || prev.identity_id === removedId) ? null : prev,
     );
     setDeleteError(null);
-    await loadData();
+    await reloadData();
   }
 
   async function handleSaveIdentityName() {
@@ -755,17 +773,7 @@ export default function IdentitiesPage() {
       return;
     }
     setIdentityNameEditing(false);
-    await loadData();
-  }
-
-  if (!ready) {
-    return (
-      <AppShell title="Identità">
-        <div className="flex min-h-[30vh] items-center justify-center text-[16px] text-[#8B93A7] sm:text-sm">
-          Caricamento…
-        </div>
-      </AppShell>
-    );
+    await reloadData();
   }
 
   const txAccList =

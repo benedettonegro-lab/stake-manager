@@ -2,6 +2,7 @@
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { PwaRegister } from "@/components/pwa-register";
+import { TabPrefetchTrigger } from "@/components/tab-prefetch-trigger";
 import { useEffect, useState } from "react";
 
 function NetworkRecoveryBanner() {
@@ -35,6 +36,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
     <ErrorBoundary>
       <NetworkRecoveryBanner />
       {children}
+      <TabPrefetchTrigger />
       <PwaRegister />
     </ErrorBoundary>
   );

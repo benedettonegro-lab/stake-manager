@@ -8,6 +8,7 @@ import { FloatingActionButton } from "@/components/floating-action-button";
 import { PageLoadGate } from "@/components/ui/page-load-gate";
 import { betIsSettled, betSettledPnL } from "@/lib/bet-balance-effect";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { readStaleCache, writeFreshCache } from "@/lib/swr-cache";
 import { usePageLoad } from "@/hooks/use-page-load";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
@@ -105,7 +106,7 @@ function StakersPageContent() {
     });
   }, [searchParams, openAddModal]);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (uid: string) => {
     setLoadError(null);
     const [sRes, bRes] = await Promise.all([
       supabase.from("stakers").select("id, name, balance, player_id").order("name"),
@@ -118,7 +119,12 @@ function StakersPageContent() {
       setBetRows([]);
       throw new Error(msg);
     }
-    setRows((sRes.data as StakerRow[]) ?? []);
+    const st = (sRes.data as StakerRow[]) ?? [];
+    setRows(st);
+    void writeFreshCache(uid, "stakers_list_v1", {
+      stakers: st,
+      bets: bRes.error ? [] : ((bRes.data as BetMini[]) ?? []),
+    });
     if (bRes.error) {
       setBetRows([]);
     } else {
@@ -127,15 +133,23 @@ function StakersPageContent() {
   }, [supabase]);
 
   const {
-    ready,
     userId,
     loadError: pageLoadError,
+    isRefreshing,
     retry: retryPageLoad,
   } = usePageLoad({
     page: "stakers",
-    fetch: async () => {
-      await load();
+    hydrateFromCache: async (uid) => {
+      const cached = await readStaleCache<{
+        stakers: StakerRow[];
+        bets: BetMini[];
+      }>(uid, "stakers_list_v1");
+      if (!cached.data) return false;
+      setRows(cached.data.stakers);
+      setBetRows(cached.data.bets);
+      return cached.data.stakers.length > 0;
     },
+    fetch: load,
   });
 
   const displayLoadError = pageLoadError ?? loadError;
@@ -295,11 +309,10 @@ function StakersPageContent() {
       </div>
 
       <PageLoadGate
-        ready={ready}
         loadError={displayLoadError}
         onRetry={retryPageLoad}
         hasContent={rows.length > 0}
-        skeletonCount={4}
+        isRefreshing={isRefreshing}
       >
         {rows.length === 0 && !displayLoadError ? (
           <p className="rounded-xl border border-dashed border-white/[0.06] py-6 text-center text-sm text-[#8B93A7] sm:py-8">

@@ -199,9 +199,9 @@ export default function AccountsListPage() {
   }, [supabase]);
 
   const {
-    ready,
     userId,
     loadError: pageLoadError,
+    isRefreshing,
     initialFetchComplete,
     retry: retryPageLoad,
   } = usePageLoad({
@@ -459,11 +459,10 @@ export default function AccountsListPage() {
     <AuthGate>
       <AppShell title="Conti">
         <PageLoadGate
-          ready={ready}
           loadError={displayLoadError}
           onRetry={retryPageLoad}
           hasContent={hasPageContent}
-          skeletonCount={6}
+          isRefreshing={isRefreshing}
         >
       <div className="sm-page-search-sticky backdrop-blur-md sm:-mx-4 sm:px-4">
         <SearchInput
