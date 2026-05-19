@@ -4,6 +4,12 @@ import { AppCard } from "@/components/app";
 import { AuthGate } from "@/components/auth-gate";
 import { AppShell } from "@/components/app-shell";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import {
+  clearCachedSessionUserId,
+  readCachedSessionUserId,
+} from "@/lib/session-user-cache";
+import { clearProfileGateCache } from "@/lib/profile-gate-cache";
+import { useAppCacheStore } from "@/stores/app-cache-store";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -25,39 +31,45 @@ function formatItDateDdMmYyyy(iso: string | null | undefined): string | null {
 export default function AltroPage() {
   const router = useRouter();
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
-  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [registeredOn, setRegisteredOn] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-
     void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (cancelled) return;
+      try {
+        const { data: sessionData } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<{ data: { session: null } }>((resolve) =>
+            setTimeout(() => resolve({ data: { session: null } }), 1200),
+          ),
+        ]);
+        const user = sessionData.session?.user;
+        if (cancelled) return;
 
-      if (!user) {
-        setEmail(null);
-        setRegisteredOn(null);
-        setLoading(false);
-        return;
+        if (!user) {
+          if (!readCachedSessionUserId()) {
+            setEmail(null);
+            setRegisteredOn(null);
+          }
+          return;
+        }
+
+        setEmail(user.email ?? null);
+
+        const { data: profile } = await Promise.race([
+          supabase.from("profiles").select("created_at").eq("id", user.id).maybeSingle(),
+          new Promise<{ data: null }>((resolve) =>
+            setTimeout(() => resolve({ data: null }), 4000),
+          ),
+        ]);
+
+        if (cancelled) return;
+        setRegisteredOn(formatItDateDdMmYyyy(profile?.created_at as string | undefined));
+      } catch {
+        /* dati profilo opzionali */
       }
-
-      setEmail(user.email ?? null);
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("created_at")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (cancelled) return;
-
-      setRegisteredOn(formatItDateDdMmYyyy(profile?.created_at as string | undefined));
-      setLoading(false);
     })();
 
     return () => {
@@ -67,6 +79,9 @@ export default function AltroPage() {
 
   const handleLogout = useCallback(async () => {
     setLoggingOut(true);
+    clearProfileGateCache();
+    clearCachedSessionUserId();
+    useAppCacheStore.getState().clear();
     await supabase.auth.signOut();
     router.replace("/login?reason=session");
   }, [router, supabase]);
@@ -89,28 +104,22 @@ export default function AltroPage() {
               <p className="text-xl font-semibold text-white sm:text-sm">Account</p>
               <p className="mt-0.5 text-sm sm:text-xs text-[#8B93A7]">Profilo</p>
 
-              {loading ? (
-                <p className="mt-3 text-lg sm:text-base text-[#8B93A7] sm:text-sm">Caricamento…</p>
-              ) : (
-                <>
-                  <p className="mt-3 break-all text-lg sm:text-base text-[#8B93A7] sm:text-sm">
-                    {email ?? "—"}
-                  </p>
-                  {registeredOn ? (
-                    <p className="mt-1 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
-                      Registrazione: {registeredOn}
-                    </p>
-                  ) : null}
-                  <button
-                    type="button"
-                    disabled={loggingOut}
-                    onClick={() => void handleLogout()}
-                    className="mt-3 w-full rounded-lg border border-white/[0.06] bg-[#131C31] px-4 py-3 text-lg sm:text-base font-semibold text-[#e2e8f0] transition active:scale-[0.99] hover:border-white/[0.12] disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
-                  >
-                    {loggingOut ? "Uscita…" : "Logout"}
-                  </button>
-                </>
-              )}
+              <p className="mt-3 break-all text-lg sm:text-base text-[#8B93A7] sm:text-sm">
+                {email ?? "—"}
+              </p>
+              {registeredOn ? (
+                <p className="mt-1 text-lg sm:text-base text-[#8B93A7] sm:text-sm">
+                  Registrazione: {registeredOn}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                disabled={loggingOut}
+                onClick={() => void handleLogout()}
+                className="mt-3 w-full rounded-lg border border-white/[0.06] bg-[#131C31] px-4 py-3 text-lg sm:text-base font-semibold text-[#e2e8f0] transition active:scale-[0.99] hover:border-white/[0.12] disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
+              >
+                {loggingOut ? "Uscita…" : "Logout"}
+              </button>
             </AppCard>
           </li>
         </ul>

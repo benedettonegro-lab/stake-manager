@@ -19,11 +19,23 @@ function readRaw(): CacheEntry | null {
   }
 }
 
+/** Ultimo userId noto nel gate (anche se TTL scaduto). */
+export function readLastKnownUserId(): string | null {
+  return readRaw()?.userId ?? null;
+}
+
 /** True se l’utente era approvato in cache ancora valida (riduce flicker / round-trip). */
 export function readProfileApprovedCache(userId: string): boolean {
   const e = readRaw();
   if (!e || e.userId !== userId) return false;
   return Date.now() - e.at < TTL_MS;
+}
+
+/** Profilo approvato in passato — sblocca UI anche con TTL scaduto (max 7 giorni). */
+export function readProfileApprovedOrStale(userId: string): boolean {
+  const e = readRaw();
+  if (!e || e.userId !== userId) return false;
+  return Date.now() - e.at < 7 * 24 * 60 * 60 * 1000;
 }
 
 export function writeProfileApprovedCache(userId: string): void {

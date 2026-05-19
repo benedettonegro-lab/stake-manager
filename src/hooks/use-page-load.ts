@@ -2,12 +2,18 @@
 
 import { devPageLog } from "@/lib/dev-log";
 import { resolveAppSession } from "@/lib/resolve-session";
+import {
+  readCachedSessionUserId,
+  writeCachedSessionUserId,
+} from "@/lib/session-user-cache";
+import { isLikelyOfflineOrNetworkError } from "@/lib/supabase-network";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAppCacheStore } from "@/stores/app-cache-store";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const STALE_MS = 45_000;
+const GATE_RELEASE_MS = 1500;
 
 export type UsePageLoadResult = {
   /** Sempre true dopo il primo frame — niente skeleton full-page. */
@@ -29,6 +35,10 @@ type UsePageLoadOptions = {
   force?: boolean;
 };
 
+function pickUserId(): string | null {
+  return useAppCacheStore.getState().userId ?? readCachedSessionUserId();
+}
+
 export function usePageLoad({
   page,
   fetch,
@@ -47,40 +57,56 @@ export function usePageLoad({
   });
 
   const [ready] = useState(true);
-  const [userId, setUserId] = useState<string | null>(() => useAppCacheStore.getState().userId);
+  const [userId, setUserId] = useState<string | null>(() => pickUserId());
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [attempt, setAttempt] = useState(0);
 
   const runIdRef = useRef(0);
-  const mountedRef = useRef(false);
 
   useEffect(() => {
     const runId = ++runIdRef.current;
     let cancelled = false;
     const isStale = () => cancelled || runIdRef.current !== runId;
 
-    const run = async () => {
-      if (!mountedRef.current) {
-        mountedRef.current = true;
-      }
+    const release = () => {
+      if (!isStale()) setInitialFetchComplete(true);
+    };
 
+    const releaseTimer = window.setTimeout(release, GATE_RELEASE_MS);
+
+    const run = async () => {
       devPageLog(page, "instant load start");
 
-      let uid = useAppCacheStore.getState().userId;
+      let uid = pickUserId();
+      if (uid && !isStale()) {
+        setUserId(uid);
+      }
 
       if (!uid) {
         const { user, error: sessionError } = await resolveAppSession(supabase);
         if (isStale()) return;
+
         if (!user) {
-          devPageLog(page, "session missing", sessionError);
-          router.replace("/login?reason=session");
-          setInitialFetchComplete(true);
-          return;
+          const fallback = pickUserId();
+          if (fallback && isLikelyOfflineOrNetworkError(sessionError)) {
+            uid = fallback;
+            useAppCacheStore.getState().setUserId(uid);
+            devPageLog(page, "session offline, use cache uid");
+          } else {
+            devPageLog(page, "session missing", sessionError);
+            release();
+            if (!fallback) {
+              router.replace("/login?reason=session");
+            }
+            return;
+          }
+        } else {
+          uid = user.id;
+          useAppCacheStore.getState().setUserId(uid);
+          writeCachedSessionUserId(uid);
         }
-        uid = user.id;
-        useAppCacheStore.getState().setUserId(uid);
       }
 
       if (isStale()) return;
@@ -100,7 +126,7 @@ export function usePageLoad({
         devPageLog(page, "skip fetch (fresh)");
         if (!isStale()) {
           setLoadError(null);
-          setInitialFetchComplete(true);
+          release();
         }
         return;
       }
@@ -121,7 +147,7 @@ export function usePageLoad({
       } finally {
         if (!isStale()) {
           setIsRefreshing(false);
-          setInitialFetchComplete(true);
+          release();
         }
       }
     };
@@ -130,6 +156,7 @@ export function usePageLoad({
 
     return () => {
       cancelled = true;
+      window.clearTimeout(releaseTimer);
     };
   }, [attempt, force, page, router, supabase]);
 
